@@ -1,7 +1,8 @@
 import { BrowserRouter, Route, Routes } from "react-router";
 import UserLayout from "../layout/user-layout";
 import NotFound from "../pages/not-found";
-import HomePage from "../pages/home";
+import HomePage from "../pages/home-page";
+import TablePage from "../pages/table-page";
 
 function Router() {
   return (
@@ -15,6 +16,7 @@ function Router() {
             </UserLayout>
           }
         />
+        <Route path="/table/:id" element={<TablePage />} />
         <Route
           index
           element={

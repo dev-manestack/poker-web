@@ -1,7 +1,13 @@
 import { Button } from "antd";
 import "./table-game.css";
 
-function TableGame({ seatCount = 12 }) {
+function TableGame({
+  isPreview = false,
+  seatCount = 8,
+}: {
+  isPreview?: boolean;
+  seatCount?: number;
+}) {
   const centerX = 50;
   const centerY = 50;
   const radiusX = 50;
@@ -19,7 +25,7 @@ function TableGame({ seatCount = 12 }) {
     };
     return (
       <Button className="seat" style={style} key={i}>
-        Суух
+        {isPreview ? "" : `Суух`}
       </Button>
     );
   });

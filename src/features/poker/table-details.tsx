@@ -1,4 +1,5 @@
-import { Flex, Skeleton, Table, Typography } from "antd";
+import { Flex, Table, Typography } from "antd";
+import TableGame from "./table-game";
 
 const { Title } = Typography;
 
@@ -42,11 +43,14 @@ function TableDetails({ table }: { table: any }) {
           width: "100%",
         }}
       />
-      <Skeleton
+      <Flex
         style={{
           height: "300px",
+          width: "100%",
         }}
-      />
+      >
+        <TableGame isPreview={true} />
+      </Flex>
     </Flex>
   );
 }

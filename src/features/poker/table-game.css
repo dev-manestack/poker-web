@@ -28,3 +28,9 @@
   font-size: 14px;
   transform: translate(-50%, -50%);
 }
+
+@media (max-width: 992px) { /* md and below (Ant Design's md is 992px) */
+  .seat-cards {
+    display: none;
+  }
+}

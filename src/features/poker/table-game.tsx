@@ -1,4 +1,4 @@
-import { Avatar, Button } from "antd";
+import { Avatar, Button, Flex } from "antd";
 import { useEffect, useRef, useState } from "react";
 import type { CardInfo } from "./poker-card";
 import PokerCard from "./poker-card";
@@ -21,6 +21,8 @@ function TableGame({
   const centerY = 50;
   const radiusX = 50;
   const radiusY = 50;
+  const cardRadiusX = radiusX - 5;
+  const cardRadiusY = radiusY - 10;
 
   const seats = Array.from({ length: seatCount }, (_, i) => {
     const angle = (2 * Math.PI * i) / seatCount;
@@ -44,6 +46,28 @@ function TableGame({
       >
         {isPreview ? "" : mySeat === i ? <Avatar /> : `Суух`}
       </Button>
+    );
+  });
+
+  const seatCards = Array.from({ length: seatCount }, (_, i) => {
+    const angle = (2 * Math.PI * i) / seatCount;
+    const x = centerX + cardRadiusX * Math.cos(angle);
+    const y = centerY + cardRadiusY * Math.sin(angle);
+    return (
+      <Flex
+        className="seat-cards"
+        style={{
+          left: `calc(${x}% - 20px)`,
+          top: `${y}%`,
+          position: "absolute",
+          width: "40px",
+          height: "60px",
+          transform: "translate(-50%, -50%)",
+        }}
+      >
+        <PokerCard suit="Heart" rank="Ace" isRevealed={false} />
+        <PokerCard suit="Spade" rank="Ace" isRevealed={false} />
+      </Flex>
     );
   });
 
@@ -97,7 +121,8 @@ function TableGame({
             justifyContent: "center",
             alignItems: "center",
             padding: "0 30px",
-            height: "100%",
+            height: "400px",
+            marginTop: "calc(40vh - 200px)",
             flexWrap: "wrap",
             gap: "10px",
           }}
@@ -107,7 +132,6 @@ function TableGame({
               key={index}
               style={{ height: "100px" }}
               onClick={() => {
-                console.log("Trying to flip", index);
                 setCards((prevCards) =>
                   prevCards.map((c, i) =>
                     i === index ? { ...c, isRevealed: true } : c
@@ -124,6 +148,7 @@ function TableGame({
           ))}
         </div>
         <div>{seats}</div>
+        <div>{seatCards}</div>
       </div>
       <Button
         onClick={() => {

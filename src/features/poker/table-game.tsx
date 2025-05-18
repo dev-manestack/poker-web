@@ -1,7 +1,9 @@
-import { Button } from "antd";
-import "./table-game.css";
-import { useEffect, useRef } from "react";
+import { Avatar, Button } from "antd";
+import { useEffect, useRef, useState } from "react";
+import type { CardInfo } from "./poker-card";
 import PokerCard from "./poker-card";
+import "./table-game.css";
+import { DealCardAudio } from "../../assets/sounds";
 
 function TableGame({
   isPreview = false,
@@ -10,6 +12,9 @@ function TableGame({
   isPreview?: boolean;
   seatCount?: number;
 }) {
+  const [mySeat, setMySeat] = useState<number | null>(null);
+  const [cards, setCards] = useState<CardInfo[]>([]);
+
   const ws = useRef<WebSocket | null>(null);
 
   const centerX = 50;
@@ -28,8 +33,16 @@ function TableGame({
       width: "50px",
     };
     return (
-      <Button className="seat" style={style} key={i}>
-        {isPreview ? "" : `Суух`}
+      <Button
+        className="seat"
+        style={style}
+        key={i}
+        onClick={() => {
+          setMySeat(i);
+        }}
+        disabled={isPreview}
+      >
+        {isPreview ? "" : mySeat === i ? <Avatar /> : `Суух`}
       </Button>
     );
   });
@@ -80,14 +93,53 @@ function TableGame({
       <div className="poker-table">
         <div
           style={{
-            height: "100px",
-            width: "100px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: "0 30px",
+            height: "100%",
+            flexWrap: "wrap",
+            gap: "10px",
           }}
         >
-          <PokerCard suit="Heart" rank="Ten" />
+          {cards?.map((card, index) => (
+            <div
+              key={index}
+              style={{ height: "100px" }}
+              onClick={() => {
+                console.log("Trying to flip", index);
+                setCards((prevCards) =>
+                  prevCards.map((c, i) =>
+                    i === index ? { ...c, isRevealed: true } : c
+                  )
+                );
+              }}
+            >
+              <PokerCard
+                suit={card.suit}
+                rank={card.rank}
+                isRevealed={card.isRevealed}
+              />
+            </div>
+          ))}
         </div>
         <div>{seats}</div>
       </div>
+      <Button
+        onClick={() => {
+          setCards([
+            ...cards,
+            { suit: "Heart", rank: "Ten", isRevealed: false },
+          ]);
+          const sound = new Howl({
+            src: [DealCardAudio],
+            volume: 0.5,
+          });
+          sound.play();
+        }}
+      >
+        Test
+      </Button>
     </div>
   );
 }

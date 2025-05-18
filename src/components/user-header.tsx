@@ -44,7 +44,7 @@ function UserHeader() {
             setModalType("login");
           }}
         >
-          Login
+          Нэвтрэх
         </Button>
       </Flex>
       <Modal

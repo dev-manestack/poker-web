@@ -75,7 +75,7 @@ function RegisterForm({
                 setModalType("login");
               }}
             >
-              Бүртгүүлэх
+              Нэвтрэх
             </a>
           </Text>
         </Flex>

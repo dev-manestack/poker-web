@@ -1,5 +1,7 @@
 import { Button } from "antd";
 import "./table-game.css";
+import { useEffect, useRef } from "react";
+import PokerCard from "./poker-card";
 
 function TableGame({
   isPreview = false,
@@ -8,6 +10,8 @@ function TableGame({
   isPreview?: boolean;
   seatCount?: number;
 }) {
+  const ws = useRef<WebSocket | null>(null);
+
   const centerX = 50;
   const centerY = 50;
   const radiusX = 50;
@@ -30,9 +34,60 @@ function TableGame({
     );
   });
 
+  const establishWebSocketConnection = () => {
+    const accessToken = "12345";
+
+    if (ws.current?.OPEN) {
+      return;
+    }
+
+    ws.current = new WebSocket(
+      `ws://127.0.0.1:8080/ws/table/1?accessToken=${accessToken}`
+    );
+
+    ws.current.onopen = () => {
+      console.log("WebSocket connected");
+    };
+
+    ws.current.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      console.log("Message received:", message);
+    };
+
+    ws.current.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+
+    ws.current.onclose = () => {
+      console.log("WebSocket disconnected");
+      ws.current = null;
+      establishWebSocketConnection();
+    };
+
+    return () => {
+      if (ws.current) {
+        ws.current.close();
+      }
+    };
+  };
+
+  useEffect(() => {
+    establishWebSocketConnection();
+  }, []);
+
   return (
     <div className="table-wrapper">
-      <div className="poker-table">{seats}</div>
+      <div className="poker-table">
+        <div
+          style={{
+            height: "100px",
+            width: "100px",
+          }}
+        >
+          <PokerCard suit="Heart" rank="Ten" />
+        </div>
+        <div>{seats}</div>
+      </div>
     </div>
   );
 }

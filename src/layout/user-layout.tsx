@@ -1,0 +1,33 @@
+import { Layout } from "antd";
+import UserHeader from "../components/user-header";
+const { Header, Footer, Content } = Layout;
+
+const headerStyle: React.CSSProperties = {
+  textAlign: "center",
+  color: "#fff",
+  height: 64,
+  padding: 0,
+};
+
+function UserLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <Layout
+      style={{
+        height: "100%",
+        width: "100%",
+        display: "flex",
+        boxShadow: "0 0 10px rgba(0, 0, 0, 0.5)",
+      }}
+    >
+      <Header style={headerStyle}>
+        <UserHeader />
+      </Header>
+      <Content>{children}</Content>
+      <Footer>
+        <div>Footer</div>
+      </Footer>
+    </Layout>
+  );
+}
+
+export default UserLayout;

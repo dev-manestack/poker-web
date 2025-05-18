@@ -1,4 +1,5 @@
 import { Button, Flex, Table } from "antd";
+import { useNavigate } from "react-router";
 
 const currencySymbol = "₮";
 
@@ -26,6 +27,8 @@ function TableList({
 }: {
   setSelectedTable: (table: any) => void;
 }) {
+  const navigate = useNavigate();
+
   const columns = [
     {
       title: "Ширээ",
@@ -60,7 +63,7 @@ function TableList({
           <Button
             type="primary"
             onClick={() => {
-              setSelectedTable(record);
+              navigate("/table/" + record.key);
             }}
           >
             Тоглох
@@ -75,6 +78,11 @@ function TableList({
     <Table
       columns={columns}
       dataSource={dataSource}
+      onRow={(record) => {
+        return {
+          onClick: () => setSelectedTable(record),
+        };
+      }}
       style={{
         width: "100%",
       }}

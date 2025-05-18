@@ -17,6 +17,13 @@ const theme: ThemeConfig = {
       gradientFromColor: "#2d2c36",
       gradientToColor: "#743c74",
     },
+    Card: {
+      colorBgContainer: "#2d2c36",
+    },
+    Input: {
+      colorBgContainer: "#2d2c36",
+      colorTextPlaceholder: "#EEFFFF",
+    },
   },
 };
 

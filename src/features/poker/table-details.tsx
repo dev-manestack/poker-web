@@ -1,4 +1,6 @@
-import { Flex, Skeleton, Table } from "antd";
+import { Flex, Skeleton, Table, Typography } from "antd";
+
+const { Title } = Typography;
 
 const columns = [
   {
@@ -26,9 +28,10 @@ const dataSource = [
   },
 ];
 
-function TableDetails({}: { table: any }) {
+function TableDetails({ table }: { table: any }) {
   return (
     <Flex style={{ width: "100%", height: "100%" }} vertical>
+      <Title level={3}>{table?.table}</Title>
       <Table
         columns={columns}
         dataSource={dataSource}

@@ -7,6 +7,7 @@ const headerStyle: React.CSSProperties = {
   color: "#fff",
   height: 64,
   padding: 0,
+  background: "none",
 };
 
 function UserLayout({ children }: { children: React.ReactNode }) {

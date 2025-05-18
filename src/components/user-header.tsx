@@ -1,12 +1,21 @@
-import { CloseOutlined, MenuOutlined } from "@ant-design/icons";
+import {
+  CloseOutlined,
+  MenuOutlined,
+  MoonFilled,
+  SunFilled,
+} from "@ant-design/icons";
 import { Button, Flex, Modal } from "antd";
 import { useState } from "react";
 import LoginForm from "../features/user/login-form";
 import RegisterForm from "../features/user/register-form";
 import ForgotPasswordForm from "../features/user/forgot-password-form";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleMode } from "../app/theme-slice";
 
 function UserHeader() {
   const [modalType, setModalType] = useState("");
+  const themeMode = useSelector((state: any) => state.theme.mode);
+  const dispatch = useDispatch();
 
   return (
     <Flex
@@ -21,7 +30,14 @@ function UserHeader() {
           }}
         />
       </Flex>
-      <Flex>
+      <Flex gap={5}>
+        <Button
+          onClick={() => {
+            dispatch(toggleMode());
+          }}
+        >
+          {themeMode === "dark" ? <SunFilled /> : <MoonFilled />}
+        </Button>
         <Button
           type="primary"
           onClick={() => {

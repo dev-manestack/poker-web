@@ -31,7 +31,9 @@ const dataSource = [
 function TableDetails({ table }: { table: any }) {
   return (
     <Flex style={{ width: "100%", height: "100%" }} vertical>
-      <Title level={3}>{table?.table}</Title>
+      <Title level={3}>
+        {table?.table?.length > 0 ? table?.table : "Default"}
+      </Title>
       <Table
         columns={columns}
         dataSource={dataSource}

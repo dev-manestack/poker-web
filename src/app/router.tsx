@@ -4,7 +4,6 @@ import NotFound from "../pages/not-found";
 import HomePage from "../pages/user/home-page";
 import TablePage from "../pages/user/table-page";
 import AdminLayout from "../layout/admin-layout";
-import LoginPage from "../pages/auth-page";
 import AuthPage from "../pages/auth-page";
 
 function Router() {

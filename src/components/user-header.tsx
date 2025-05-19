@@ -1,21 +1,45 @@
 import {
+  BellOutlined,
   CloseOutlined,
   MenuOutlined,
+  MessageOutlined,
   MoonFilled,
   SunFilled,
 } from "@ant-design/icons";
-import { Button, Flex, Modal } from "antd";
-import { useState } from "react";
+import { Avatar, Button, Dropdown, Flex, Modal, Typography } from "antd";
+import { useEffect, useState } from "react";
 import LoginForm from "../features/user/login-form";
 import RegisterForm from "../features/user/register-form";
 import ForgotPasswordForm from "../features/user/forgot-password-form";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleMode } from "../providers/theme-slice";
+import { useMeQuery } from "../api/user";
+import { logout } from "../providers/auth-slice";
+
+const { Text } = Typography;
 
 function UserHeader() {
   const [modalType, setModalType] = useState("");
   const themeMode = useSelector((state: any) => state.theme.mode);
   const dispatch = useDispatch();
+  const isAuthenticated = useSelector(
+    (state: any) => state.auth.isAuthenticated
+  );
+
+  const items = [
+    {
+      key: "1",
+      label: <Text>Logout</Text>,
+      onClick: () => dispatch(logout()),
+      danger: true,
+    },
+  ];
+
+  const { data: userInfo, refetch } = useMeQuery();
+
+  useEffect(() => {
+    refetch();
+  }, [isAuthenticated]);
 
   return (
     <Flex
@@ -38,14 +62,27 @@ function UserHeader() {
         >
           {themeMode === "dark" ? <SunFilled /> : <MoonFilled />}
         </Button>
-        <Button
-          type="primary"
-          onClick={() => {
-            setModalType("login");
-          }}
-        >
-          Нэвтрэх
-        </Button>
+        {isAuthenticated ? (
+          <Flex gap={5} align="center">
+            <Button icon={<BellOutlined />} />
+            <Button icon={<MessageOutlined />} />
+            <Dropdown menu={{ items }}>
+              <Flex align="center" gap={5} style={{ flex: 1 }}>
+                <Avatar src={userInfo?.profileURL} />
+                <Text>{userInfo?.username}</Text>
+              </Flex>
+            </Dropdown>
+          </Flex>
+        ) : (
+          <Button
+            type="primary"
+            onClick={() => {
+              setModalType("login");
+            }}
+          >
+            Нэвтрэх
+          </Button>
+        )}
       </Flex>
       <Modal
         open={modalType?.length > 0}

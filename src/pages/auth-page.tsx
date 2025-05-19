@@ -1,8 +1,10 @@
-import { Flex } from "antd";
+import { Flex, Typography } from "antd";
 import LoginForm from "../features/user/login-form";
 import { useNavigate } from "react-router";
 import RegisterForm from "../features/user/register-form";
 import ForgotPasswordForm from "../features/user/forgot-password-form";
+
+const { Title } = Typography;
 
 function AuthPage({ type }: { type: string }) {
   const navigate = useNavigate();
@@ -13,14 +15,20 @@ function AuthPage({ type }: { type: string }) {
 
   return (
     <Flex
+      justify="center"
+      align="center"
+      vertical
       style={{
         width: "100%",
-        marginTop: "30vh",
-        justifyContent: "center",
-        alignItems: "center",
+        marginTop: type === "register" ? "20vh" : "30vh",
         position: "absolute",
       }}
     >
+      <Title>
+        {type === "register" && "Бүртгүүлэх"}
+        {type === "login" && "Нэвтрэх"}
+        {type === "forgot-password" && "Нууц үг сэргээх"}
+      </Title>
       <Flex
         style={{
           width: "50%",

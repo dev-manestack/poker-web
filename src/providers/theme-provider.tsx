@@ -5,6 +5,7 @@ const { defaultAlgorithm, darkAlgorithm } = theme;
 
 function ThemeProvider({ children }: { children: React.ReactNode }) {
   const mode = useSelector((state: any) => state.theme.mode);
+
   return (
     <ConfigProvider
       theme={{

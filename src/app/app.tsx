@@ -4,7 +4,7 @@ import Router from "./router";
 
 function App() {
   return (
-    <Flex style={{ height: "100vh", width: "100vw" }}>
+    <Flex style={{}}>
       <AppProvider>
         <Router />
       </AppProvider>

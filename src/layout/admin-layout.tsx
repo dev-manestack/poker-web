@@ -1,4 +1,4 @@
-import { Flex, Layout, Menu, type MenuProps } from "antd";
+import { Flex, Layout, Menu, Spin, Typography, type MenuProps } from "antd";
 import AdminHeader from "../components/admin-header";
 import {
   ContainerOutlined,
@@ -6,12 +6,19 @@ import {
   PieChartOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router";
+import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 const { Content, Sider } = Layout;
+const { Text } = Typography;
 
 type MenuItem = Required<MenuProps>["items"][number];
 
 function AdminLayout({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const isAuthenticated = useSelector(
+    (state: any) => state.auth.isAuthenticated
+  );
 
   const items: MenuItem[] = [
     {
@@ -44,6 +51,32 @@ function AdminLayout({ children }: { children: React.ReactNode }) {
       ],
     },
   ];
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/auth/login", { replace: true });
+    } else {
+    }
+    setIsCheckingAuth(false);
+  }, [isAuthenticated, navigate]);
+
+  if (isCheckingAuth) {
+    return (
+      <Flex
+        vertical
+        justify="center"
+        align="center"
+        gap={10}
+        style={{
+          height: "100vh",
+          width: "100%",
+        }}
+      >
+        <Spin />
+        <Text>Түр хүлээнэ үү. Таны эрхийн тохиргоог шалгаж байна.</Text>
+      </Flex>
+    );
+  }
 
   return (
     <Layout

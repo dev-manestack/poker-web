@@ -4,6 +4,8 @@ import NotFound from "../pages/not-found";
 import HomePage from "../pages/user/home-page";
 import TablePage from "../pages/user/table-page";
 import AdminLayout from "../layout/admin-layout";
+import LoginPage from "../pages/auth-page";
+import AuthPage from "../pages/auth-page";
 
 function Router() {
   return (
@@ -57,6 +59,32 @@ function Router() {
               <AdminLayout>
                 <div>Dashboard</div>
               </AdminLayout>
+            }
+          />
+        </Route>
+        <Route path="/auth">
+          <Route
+            path="/auth/login"
+            element={
+              <UserLayout>
+                <AuthPage type="login" />
+              </UserLayout>
+            }
+          />
+          <Route
+            path="/auth/register"
+            element={
+              <UserLayout>
+                <AuthPage type="register" />
+              </UserLayout>
+            }
+          />
+          <Route
+            path="/auth/forgot-password"
+            element={
+              <UserLayout>
+                <AuthPage type="forgot-password" />
+              </UserLayout>
             }
           />
         </Route>

@@ -6,7 +6,7 @@ function ForgotPasswordForm() {
   };
 
   return (
-    <Form labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} onFinish={onFinish}>
+    <Form labelCol={{ span: 8 }} wrapperCol={{ span: 18 }} onFinish={onFinish}>
       <Form.Item label="Цахим хаяг" name="username">
         <Input placeholder="Цахим хаягаа оруулна уу" />
       </Form.Item>

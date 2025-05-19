@@ -1,6 +1,6 @@
 import { Layout } from "antd";
 import UserHeader from "../components/user-header";
-const { Header, Footer, Content } = Layout;
+const { Header, Content } = Layout;
 
 const headerStyle: React.CSSProperties = {
   textAlign: "center",
@@ -24,9 +24,6 @@ function UserLayout({ children }: { children: React.ReactNode }) {
         <UserHeader />
       </Header>
       <Content>{children}</Content>
-      <Footer>
-        <div>Footer</div>
-      </Footer>
     </Layout>
   );
 }

@@ -10,7 +10,7 @@ import LoginForm from "../features/user/login-form";
 import RegisterForm from "../features/user/register-form";
 import ForgotPasswordForm from "../features/user/forgot-password-form";
 import { useDispatch, useSelector } from "react-redux";
-import { toggleMode } from "../app/theme-slice";
+import { toggleMode } from "../providers/theme-slice";
 
 function UserHeader() {
   const [modalType, setModalType] = useState("");

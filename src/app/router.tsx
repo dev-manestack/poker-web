@@ -1,8 +1,9 @@
 import { BrowserRouter, Route, Routes } from "react-router";
 import UserLayout from "../layout/user-layout";
 import NotFound from "../pages/not-found";
-import HomePage from "../pages/home-page";
-import TablePage from "../pages/table-page";
+import HomePage from "../pages/user/home-page";
+import TablePage from "../pages/user/table-page";
+import AdminLayout from "../layout/admin-layout";
 
 function Router() {
   return (
@@ -17,6 +18,48 @@ function Router() {
           }
         />
         <Route path="/table/:id" element={<TablePage />} />
+        <Route path="/admin">
+          <Route
+            path="/admin/user/*"
+            element={
+              <AdminLayout>
+                <div>User</div>
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="/admin/withdraw/*"
+            element={
+              <AdminLayout>
+                <div>Withdraw</div>
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="/admin/deposit/*"
+            element={
+              <AdminLayout>
+                <div>Deposit</div>
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="/admin/settings/*"
+            element={
+              <AdminLayout>
+                <div>Settings</div>
+              </AdminLayout>
+            }
+          />
+          <Route
+            index
+            element={
+              <AdminLayout>
+                <div>Dashboard</div>
+              </AdminLayout>
+            }
+          />
+        </Route>
         <Route
           index
           element={

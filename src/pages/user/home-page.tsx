@@ -1,7 +1,7 @@
 import { Flex, Tabs, type TabsProps } from "antd";
-import TableList from "../features/poker/table-list";
+import TableList from "../../features/poker/table-list";
 import { useState } from "react";
-import TableDetails from "../features/poker/table-details";
+import TableDetails from "../../features/poker/table-details";
 
 function HomePage() {
   const [selectedTable, setSelectedTable] = useState<any>(null);

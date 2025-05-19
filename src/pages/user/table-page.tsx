@@ -1,6 +1,6 @@
 import { Button, Flex } from "antd";
-import RoomBackground from "../assets/room-background.jpg";
-import TableGame from "../features/poker/table-game";
+import RoomBackground from "../../assets/room-background.jpg";
+import TableGame from "../../features/poker/table-game";
 import { LeftOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router";
 

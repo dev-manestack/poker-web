@@ -63,6 +63,7 @@ function TableGame({
           width: "40px",
           height: "60px",
           transform: "translate(-50%, -50%)",
+          display: isPreview ? "none" : "flex",
         }}
       >
         <PokerCard suit="Heart" rank="Ace" isRevealed={false} />

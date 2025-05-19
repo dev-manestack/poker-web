@@ -1,6 +1,8 @@
 import {
   BellOutlined,
   CloseOutlined,
+  CrownOutlined,
+  LogoutOutlined,
   MenuOutlined,
   MessageOutlined,
   MoonFilled,
@@ -14,11 +16,13 @@ import ForgotPasswordForm from "../features/user/forgot-password-form";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleMode } from "../providers/theme-slice";
 import { useMeQuery } from "../api/user";
-import { logout } from "../providers/auth-slice";
+import { logout, setAuthenticated } from "../providers/auth-slice";
+import { useNavigate } from "react-router";
 
 const { Text } = Typography;
 
 function UserHeader() {
+  const navigate = useNavigate();
   const [modalType, setModalType] = useState("");
   const themeMode = useSelector((state: any) => state.theme.mode);
   const dispatch = useDispatch();
@@ -29,9 +33,18 @@ function UserHeader() {
   const items = [
     {
       key: "1",
-      label: <Text>Logout</Text>,
+      label: "Admin",
+      onClick: () => {
+        navigate("/admin");
+      },
+      icon: <CrownOutlined />,
+    },
+    {
+      key: "2",
+      label: "Logout",
       onClick: () => dispatch(logout()),
       danger: true,
+      icon: <LogoutOutlined />,
     },
   ];
 
@@ -40,6 +53,12 @@ function UserHeader() {
   useEffect(() => {
     refetch();
   }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (userInfo) {
+      dispatch(setAuthenticated(true));
+    }
+  }, [userInfo]);
 
   return (
     <Flex

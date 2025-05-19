@@ -31,6 +31,7 @@ function HomePage() {
     <Flex
       style={{
         padding: "20px",
+        height: "100%",
       }}
       gap={10}
     >

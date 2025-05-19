@@ -2,6 +2,7 @@ import {
   BellOutlined,
   LogoutOutlined,
   MessageOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import {
   Avatar,
@@ -12,20 +13,31 @@ import {
   Typography,
   type MenuProps,
 } from "antd";
+import { useNavigate } from "react-router";
 
 const { Text } = Typography;
 
-const items: MenuProps["items"] = [
-  {
-    key: "1",
-    label: <Text>Logout</Text>,
-    onClick: () => {},
-    icon: <LogoutOutlined />,
-    danger: true,
-  },
-];
-
 function AdminHeader() {
+  const navigate = useNavigate();
+
+  const items: MenuProps["items"] = [
+    {
+      key: "1",
+      label: "User View",
+      onClick: () => {
+        navigate("/");
+      },
+      icon: <UserOutlined />,
+    },
+    {
+      key: "2",
+      label: <Text>Logout</Text>,
+      onClick: () => {},
+      icon: <LogoutOutlined />,
+      danger: true,
+    },
+  ];
+
   return (
     <Flex
       justify="space-between"

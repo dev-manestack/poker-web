@@ -41,12 +41,12 @@ function AdminLayout({ children }: { children: React.ReactNode }) {
       children: [
         {
           key: "3",
-          label: "Цэнэглэлт",
+          label: "Таталт",
           onClick: () => navigate("/admin/withdraw"),
         },
         {
           key: "4",
-          label: "Мөнгө Олгох",
+          label: "Цэнэглэлт",
           onClick: () => navigate("/admin/deposit"),
         },
       ],

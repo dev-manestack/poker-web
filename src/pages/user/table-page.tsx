@@ -23,7 +23,7 @@ function TablePage() {
           left: 20,
         }}
         icon={<LeftOutlined />}
-        onClick={() => navigate("/home")}
+        onClick={() => navigate("/")}
       >
         Back
       </Button>

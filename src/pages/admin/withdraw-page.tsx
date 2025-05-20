@@ -1,5 +1,20 @@
+import { useEffect } from "react";
+import { useFetchWithdrawalsQuery } from "../../api/admin";
+import { Flex } from "antd";
+import AdminWithdrawList from "../../features/admin/admin-withdraw-list";
+
 function WithdrawPage() {
-  return <div>withdraw</div>;
+  const { data } = useFetchWithdrawalsQuery(null);
+
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
+
+  return (
+    <Flex style={{ width: "100%" }}>
+      <AdminWithdrawList withdrawals={data ? data : []} />
+    </Flex>
+  );
 }
 
 export default WithdrawPage;

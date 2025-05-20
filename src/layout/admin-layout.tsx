@@ -2,6 +2,7 @@ import { Flex, Layout, Menu, Spin, Typography, type MenuProps } from "antd";
 import AdminHeader from "../components/admin-header";
 import {
   ContainerOutlined,
+  CrownOutlined,
   MoneyCollectFilled,
   PieChartOutlined,
 } from "@ant-design/icons";
@@ -48,6 +49,18 @@ function AdminLayout({ children }: { children: React.ReactNode }) {
           key: "4",
           label: "Цэнэглэлт",
           onClick: () => navigate("/admin/deposit"),
+        },
+      ],
+    },
+    {
+      key: "sub2",
+      label: "Тоглолт",
+      icon: <CrownOutlined />,
+      children: [
+        {
+          key: "5",
+          label: "Ширээ",
+          onClick: () => navigate("/admin/table"),
         },
       ],
     },

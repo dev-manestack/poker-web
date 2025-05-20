@@ -44,7 +44,7 @@ function AdminDepositList({ deposits }: { deposits: Deposit[] }) {
       },
     },
     {
-      title: "Create Date",
+      title: "Үүсгэсэн огноо",
       dataIndex: "createDate",
       key: "createDate",
       render: (text: string) => {

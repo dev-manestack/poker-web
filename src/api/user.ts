@@ -43,6 +43,7 @@ const baseQuery: typeof rawBaseQuery = async (args, api, extraOptions) => {
 export const userApi = createApi({
   reducerPath: "userApi",
   baseQuery: baseQuery,
+  tagTypes: ["UserList"],
   endpoints: (builder) => ({
     login: builder.mutation({
       query: (credentials: LoginCredentials) => ({
@@ -64,8 +65,20 @@ export const userApi = createApi({
         method: "GET",
       }),
     }),
+    searchUsers: builder.query<User[], void>({
+      query: () => ({
+        url: "/search",
+        method: "GET",
+      }),
+      providesTags: ["UserList"],
+    }),
   }),
 });
 
-export const { useLoginMutation, useRegisterMutation, useMeQuery } = userApi;
+export const {
+  useLoginMutation,
+  useRegisterMutation,
+  useMeQuery,
+  useSearchUsersQuery,
+} = userApi;
 export type { User, LoginCredentials };

@@ -48,6 +48,14 @@ function Router() {
             }
           />
           <Route
+            path="/admin/table/*"
+            element={
+              <AdminLayout>
+                <div>Table</div>
+              </AdminLayout>
+            }
+          />
+          <Route
             index
             element={
               <AdminLayout>

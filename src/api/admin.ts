@@ -49,21 +49,47 @@ const baseQuery: typeof rawBaseQuery = async (args, api, extraOptions) => {
 export const adminApi = createApi({
   reducerPath: "adminApi",
   baseQuery: baseQuery,
+  tagTypes: ["withdrawals", "deposits"],
   endpoints: (builder) => ({
-    fetchWithdrawals: builder.query<Withdrawal[], null>({
+    fetchWithdrawals: builder.query<Withdrawal[], void>({
       query: () => ({
         url: "/withdrawal",
         method: "GET",
       }),
+      providesTags: ["withdrawals"],
     }),
-    fetchDeposits: builder.query<Deposit[], null>({
+    createDeposit: builder.mutation<
+      void,
+      { userId: number; amount: number; type: string; details: object }
+    >({
+      query: (data) => ({
+        url: "/deposit",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["deposits"],
+    }),
+    fetchDeposits: builder.query<Deposit[], void>({
       query: () => ({
         url: "/deposit",
         method: "GET",
       }),
+      providesTags: ["deposits"],
+    }),
+    approveWithdrawal: builder.mutation<void, { id: number }>({
+      query: ({ id }) => ({
+        url: `/withdrawal/approve?withdrawalId=${id}`,
+        method: "PUT",
+      }),
+      invalidatesTags: ["withdrawals"],
     }),
   }),
 });
 
-export const { useFetchWithdrawalsQuery, useFetchDepositsQuery } = adminApi;
+export const {
+  useFetchWithdrawalsQuery,
+  useFetchDepositsQuery,
+  useApproveWithdrawalMutation,
+  useCreateDepositMutation,
+} = adminApi;
 export type { Withdrawal, Deposit };

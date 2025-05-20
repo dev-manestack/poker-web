@@ -1,7 +1,9 @@
 import { Button, Flex, Popover, Table, Typography } from "antd";
-import type { Withdrawal } from "../../api/admin";
+import { useApproveWithdrawalMutation, type Withdrawal } from "../../api/admin";
 
 function AdminWithdrawList({ withdrawals }: { withdrawals: Withdrawal[] }) {
+  const [approve] = useApproveWithdrawalMutation();
+
   const columns = [
     {
       title: "Хэрэглэгч",
@@ -80,7 +82,16 @@ function AdminWithdrawList({ withdrawals }: { withdrawals: Withdrawal[] }) {
       key: "action",
       render: (_: any, record: any) => (
         <Flex gap={5}>
-          <Button type="primary" disabled={record?.approvedBy}>
+          <Button
+            type="primary"
+            disabled={record?.approvedBy}
+            onClick={() => {
+              console.log(record?.withdrawalId);
+              approve({
+                id: record?.withdrawalId,
+              });
+            }}
+          >
             Батлах
           </Button>
           <Popover

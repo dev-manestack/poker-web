@@ -4,6 +4,10 @@ import HomePage from "../pages/user/home-page";
 import TablePage from "../pages/user/table-page";
 import AdminLayout from "../layout/admin-layout";
 import AuthPage from "../pages/auth-page";
+import WithdrawPage from "../pages/admin/withdraw-page";
+import UserPage from "../pages/admin/user-page";
+import DepositPage from "../pages/admin/deposit-page";
+import AdminSettingsPage from "../pages/admin/admin-settings-page";
 
 function Router() {
   return (
@@ -15,7 +19,7 @@ function Router() {
             path="/admin/user/*"
             element={
               <AdminLayout>
-                <div>User</div>
+                <UserPage />
               </AdminLayout>
             }
           />
@@ -23,7 +27,7 @@ function Router() {
             path="/admin/withdraw/*"
             element={
               <AdminLayout>
-                <div>Withdraw</div>
+                <WithdrawPage />
               </AdminLayout>
             }
           />
@@ -31,7 +35,7 @@ function Router() {
             path="/admin/deposit/*"
             element={
               <AdminLayout>
-                <div>Deposit</div>
+                <DepositPage />
               </AdminLayout>
             }
           />
@@ -39,7 +43,7 @@ function Router() {
             path="/admin/settings/*"
             element={
               <AdminLayout>
-                <div>Settings</div>
+                <AdminSettingsPage />
               </AdminLayout>
             }
           />

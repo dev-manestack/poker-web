@@ -14,11 +14,31 @@ import {
   type MenuProps,
 } from "antd";
 import { useNavigate } from "react-router";
+import { useMeQuery } from "../api/user";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { logout, setAuthenticated } from "../providers/auth-slice";
 
 const { Text } = Typography;
 
-function AdminHeader() {
+function AdminHeader({ style }: { style?: React.CSSProperties }) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const isAuthenticated = useSelector(
+    (state: any) => state.auth.isAuthenticated
+  );
+  const { data: userInfo, refetch } = useMeQuery();
+
+  useEffect(() => {
+    refetch();
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (userInfo) {
+      dispatch(setAuthenticated(true));
+    }
+  }, [userInfo]);
 
   const items: MenuProps["items"] = [
     {
@@ -32,7 +52,9 @@ function AdminHeader() {
     {
       key: "2",
       label: <Text>Logout</Text>,
-      onClick: () => {},
+      onClick: () => {
+        dispatch(logout());
+      },
       icon: <LogoutOutlined />,
       danger: true,
     },
@@ -43,6 +65,7 @@ function AdminHeader() {
       justify="space-between"
       align="center"
       style={{
+        ...style,
         padding: "10px 24px",
         boxShadow: "0 0 3px rgba(0, 0, 0, 0.5)",
       }}
@@ -59,8 +82,8 @@ function AdminHeader() {
         <Button icon={<MessageOutlined />} />
         <Dropdown menu={{ items }}>
           <Flex align="center" gap={5} style={{ flex: 1 }}>
-            <Avatar />
-            <Text>Test</Text>
+            <Avatar src={userInfo?.profileURL} />
+            <Text>{userInfo?.username}</Text>
           </Flex>
         </Dropdown>
       </Flex>

@@ -19,6 +19,7 @@ function AdminLayout({ children }: { children: React.ReactNode }) {
   const isAuthenticated = useSelector(
     (state: any) => state.auth.isAuthenticated
   );
+  const checkedAuth = useSelector((state: any) => state.auth.checkedAuth);
 
   const items: MenuItem[] = [
     {
@@ -53,12 +54,15 @@ function AdminLayout({ children }: { children: React.ReactNode }) {
   ];
 
   useEffect(() => {
+    if (!checkedAuth) {
+      return;
+    }
     if (!isAuthenticated) {
       navigate("/auth/login", { replace: true });
     } else {
     }
     setIsCheckingAuth(false);
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, checkedAuth]);
 
   if (isCheckingAuth) {
     return (
@@ -72,6 +76,7 @@ function AdminLayout({ children }: { children: React.ReactNode }) {
           width: "100%",
         }}
       >
+        <AdminHeader style={{ display: "none" }} />
         <Spin />
         <Text>Түр хүлээнэ үү. Таны эрхийн тохиргоог шалгаж байна.</Text>
       </Flex>

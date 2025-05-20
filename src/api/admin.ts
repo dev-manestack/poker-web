@@ -83,6 +83,13 @@ export const adminApi = createApi({
       }),
       invalidatesTags: ["withdrawals"],
     }),
+    adminSearchUsers: builder.query<User[], void>({
+      query: () => ({
+        url: "/user/search",
+        method: "GET",
+      }),
+      providesTags: ["withdrawals"],
+    }),
   }),
 });
 
@@ -91,5 +98,6 @@ export const {
   useFetchDepositsQuery,
   useApproveWithdrawalMutation,
   useCreateDepositMutation,
+  useAdminSearchUsersQuery,
 } = adminApi;
 export type { Withdrawal, Deposit };

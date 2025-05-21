@@ -126,6 +126,13 @@ export const adminApi = createApi({
       }),
       invalidatesTags: ["tables"],
     }),
+    deleteTable: builder.mutation<void, number>({
+      query: (id) => ({
+        url: `/table?tableId=${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["tables"],
+    }),
   }),
 });
 
@@ -138,5 +145,6 @@ export const {
   useFetchTablesQuery,
   useCreateTableMutation,
   useUpdateTableMutation,
+  useDeleteTableMutation,
 } = adminApi;
 export type { Withdrawal, Deposit, GameTable };

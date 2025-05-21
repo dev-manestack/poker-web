@@ -10,6 +10,7 @@ import {
 } from "antd";
 import {
   useCreateTableMutation,
+  useDeleteTableMutation,
   useFetchTablesQuery,
   useUpdateTableMutation,
   type GameTable,
@@ -29,6 +30,10 @@ function AdminTable() {
     updateTable,
     { isError: isUpdateError, error: updateError, isSuccess: isUpdateSuccess },
   ] = useUpdateTableMutation();
+  const [
+    deleteTable,
+    { isError: isDeleteError, error: deleteError, isSuccess: isDeleteSuccess },
+  ] = useDeleteTableMutation();
   const [messageAPI, contextHolder] = message.useMessage();
   const [editTable, setEditTable] = useState<GameTable | null>(null);
 
@@ -72,6 +77,25 @@ function AdminTable() {
     }
   }, [isUpdateSuccess]);
 
+  useEffect(() => {
+    if (isDeleteError) {
+      console.error(deleteError);
+      if ("data" in deleteError && (deleteError as any).data?.errorMessage) {
+        messageAPI.error(
+          "Устгахад алдаа гарлаа: " + (deleteError as any).data.errorMessage
+        );
+      } else {
+        messageAPI.error("Устгахад алдаа гарлаа");
+      }
+    }
+  }, [isDeleteError, deleteError]);
+
+  useEffect(() => {
+    if (isDeleteSuccess) {
+      messageAPI.success("Ширээ амжилттай устгагдлаа");
+    }
+  }, [isDeleteSuccess]);
+
   return (
     <Flex
       style={{
@@ -89,71 +113,72 @@ function AdminTable() {
         />
       </Flex>
       <Modal open={!!modalType} onCancel={() => setModalType("")} footer={null}>
-        {modalType === "create" ||
-          (modalType === "edit" && (
-            <Form
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-              initialValues={
-                modalType === "edit" ? (editTable ? editTable : {}) : {}
+        {(modalType === "create" || modalType === "edit") && (
+          <Form
+            labelCol={{ span: 8 }}
+            wrapperCol={{ span: 16 }}
+            initialValues={
+              modalType === "edit" ? (editTable ? editTable : {}) : {}
+            }
+            onFinish={(values: GameTable) => {
+              if (modalType === "edit") {
+                updateTable({
+                  ...values,
+                  tableId: editTable?.tableId ? editTable.tableId : 0,
+                });
+              } else if (modalType === "create") {
+                createTable(values);
               }
-              onFinish={(values: GameTable) => {
-                if (modalType === "edit") {
-                  updateTable({
-                    ...values,
-                    tableId: editTable?.tableId ? editTable.tableId : 0,
-                  });
-                } else if (modalType === "create") {
-                  createTable(values);
+            }}
+          >
+            <Form.Item label="Ширээний нэр" name="tableName">
+              <Input type="text" placeholder="Ширээний нэр" />
+            </Form.Item>
+            <Form.Item label="Тоглогчийн тоо" name="maxPlayers">
+              <InputNumber type="number" placeholder="12" max={12} min={2} />
+            </Form.Item>
+            <Form.Item label="Big Blind" name="bigBlind">
+              <InputNumber type="number" placeholder="1,000" />
+            </Form.Item>
+            <Form.Item label="Small Blind" name="smallBlind">
+              <InputNumber type="number" placeholder="500" />
+            </Form.Item>
+            <Form.Item label="Ширээний доод лимит" name="minBuyIn">
+              <InputNumber type="number" placeholder="10,000" />
+            </Form.Item>
+            <Form.Item label="Ширээний дээд лимит" name="maxBuyIn">
+              <InputNumber type="number" placeholder="50,000" />
+            </Form.Item>
+            <Form.Item label="Төрөл" name="variant">
+              <Select
+                placeholder="Төрөл"
+                showSearch
+                filterOption={(input, option) =>
+                  (option?.label ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
                 }
-              }}
-            >
-              <Form.Item label="Ширээний нэр" name="tableName">
-                <Input type="text" placeholder="Ширээний нэр" />
-              </Form.Item>
-              <Form.Item label="Тоглогчийн тоо" name="maxPlayers">
-                <InputNumber type="number" placeholder="12" max={12} min={2} />
-              </Form.Item>
-              <Form.Item label="Big Blind" name="bigBlind">
-                <InputNumber type="number" placeholder="1,000" />
-              </Form.Item>
-              <Form.Item label="Small Blind" name="smallBlind">
-                <InputNumber type="number" placeholder="500" />
-              </Form.Item>
-              <Form.Item label="Ширээний доод лимит" name="minBuyIn">
-                <InputNumber type="number" placeholder="10,000" />
-              </Form.Item>
-              <Form.Item label="Ширээний дээд лимит" name="maxBuyIn">
-                <InputNumber type="number" placeholder="50,000" />
-              </Form.Item>
-              <Form.Item label="Төрөл" name="variant">
-                <Select
-                  placeholder="Төрөл"
-                  showSearch
-                  filterOption={(input, option) =>
-                    (option?.label ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase())
-                  }
-                  options={[
-                    {
-                      label: "Texas Holdem",
-                      value: "TEXAS",
-                    },
-                  ]}
-                />
-              </Form.Item>
-              <Form.Item>
-                <Button type="primary" htmlType="submit">
-                  Ширээ үүсгэх
-                </Button>
-              </Form.Item>
-            </Form>
-          ))}
+                options={[
+                  {
+                    label: "Texas Holdem",
+                    value: "TEXAS",
+                  },
+                ]}
+              />
+            </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit">
+                Ширээ үүсгэх
+              </Button>
+            </Form.Item>
+          </Form>
+        )}
       </Modal>
       <AdminTableList
         tables={data ? data : []}
-        deleteTable={() => {}}
+        deleteTable={(table) => {
+          deleteTable(table?.tableId);
+        }}
         editTable={(table) => {
           setEditTable(table);
           setModalType("edit");

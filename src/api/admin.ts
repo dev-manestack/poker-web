@@ -25,6 +25,19 @@ interface Deposit {
   user: User;
 }
 
+interface GameTable {
+  tableId: number;
+  tableName: string;
+  maxPlayers: number;
+  bigBlind: number;
+  smallBlind: number;
+  minBuyIn: number;
+  maxBuyIn: number;
+  variant: string;
+  createdAt: string;
+  createdBy: number;
+}
+
 const rawBaseQuery = fetchBaseQuery({
   baseUrl: `${baseURL}/api/v1/admin`,
   prepareHeaders: (headers) => {
@@ -49,7 +62,7 @@ const baseQuery: typeof rawBaseQuery = async (args, api, extraOptions) => {
 export const adminApi = createApi({
   reducerPath: "adminApi",
   baseQuery: baseQuery,
-  tagTypes: ["withdrawals", "deposits"],
+  tagTypes: ["withdrawals", "deposits", "tables"],
   endpoints: (builder) => ({
     fetchWithdrawals: builder.query<Withdrawal[], void>({
       query: () => ({
@@ -90,6 +103,29 @@ export const adminApi = createApi({
       }),
       providesTags: ["withdrawals"],
     }),
+    fetchTables: builder.query<GameTable[], void>({
+      query: () => ({
+        url: "/table",
+        method: "GET",
+      }),
+      providesTags: ["tables"],
+    }),
+    createTable: builder.mutation<void, GameTable>({
+      query: (data) => ({
+        url: "/table",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["tables"],
+    }),
+    updateTable: builder.mutation<void, GameTable>({
+      query: (data) => ({
+        url: `/table`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["tables"],
+    }),
   }),
 });
 
@@ -99,5 +135,8 @@ export const {
   useApproveWithdrawalMutation,
   useCreateDepositMutation,
   useAdminSearchUsersQuery,
+  useFetchTablesQuery,
+  useCreateTableMutation,
+  useUpdateTableMutation,
 } = adminApi;
-export type { Withdrawal, Deposit };
+export type { Withdrawal, Deposit, GameTable };

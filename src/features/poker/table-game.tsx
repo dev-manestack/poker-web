@@ -4,6 +4,7 @@ import type { CardInfo } from "./poker-card";
 import PokerCard from "./poker-card";
 import "./table-game.css";
 import { DealCardAudio } from "../../assets/sounds";
+import PokerChip from "./poker-chip";
 
 function TableGame({
   isPreview = false,
@@ -23,6 +24,8 @@ function TableGame({
   const radiusY = 50;
   const cardRadiusX = radiusX - 5;
   const cardRadiusY = radiusY - 10;
+  const chipRadiusX = radiusX - 20;
+  const chipRadiusY = radiusY - 20;
 
   const seats = Array.from({ length: seatCount }, (_, i) => {
     const angle = (2 * Math.PI * i) / seatCount;
@@ -72,35 +75,63 @@ function TableGame({
     );
   });
 
-  const establishWebSocketConnection = () => {
-    const accessToken = "12345";
+  const seatChips = Array.from({ length: seatCount }, (_, i) => {
+    const angle = (2 * Math.PI * i) / seatCount;
+    const x = centerX - 1 + chipRadiusX * Math.cos(angle);
+    const y = centerY - 2 + chipRadiusY * Math.sin(angle);
+    return (
+      <div
+        key={i}
+        className="seat-chip"
+        style={{
+          position: "absolute",
+          left: `${x}%`,
+          top: `${y}%`,
+          transform: "translate(-50%, -50%)",
+          width: "28px",
+          height: "28px",
+          zIndex: 2,
+          pointerEvents: "none",
+        }}
+      >
+        <PokerChip amount={5000} />
+      </div>
+    );
+  });
+
+  const establishWebSocketConnection = (delay = 0) => {
+    const accessToken = localStorage.getItem("accessToken");
 
     if (ws.current?.OPEN) {
       return;
     }
 
-    ws.current = new WebSocket(
-      `ws://127.0.0.1:8080/ws/table/1?accessToken=${accessToken}`
-    );
+    // Add delay before establishing connection
+    setTimeout(() => {
+      ws.current = new WebSocket(
+        `ws://127.0.0.1:8080/ws/table/1?accessToken=${accessToken}`
+      );
 
-    ws.current.onopen = () => {
-      console.log("WebSocket connected");
-    };
+      ws.current.onopen = () => {
+        console.log("WebSocket connected");
+      };
 
-    ws.current.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      console.log("Message received:", message);
-    };
+      ws.current.onmessage = (event) => {
+        const message = JSON.parse(event.data);
+        console.log("Message received:", message);
+      };
 
-    ws.current.onerror = (error) => {
-      console.error("WebSocket error:", error);
-    };
+      ws.current.onerror = (error) => {
+        console.error("WebSocket error:", error);
+      };
 
-    ws.current.onclose = () => {
-      console.log("WebSocket disconnected");
-      ws.current = null;
-      establishWebSocketConnection();
-    };
+      ws.current.onclose = () => {
+        console.log("WebSocket disconnected");
+        ws.current = null;
+        // Add a delay (e.g., 2 seconds) before reconnecting
+        establishWebSocketConnection(2000);
+      };
+    }, delay);
 
     return () => {
       if (ws.current) {
@@ -150,6 +181,22 @@ function TableGame({
         </div>
         <div>{seats}</div>
         <div>{seatCards}</div>
+        <div
+          className="pot-chip"
+          style={{
+            position: "absolute",
+            left: `${centerX}%`,
+            top: `calc(${centerY}% + 100px)`,
+            transform: "translate(-50%, -50%)",
+            width: "40px",
+            height: "40px",
+            zIndex: 2,
+            pointerEvents: "none",
+          }}
+        >
+          <PokerChip amount={5000} />
+        </div>
+        <div>{seatChips}</div>
       </div>
       <Button
         onClick={() => {

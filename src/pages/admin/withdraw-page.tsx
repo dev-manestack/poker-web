@@ -4,7 +4,7 @@ import { Flex } from "antd";
 import AdminWithdrawList from "../../features/admin/admin-withdraw-list";
 
 function WithdrawPage() {
-  const { data } = useFetchWithdrawalsQuery(null);
+  const { data } = useFetchWithdrawalsQuery();
 
   useEffect(() => {
     console.log(data);

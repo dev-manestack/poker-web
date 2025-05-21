@@ -8,6 +8,7 @@ import WithdrawPage from "../pages/admin/withdraw-page";
 import UserPage from "../pages/admin/user-page";
 import DepositPage from "../pages/admin/deposit-page";
 import AdminSettingsPage from "../pages/admin/admin-settings-page";
+import AdminTable from "../pages/admin/admin-table";
 
 function Router() {
   return (
@@ -51,7 +52,7 @@ function Router() {
             path="/admin/table/*"
             element={
               <AdminLayout>
-                <div>Table</div>
+                <AdminTable />
               </AdminLayout>
             }
           />

@@ -21,10 +21,10 @@ function DepositPage() {
       console.error(error);
       if ("data" in error && (error as any).data?.errorMessage) {
         messageAPI.error(
-          "Нэвтрэхэд алдаа гарлаа: " + (error as any).data.errorMessage
+          "Үүсгэхэд алдаа гарлаа: " + (error as any).data.errorMessage
         );
       } else {
-        messageAPI.error("Нэвтрэхэд алдаа гарлаа");
+        messageAPI.error("Үүсгэхэд алдаа гарлаа");
       }
     }
   }, [isError, error]);

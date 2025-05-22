@@ -182,6 +182,14 @@ function TexasTableGame({
         sound.play();
         break;
       }
+      case "LEAVE_TABLE": {
+        const sound = new Howl({
+          src: [DisconnectAudio],
+          volume: 0.5,
+        });
+        sound.play();
+        break;
+      }
     }
   };
 

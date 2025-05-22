@@ -1,6 +1,6 @@
 import { Button, Flex } from "antd";
 import RoomBackground from "../../assets/room-background.jpg";
-import TableGame from "../../features/poker/table-game";
+import TexasTableGame from "../../features/poker/texas-table-game";
 import { LeftOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router";
 
@@ -27,7 +27,7 @@ function TablePage() {
       >
         Back
       </Button>
-      <TableGame />
+      <TexasTableGame />
     </Flex>
   );
 }

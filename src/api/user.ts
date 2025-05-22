@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { setAuthenticated } from "../providers/auth-slice";
+import type { GameTable } from "./admin";
 const baseURL = import.meta.env.VITE_BACKEND_URL;
 
 interface User {
@@ -43,7 +44,7 @@ const baseQuery: typeof rawBaseQuery = async (args, api, extraOptions) => {
 export const userApi = createApi({
   reducerPath: "userApi",
   baseQuery: baseQuery,
-  tagTypes: ["UserList"],
+  tagTypes: ["UserList", "tables"],
   endpoints: (builder) => ({
     login: builder.mutation({
       query: (credentials: LoginCredentials) => ({
@@ -72,6 +73,13 @@ export const userApi = createApi({
       }),
       providesTags: ["UserList"],
     }),
+    fetchTables: builder.query<GameTable[], void>({
+      query: () => ({
+        url: "/table",
+        method: "GET",
+      }),
+      providesTags: ["tables"],
+    }),
   }),
 });
 
@@ -79,6 +87,7 @@ export const {
   useLoginMutation,
   useRegisterMutation,
   useMeQuery,
+  useFetchTablesQuery,
   useSearchUsersQuery,
 } = userApi;
 export type { User, LoginCredentials };

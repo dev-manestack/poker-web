@@ -103,13 +103,6 @@ export const adminApi = createApi({
       }),
       providesTags: ["withdrawals"],
     }),
-    fetchTables: builder.query<GameTable[], void>({
-      query: () => ({
-        url: "/table",
-        method: "GET",
-      }),
-      providesTags: ["tables"],
-    }),
     createTable: builder.mutation<void, GameTable>({
       query: (data) => ({
         url: "/table",
@@ -142,7 +135,6 @@ export const {
   useApproveWithdrawalMutation,
   useCreateDepositMutation,
   useAdminSearchUsersQuery,
-  useFetchTablesQuery,
   useCreateTableMutation,
   useUpdateTableMutation,
   useDeleteTableMutation,

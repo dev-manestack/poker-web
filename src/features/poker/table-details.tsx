@@ -1,5 +1,5 @@
 import { Flex, Table, Typography } from "antd";
-import TableGame from "./table-game";
+import TableGame from "./texas-table-game";
 
 const { Title } = Typography;
 

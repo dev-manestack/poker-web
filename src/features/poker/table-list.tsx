@@ -1,26 +1,9 @@
 import { Button, Flex, Table } from "antd";
 import { useNavigate } from "react-router";
+import type { GameTable } from "../../api/admin";
+import { useFetchTablesQuery } from "../../api/user";
 
 const currencySymbol = "₮";
-
-const dataSource = [
-  {
-    key: "1",
-    table: "Ширээ 1",
-    bid: "1000 / 2000" + currencySymbol,
-    pot: "2000" + currencySymbol,
-    player: "Тоглогч 1",
-    type: "Төрөл 1",
-  },
-  {
-    key: "2",
-    table: "Ширээ 2",
-    bid: "2000 / 4000" + currencySymbol,
-    pot: "4000" + currencySymbol,
-    player: "Тоглогч 2",
-    type: "Төрөл 2",
-  },
-];
 
 function TableList({
   setSelectedTable,
@@ -28,42 +11,92 @@ function TableList({
   setSelectedTable: (table: any) => void;
 }) {
   const navigate = useNavigate();
+  const { data: tableData } = useFetchTablesQuery();
 
   const columns = [
     {
-      title: "Ширээ",
-      dataIndex: "table",
-      key: "table",
-    },
-    {
-      title: "Ул",
-      dataIndex: "bid",
-      key: "bid",
-    },
-    {
-      title: "Пот",
-      dataIndex: "pot",
-      key: "pot",
-    },
-    {
-      title: "Тоглогч",
-      dataIndex: "player",
-      key: "player",
+      title: "Нэр",
+      dataIndex: "tableName",
+      key: "tableName",
     },
     {
       title: "Төрөл",
-      dataIndex: "type",
-      key: "type",
+      dataIndex: "variant",
+      key: "variant",
+      render: (text: string) => {
+        switch (text) {
+          case "TEXAS": {
+            return "Texas Holdem";
+          }
+          default: {
+            return "Unknown";
+          }
+        }
+      },
     },
     {
-      title: "Үйлдэл",
-      key: "action",
-      render: (_: any, record: any) => (
+      title: "Үүсгэсэн огноо",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (text: string) => {
+        const date = new Date(text);
+        const options: Intl.DateTimeFormatOptions = {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        };
+        return date.toLocaleString("mn-MN", options);
+      },
+    },
+    {
+      title: "Ширээний доод лимит",
+      dataIndex: "minBuyIn",
+      key: "minBuyIn",
+      render: (text: number) => {
+        return currencySymbol + text.toLocaleString("mn-MN");
+      },
+    },
+    {
+      title: "Ширээний дээд лимит",
+      dataIndex: "maxBuyIn",
+      key: "maxBuyIn",
+      render: (text: number) => {
+        return currencySymbol + text.toLocaleString("mn-MN");
+      },
+    },
+    {
+      title: "Тоглогчийн тоо",
+      dataIndex: "maxPlayers",
+      key: "maxPlayers",
+    },
+    {
+      title: "Big Blind",
+      dataIndex: "bigBlind",
+      key: "bigBlind",
+      render: (text: number) => {
+        return currencySymbol + text.toLocaleString("mn-MN");
+      },
+    },
+    {
+      title: "Small Blind",
+      dataIndex: "smallBlind",
+      key: "smallBlind",
+      render: (text: number) => {
+        return currencySymbol + text.toLocaleString("mn-MN");
+      },
+    },
+    {
+      title: "Actions",
+      key: "actions",
+      render: (_: any, record: GameTable) => (
         <Flex gap={5}>
           <Button
             type="primary"
             onClick={() => {
-              navigate("/table/" + record.key);
+              navigate("/table/" + record.tableId);
             }}
           >
             Тоглох
@@ -77,7 +110,7 @@ function TableList({
   return (
     <Table
       columns={columns}
-      dataSource={dataSource}
+      dataSource={tableData}
       onRow={(record) => {
         return {
           onClick: () => setSelectedTable(record),

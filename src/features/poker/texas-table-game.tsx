@@ -1,20 +1,31 @@
-import { Avatar, Button, Flex } from "antd";
+import { Avatar, Button, Flex, message } from "antd";
 import { useEffect, useRef, useState } from "react";
 import type { CardInfo } from "./poker-card";
 import PokerCard from "./poker-card";
-import "./table-game.css";
+import "./texas-table-game.css";
 import { DealCardAudio } from "../../assets/sounds";
 import PokerChip from "./poker-chip";
+import {
+  websocketURL,
+  type GameState,
+  type WebsocketEvent,
+} from "../../api/game";
+import { useParams } from "react-router";
 
-function TableGame({
+function TexasTableGame({
   isPreview = false,
   seatCount = 8,
 }: {
   isPreview?: boolean;
   seatCount?: number;
 }) {
-  const [mySeat, setMySeat] = useState<number | null>(null);
+  const { id: tableId } = useParams();
+  const [messageAPI, contextHolder] = message.useMessage();
   const [cards, setCards] = useState<CardInfo[]>([]);
+  const gameRef = useRef<GameState>({
+    isAuthenticated: false,
+    currentSeat: undefined,
+  });
 
   const ws = useRef<WebSocket | null>(null);
 
@@ -43,11 +54,17 @@ function TableGame({
         style={style}
         key={i}
         onClick={() => {
-          setMySeat(i);
+          takeSeat(i);
         }}
         disabled={isPreview}
       >
-        {isPreview ? "" : mySeat === i ? <Avatar /> : `Суух`}
+        {isPreview ? (
+          ""
+        ) : gameRef.current.currentSeat === i ? (
+          <Avatar />
+        ) : (
+          `Суух`
+        )}
       </Button>
     );
   });
@@ -99,26 +116,68 @@ function TableGame({
     );
   });
 
-  const establishWebSocketConnection = (delay = 0) => {
+  const authenticateSocket = () => {
     const accessToken = localStorage.getItem("accessToken");
 
-    if (ws.current?.OPEN) {
+    ws.current?.send(
+      JSON.stringify({
+        type: "AUTH",
+        data: {
+          accessToken: accessToken,
+        },
+      })
+    );
+  };
+
+  const takeSeat = (seatIndex: number) => {
+    if (gameRef.current.isAuthenticated) {
+      ws.current?.send(
+        JSON.stringify({
+          type: "TABLE",
+          data: {
+            tableId: tableId,
+            action: "TAKE_SEAT",
+            seatIndex: seatIndex,
+          },
+        })
+      );
+    } else {
+      messageAPI.error("Та ширээнд суухын тулд эхлээд холбогдох хэрэгтэй");
+    }
+  };
+
+  const establishWebSocketConnection = (delay = 0) => {
+    if (ws.current && ws.current.readyState === WebSocket.OPEN) {
       return;
     }
 
-    // Add delay before establishing connection
     setTimeout(() => {
-      ws.current = new WebSocket(
-        `ws://127.0.0.1:8080/ws/table/1?accessToken=${accessToken}`
-      );
+      ws.current = new WebSocket(websocketURL);
 
       ws.current.onopen = () => {
         console.log("WebSocket connected");
       };
 
       ws.current.onmessage = (event) => {
-        const message = JSON.parse(event.data);
+        const message: WebsocketEvent = JSON.parse(event.data);
         console.log("Message received:", message);
+        switch (message.type) {
+          case "CONNECTED": {
+            authenticateSocket();
+            break;
+          }
+          case "AUTH": {
+            messageAPI.success("Та амжилттай холбогдлоо");
+            gameRef.current.isAuthenticated = true;
+            break;
+          }
+          case "ERROR": {
+            messageAPI.error(
+              message.data?.error ? message.data.error : "Алдаа гарлаа"
+            );
+            break;
+          }
+        }
       };
 
       ws.current.onerror = (error) => {
@@ -127,8 +186,8 @@ function TableGame({
 
       ws.current.onclose = () => {
         console.log("WebSocket disconnected");
+        messageAPI.error("Таны холболт тасарлаа");
         ws.current = null;
-        // Add a delay (e.g., 2 seconds) before reconnecting
         establishWebSocketConnection(2000);
       };
     }, delay);
@@ -146,6 +205,7 @@ function TableGame({
 
   return (
     <div className="table-wrapper">
+      {contextHolder}
       <div className="poker-table">
         <div
           style={{
@@ -217,4 +277,4 @@ function TableGame({
   );
 }
 
-export default TableGame;
+export default TexasTableGame;

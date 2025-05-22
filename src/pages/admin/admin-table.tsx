@@ -11,13 +11,13 @@ import {
 import {
   useCreateTableMutation,
   useDeleteTableMutation,
-  useFetchTablesQuery,
   useUpdateTableMutation,
   type GameTable,
 } from "../../api/admin";
 import AdminTableList from "../../features/admin/admin-table-list";
 import { PlusOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
+import { useFetchTablesQuery } from "../../api/user";
 
 function AdminTable() {
   const { data } = useFetchTablesQuery();

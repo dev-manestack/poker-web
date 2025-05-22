@@ -12,10 +12,19 @@ interface WebsocketEvent {
   };
 }
 
+interface TableState {
+  seats: Record<number, GamePlayer>;
+}
+
+interface GamePlayer {
+  user: User;
+  balance: number;
+}
+
 interface GameState {
   isAuthenticated: boolean;
-  currentSeat: number | undefined;
+  seats: GamePlayer[];
 }
 
 export { websocketURL };
-export type { WebsocketEvent, GameState };
+export type { WebsocketEvent, GameState, TableState };

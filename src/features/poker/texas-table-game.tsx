@@ -1,4 +1,4 @@
-import { Avatar, Button, Flex, message } from "antd";
+import { Button, Flex, message, Spin, Typography } from "antd";
 import { useEffect, useRef, useState } from "react";
 import type { CardInfo } from "./poker-card";
 import PokerCard from "./poker-card";
@@ -8,9 +8,11 @@ import PokerChip from "./poker-chip";
 import {
   websocketURL,
   type GameState,
+  type TableState,
   type WebsocketEvent,
 } from "../../api/game";
 import { useParams } from "react-router";
+import { shortenNameToTwoChars } from "../../utils/user-utils";
 
 function TexasTableGame({
   isPreview = false,
@@ -22,9 +24,9 @@ function TexasTableGame({
   const { id: tableId } = useParams();
   const [messageAPI, contextHolder] = message.useMessage();
   const [cards, setCards] = useState<CardInfo[]>([]);
-  const gameRef = useRef<GameState>({
+  const [gameState, setGameState] = useState<GameState>({
     isAuthenticated: false,
-    currentSeat: undefined,
+    seats: [],
   });
 
   const ws = useRef<WebSocket | null>(null);
@@ -58,12 +60,12 @@ function TexasTableGame({
         }}
         disabled={isPreview}
       >
-        {isPreview ? (
-          ""
-        ) : gameRef.current.currentSeat === i ? (
-          <Avatar />
+        {gameState?.seats?.length > i && gameState.seats[i]?.user ? (
+          <Flex>
+            {shortenNameToTwoChars(gameState?.seats[i]?.user?.username)}
+          </Flex>
         ) : (
-          `Суух`
+          "Суух"
         )}
       </Button>
     );
@@ -75,6 +77,7 @@ function TexasTableGame({
     const y = centerY + cardRadiusY * Math.sin(angle);
     return (
       <Flex
+        key={i}
         className="seat-cards"
         style={{
           left: `calc(${x}% - 20px)`,
@@ -118,7 +121,6 @@ function TexasTableGame({
 
   const authenticateSocket = () => {
     const accessToken = localStorage.getItem("accessToken");
-
     ws.current?.send(
       JSON.stringify({
         type: "AUTH",
@@ -130,12 +132,12 @@ function TexasTableGame({
   };
 
   const takeSeat = (seatIndex: number) => {
-    if (gameRef.current.isAuthenticated) {
+    if (gameState.isAuthenticated) {
       ws.current?.send(
         JSON.stringify({
           type: "TABLE",
           data: {
-            tableId: tableId,
+            tableId: parseInt(tableId || "0"),
             action: "TAKE_SEAT",
             seatIndex: seatIndex,
           },
@@ -144,6 +146,21 @@ function TexasTableGame({
     } else {
       messageAPI.error("Та ширээнд суухын тулд эхлээд холбогдох хэрэгтэй");
     }
+  };
+
+  const handleTableEvent = (data: any) => {
+    const tableState: TableState = data?.table;
+    const tempArray = new Array(seatCount).fill(null);
+    Object.entries(tableState.seats).forEach(([index, seat]) => {
+      tempArray[parseInt(index)] = {
+        user: seat.user,
+        balance: seat.balance,
+      };
+    });
+    setGameState((prevState) => ({
+      ...prevState,
+      seats: tempArray,
+    }));
   };
 
   const establishWebSocketConnection = (delay = 0) => {
@@ -160,7 +177,6 @@ function TexasTableGame({
 
       ws.current.onmessage = (event) => {
         const message: WebsocketEvent = JSON.parse(event.data);
-        console.log("Message received:", message);
         switch (message.type) {
           case "CONNECTED": {
             authenticateSocket();
@@ -168,7 +184,23 @@ function TexasTableGame({
           }
           case "AUTH": {
             messageAPI.success("Та амжилттай холбогдлоо");
-            gameRef.current.isAuthenticated = true;
+            setGameState((prevState) => ({
+              ...prevState,
+              isAuthenticated: true,
+            }));
+            ws.current?.send(
+              JSON.stringify({
+                type: "TABLE",
+                data: {
+                  tableId: parseInt(tableId || "0"),
+                  action: "JOIN_TABLE",
+                },
+              })
+            );
+            break;
+          }
+          case "TABLE": {
+            handleTableEvent(message.data);
             break;
           }
           case "ERROR": {
@@ -202,6 +234,28 @@ function TexasTableGame({
   useEffect(() => {
     establishWebSocketConnection();
   }, []);
+
+  useEffect(() => {
+    console.log("Game state updated:", gameState);
+  }, [gameState]);
+
+  if (!gameState.isAuthenticated) {
+    return (
+      <Flex
+        vertical
+        justify="center"
+        align="center"
+        gap={16}
+        style={{
+          height: "100vh",
+          width: "100vw",
+        }}
+      >
+        <Spin />
+        <Typography.Text>Та түр хүлээнэ үү.</Typography.Text>
+      </Flex>
+    );
+  }
 
   return (
     <div className="table-wrapper">
@@ -241,21 +295,6 @@ function TexasTableGame({
         </div>
         <div>{seats}</div>
         <div>{seatCards}</div>
-        <div
-          className="pot-chip"
-          style={{
-            position: "absolute",
-            left: `${centerX}%`,
-            top: `calc(${centerY}% + 100px)`,
-            transform: "translate(-50%, -50%)",
-            width: "40px",
-            height: "40px",
-            zIndex: 2,
-            pointerEvents: "none",
-          }}
-        >
-          <PokerChip amount={5000} />
-        </div>
         <div>{seatChips}</div>
       </div>
       <Button

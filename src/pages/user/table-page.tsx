@@ -1,5 +1,4 @@
 import { Button, Flex } from "antd";
-import RoomBackground from "../../assets/room-background.jpg";
 import TexasTableGame from "../../features/poker/texas-table-game";
 import { LeftOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router";
@@ -11,8 +10,7 @@ function TablePage() {
       style={{
         height: "100vh",
         width: "100vw",
-        background: `url(${RoomBackground})`,
-        backgroundSize: "contain",
+        background: "beige",
       }}
     >
       <Button

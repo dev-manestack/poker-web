@@ -3,7 +3,11 @@ import { useEffect, useRef, useState } from "react";
 import type { CardInfo } from "./poker-card";
 import PokerCard from "./poker-card";
 import "./texas-table-game.css";
-import { DealCardAudio } from "../../assets/sounds";
+import {
+  DealCardAudio,
+  DisconnectAudio,
+  SuccessAudio,
+} from "../../assets/sounds";
 import PokerChip from "./poker-chip";
 import {
   websocketURL,
@@ -161,6 +165,24 @@ function TexasTableGame({
       ...prevState,
       seats: tempArray,
     }));
+    switch (data.action) {
+      case "TAKE_SEAT": {
+        const sound = new Howl({
+          src: [SuccessAudio],
+          volume: 0.5,
+        });
+        sound.play();
+        break;
+      }
+      case "LEAVE_SEAT": {
+        const sound = new Howl({
+          src: [DisconnectAudio],
+          volume: 0.5,
+        });
+        sound.play();
+        break;
+      }
+    }
   };
 
   const establishWebSocketConnection = (delay = 0) => {

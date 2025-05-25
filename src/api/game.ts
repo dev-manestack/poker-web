@@ -18,7 +18,7 @@ interface TableState {
 
 interface GamePlayer {
   user: User;
-  balance: number;
+  stack: number;
 }
 
 interface GameState {
@@ -27,4 +27,4 @@ interface GameState {
 }
 
 export { websocketURL };
-export type { WebsocketEvent, GameState, TableState };
+export type { WebsocketEvent, GameState, TableState, GamePlayer };

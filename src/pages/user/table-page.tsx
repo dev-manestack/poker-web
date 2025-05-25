@@ -10,7 +10,7 @@ function TablePage() {
       style={{
         height: "100vh",
         width: "100vw",
-        background: "beige",
+        background: "#1B243C",
       }}
     >
       <Button

@@ -17,6 +17,7 @@ import {
 import { useParams } from "react-router";
 import TablePlayer from "./table-player";
 import PokerActions from "./poker-actions";
+import PokerChat from "./poker-chat";
 
 function TexasTableGame({
   isPreview = false,
@@ -350,23 +351,23 @@ function TexasTableGame({
           <div>{seats}</div>
         </div>
       </Flex>
-      <Flex
-        style={{
-          width: "100%",
-          padding: "16px",
-          position: "absolute",
-          bottom: 20,
-          right: 10,
-        }}
-        align="center"
-        justify="space-between"
-        gap={16}
-      >
-        <Flex style={{ width: "50%" }}>
-          <p></p>
+      {!isPreview && (
+        <Flex
+          style={{
+            width: "100%",
+            padding: "16px",
+            position: "absolute",
+            bottom: 20,
+            right: 10,
+          }}
+          align="center"
+          justify="space-between"
+          gap={16}
+        >
+          <PokerChat />
+          <PokerActions />
         </Flex>
-        <PokerActions />
-      </Flex>
+      )}
     </Flex>
   );
 }

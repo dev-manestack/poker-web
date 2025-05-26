@@ -17,6 +17,7 @@ import {
 import { useParams } from "react-router";
 import TablePlayer from "./table-player";
 import PokerActions from "./poker-actions";
+import type { User } from "../../api/user";
 
 interface GameState {
   isAuthenticated: boolean;
@@ -30,7 +31,7 @@ interface GameState {
 
   seats: GamePlayer[];
 
-  currentPlayerId: number;
+  currentPlayerSeat: number;
   communityCards?: GameCard[];
   state: "PRE_FLOP" | "FLOP" | "TURN" | "RIVER" | "SHOWDOWN";
 }
@@ -54,10 +55,11 @@ function TexasTableGame({
     currentRequiredBet: 0,
     currentPot: 0,
     seats: [],
-    currentPlayerId: 0,
+    currentPlayerSeat: 0,
     communityCards: [],
     state: "PRE_FLOP",
   });
+  const userInfoRef = useRef<User | null>(null);
 
   const ws = useRef<WebSocket | null>(null);
 
@@ -208,12 +210,25 @@ function TexasTableGame({
         });
         break;
       }
-      case "PLAYER_TURN": {
+      case "TURN_UPDATE": {
         console.log("Received player turn event:", data);
         setGameState((prevState) => {
+          let mySeat = -1;
+          prevState.seats.forEach((seat, idx) => {
+            if (seat.user?.userId === userInfoRef.current?.userId) {
+              mySeat = idx;
+            }
+          });
+          console.log(
+            "My seat index:",
+            mySeat,
+            userInfoRef.current,
+            prevState.seats
+          );
           const newState: GameState = {
             ...prevState,
-            currentPlayerId: data?.currentPlayerId || 0,
+            currentPlayerSeat: data?.currentPlayerSeat || 0,
+            isMyTurn: data?.currentPlayerSeat === mySeat,
           };
           return newState;
         });
@@ -273,15 +288,20 @@ function TexasTableGame({
               ...prevState,
               isAuthenticated: true,
             }));
-            ws.current?.send(
-              JSON.stringify({
-                type: "TABLE",
-                data: {
-                  tableId: parseInt(tableId || "0"),
-                  action: "JOIN_TABLE",
-                },
-              })
-            );
+            console.log("Authenticated", message.data?.user);
+            if (message.data?.user) {
+              userInfoRef.current = message?.data?.user;
+              ws.current?.send(
+                JSON.stringify({
+                  type: "TABLE",
+                  data: {
+                    tableId: parseInt(tableId || "0"),
+                    action: "JOIN_TABLE",
+                  },
+                })
+              );
+            }
+
             break;
           }
           case "TABLE": {
@@ -410,7 +430,7 @@ function TexasTableGame({
                   {seat?.user?.userId ? (
                     <TablePlayer
                       player={seat}
-                      isTurn={seat?.user?.userId === gameState.currentPlayerId}
+                      isTurn={i === gameState.currentPlayerSeat}
                       holeCards={seat?.holeCards || []}
                     />
                   ) : (
@@ -437,9 +457,9 @@ function TexasTableGame({
         >
           <PokerActions
             stack={500}
-            isTurn={true}
-            isFolded={false}
-            isAllIn={false}
+            isTurn={gameState.isMyTurn}
+            isFolded={gameState.isFolded}
+            isAllIn={gameState.isAllIn}
             currentBet={50}
             currentRequiredBet={100}
             currentPot={1000}

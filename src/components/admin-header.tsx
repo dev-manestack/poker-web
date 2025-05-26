@@ -17,7 +17,7 @@ import { useNavigate } from "react-router";
 import { useMeQuery } from "../api/user";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { logout, setAuthenticated } from "../providers/auth-slice";
+import { logout, setAuthenticated, setUserInfo } from "../providers/auth-slice";
 
 const { Text } = Typography;
 
@@ -37,6 +37,7 @@ function AdminHeader({ style }: { style?: React.CSSProperties }) {
   useEffect(() => {
     if (userInfo) {
       dispatch(setAuthenticated(true));
+      dispatch(setUserInfo(userInfo));
     }
   }, [userInfo]);
 

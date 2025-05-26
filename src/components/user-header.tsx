@@ -16,7 +16,7 @@ import ForgotPasswordForm from "../features/user/forgot-password-form";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleMode } from "../providers/theme-slice";
 import { useMeQuery } from "../api/user";
-import { logout, setAuthenticated } from "../providers/auth-slice";
+import { logout, setAuthenticated, setUserInfo } from "../providers/auth-slice";
 import { useNavigate } from "react-router";
 
 const { Text } = Typography;
@@ -57,6 +57,7 @@ function UserHeader() {
   useEffect(() => {
     if (userInfo) {
       dispatch(setAuthenticated(true));
+      dispatch(setUserInfo(userInfo));
     }
   }, [userInfo]);
 

@@ -1,6 +1,5 @@
 import { Button, Flex, message, Spin, Typography } from "antd";
 import { useEffect, useRef, useState } from "react";
-import type { CardInfo } from "./poker-card";
 import PokerCard from "./poker-card";
 import "./texas-table-game.css";
 import {
@@ -10,14 +9,31 @@ import {
 } from "../../assets/sounds";
 import {
   websocketURL,
-  type GameState,
+  type GameCard,
+  type GamePlayer,
   type TableState,
   type WebsocketEvent,
 } from "../../api/game";
 import { useParams } from "react-router";
 import TablePlayer from "./table-player";
 import PokerActions from "./poker-actions";
-import PokerChat from "./poker-chat";
+
+interface GameState {
+  isAuthenticated: boolean;
+  isSpectator: boolean;
+  isMyTurn: boolean;
+  isFolded: boolean;
+  isAllIn: boolean;
+  currentBet: number;
+  currentRequiredBet: number;
+  currentPot: number;
+
+  seats: GamePlayer[];
+
+  currentPlayerId: number;
+  communityCards?: GameCard[];
+  state: "PRE_FLOP" | "FLOP" | "TURN" | "RIVER" | "SHOWDOWN";
+}
 
 function TexasTableGame({
   isPreview = false,
@@ -28,10 +44,19 @@ function TexasTableGame({
 }) {
   const { id: tableId } = useParams();
   const [messageAPI, contextHolder] = message.useMessage();
-  const [cards, setCards] = useState<CardInfo[]>([]);
   const [gameState, setGameState] = useState<GameState>({
     isAuthenticated: false,
+    isSpectator: false,
+    isMyTurn: false,
+    isFolded: false,
+    isAllIn: false,
+    currentBet: 0,
+    currentRequiredBet: 0,
+    currentPot: 0,
     seats: [],
+    currentPlayerId: 0,
+    communityCards: [],
+    state: "PRE_FLOP",
   });
 
   const ws = useRef<WebSocket | null>(null);
@@ -44,35 +69,6 @@ function TexasTableGame({
   // const cardRadiusY = radiusY - 10;
   // const chipRadiusX = radiusX - 20;
   // const chipRadiusY = radiusY - 20;
-
-  const seats = Array.from({ length: seatCount }, (_, i) => {
-    const angle = (2 * Math.PI * i) / seatCount;
-    const x = centerX + radiusX * Math.cos(angle);
-    const y = centerY + radiusY * Math.sin(angle);
-    const style = {
-      left: `${x}%`,
-      top: `${y}%`,
-      height: "50px",
-      width: "50px",
-    };
-    return (
-      <Button
-        className="seat"
-        style={style}
-        key={i}
-        onClick={() => {
-          takeSeat(i);
-        }}
-        disabled={isPreview}
-      >
-        {gameState?.seats?.length > i && gameState.seats[i]?.user ? (
-          <TablePlayer player={gameState?.seats[i]} />
-        ) : (
-          "Суух"
-        )}
-      </Button>
-    );
-  });
 
   // const seatCards = Array.from({ length: seatCount }, (_, i) => {
   //   const angle = (2 * Math.PI * i) / seatCount;
@@ -162,7 +158,13 @@ function TexasTableGame({
     });
     setGameState((prevState) => ({
       ...prevState,
-      seats: tempArray,
+      // seats: tempArray,
+      seats: tempArray.map((seat) => ({
+        ...seat,
+        holeCards: seat?.holeCards || [],
+        isAllIn: seat?.isAllIn || false,
+        isFolded: seat?.isFolded || false,
+      })),
     }));
     switch (data.action) {
       case "TAKE_SEAT": {
@@ -193,8 +195,62 @@ function TexasTableGame({
   };
 
   const handleGameEvent = (data: any) => {
-    console.log(data);
+    switch (data?.action) {
+      case "GAME_STATE": {
+        console.log("Received game state event:", data);
+        setGameState((prevState) => {
+          const newState: GameState = {
+            ...prevState,
+            communityCards: data.communityCards || [],
+            state: data?.state,
+          };
+          return newState;
+        });
+        break;
+      }
+      case "PLAYER_TURN": {
+        console.log("Received player turn event:", data);
+        setGameState((prevState) => {
+          const newState: GameState = {
+            ...prevState,
+            currentPlayerId: data?.currentPlayerId || 0,
+          };
+          return newState;
+        });
+        break;
+      }
+      case "HOLE_CARDS": {
+        console.log("Received hole cards event:", data);
+        setGameState((prevState) => ({
+          ...prevState,
+          seats: prevState.seats.map((seat, idx) =>
+            data?.holeCards?.[idx]
+              ? { ...seat, holeCards: data.holeCards[idx] }
+              : seat
+          ),
+        }));
+        break;
+      }
+    }
   };
+
+  const sendGameAction = (action: string, amount?: number) => {
+    console.log("Sending action:", action, "with amount:", amount);
+    ws.current?.send(
+      JSON.stringify({
+        type: "GAME",
+        data: {
+          tableId: parseInt(tableId || "0"),
+          action: action,
+          amount: amount,
+        },
+      })
+    );
+  };
+
+  useEffect(() => {
+    console.log("Game state updated:", gameState);
+  }, [gameState]);
 
   const establishWebSocketConnection = (delay = 0) => {
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
@@ -203,10 +259,6 @@ function TexasTableGame({
 
     setTimeout(() => {
       ws.current = new WebSocket(websocketURL);
-
-      ws.current.onopen = () => {
-        console.log("WebSocket connected");
-      };
 
       ws.current.onmessage = (event) => {
         const message: WebsocketEvent = JSON.parse(event.data);
@@ -298,10 +350,10 @@ function TexasTableGame({
       <Flex
         style={{
           position: "absolute",
-          width: "80%",
-          height: "60%",
-          marginTop: "5%",
-          marginLeft: "10%",
+          width: "60%",
+          height: "40%",
+          marginTop: "10%",
+          marginLeft: "20%",
         }}
       >
         {contextHolder}
@@ -328,44 +380,72 @@ function TexasTableGame({
               gap: "10px",
             }}
           >
-            {cards?.map((card, index) => (
-              <div
-                key={index}
-                style={{ height: "100px" }}
-                onClick={() => {
-                  setCards((prevCards) =>
-                    prevCards.map((c, i) =>
-                      i === index ? { ...c, isRevealed: true } : c
-                    )
-                  );
-                }}
-              >
-                <PokerCard
-                  suit={card.suit}
-                  rank={card.rank}
-                  isRevealed={card.isRevealed}
-                />
+            {gameState.communityCards?.map((communityCard, index) => (
+              <div key={index} style={{ height: "100px" }}>
+                <PokerCard info={communityCard} />
               </div>
             ))}
           </div>
-          <div>{seats}</div>
+          <div>
+            {gameState.seats.map((seat: GamePlayer, i: number) => {
+              const angle = (2 * Math.PI * i) / seatCount;
+              const x = centerX + radiusX * Math.cos(angle);
+              const y = centerY + radiusY * Math.sin(angle);
+              const style = {
+                left: `${x}%`,
+                top: `${y}%`,
+                height: "50px",
+                width: "50px",
+              };
+              return (
+                <Button
+                  className="seat"
+                  style={style}
+                  key={i}
+                  onClick={() => {
+                    takeSeat(i);
+                  }}
+                  disabled={isPreview}
+                >
+                  {seat?.user?.userId ? (
+                    <TablePlayer
+                      player={seat}
+                      isTurn={seat?.user?.userId === gameState.currentPlayerId}
+                      holeCards={seat?.holeCards || []}
+                    />
+                  ) : (
+                    "Суух"
+                  )}
+                </Button>
+              );
+            })}
+          </div>
         </div>
       </Flex>
       {!isPreview && (
         <Flex
           style={{
             width: "100%",
-            padding: "16px",
             position: "absolute",
-            bottom: 20,
+            bottom: 0,
             right: 10,
+            paddingTop: "16px",
           }}
           align="center"
-          justify="space-between"
+          justify="center"
           gap={16}
         >
-          <PokerChat />
-          <PokerActions />
+          <PokerActions
+            stack={500}
+            isTurn={true}
+            isFolded={false}
+            isAllIn={false}
+            currentBet={50}
+            currentRequiredBet={100}
+            currentPot={1000}
+            minRaise={100}
+            sendAction={(action, amount) => sendGameAction(action, amount)}
+          />
         </Flex>
       )}
     </Flex>

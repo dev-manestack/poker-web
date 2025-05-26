@@ -3,48 +3,42 @@ import { BackCard, PokerCardImage } from "../../assets/card";
 import { motion } from "motion/react";
 import { Howl } from "howler";
 import { FlipCardAudio } from "../../assets/sounds";
-
-type Suit = keyof typeof PokerCardImage;
-type Rank = keyof (typeof PokerCardImage)[Suit];
-
-type CardInfo = {
-  suit: Suit;
-  rank: Rank;
-  isRevealed: boolean;
-};
+import type { GameCard } from "../../api/game";
 
 function PokerCard({
-  suit,
-  rank,
-  isRevealed = false,
+  style,
+  info,
 }: {
-  suit: Suit;
-  rank: Rank;
-  isRevealed: boolean;
+  style?: React.CSSProperties;
+  info: GameCard;
 }) {
   const [cardImage, setCardImage] = useState<null | string>(null);
 
   useEffect(() => {
-    const suitObj = PokerCardImage[suit];
-    const imagePath = suitObj ? suitObj[rank] : undefined;
-
-    if (typeof imagePath === "string") {
-      setCardImage(imagePath);
-    } else {
-      setCardImage("");
-      console.error(`Image not found for card: ${suit} ${rank}`);
+    if (info.secret) {
+      setCardImage(BackCard);
+      return;
+    } else if (info.suit && info.rank) {
+      const suitObj = PokerCardImage[info.suit];
+      const imagePath = suitObj ? suitObj[info.rank] : undefined;
+      if (typeof imagePath === "string") {
+        setCardImage(imagePath);
+      } else {
+        setCardImage("");
+        console.error(`Image not found for card: ${info.suit} ${info.rank}`);
+      }
     }
-  }, [suit, rank]);
+  }, [info]);
 
   useEffect(() => {
-    if (isRevealed) {
+    if (info.secret) {
       const sound = new Howl({
         src: [FlipCardAudio],
         volume: 0.5,
       });
       sound.play();
     }
-  }, [isRevealed]);
+  }, [info.secret]);
 
   if (!cardImage) {
     return null;
@@ -52,11 +46,14 @@ function PokerCard({
 
   return (
     <motion.img
-      src={isRevealed ? cardImage : BackCard}
-      initial={{ y: -100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1, rotateY: isRevealed ? 0 : 180 }}
-      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      src={cardImage}
+      // src={info.isRevealed ? cardImage : BackCard}
+      // initial={{ y: -100, opacity: 0 }}
+      // animate={{ y: 0, opacity: 1, rotateY: info.isRevealed ? 0 : 180 }}
+      // animate={{ y: 0, opacity: 1 }}
+      // transition={{ type: "spring", stiffness: 300, damping: 20 }}
       style={{
+        ...style,
         width: "100%",
         height: "100%",
         objectFit: "contain",
@@ -66,5 +63,3 @@ function PokerCard({
 }
 
 export default PokerCard;
-
-export type { CardInfo, Suit, Rank };

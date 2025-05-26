@@ -198,7 +198,7 @@ function TexasTableGame({
 
   const handleGameEvent = (data: any) => {
     switch (data?.action) {
-      case "GAME_STATE": {
+      case "GAME_STATE_UPDATE": {
         console.log("Received game state event:", data);
         setGameState((prevState) => {
           const newState: GameState = {
@@ -206,6 +206,7 @@ function TexasTableGame({
             communityCards: data.communityCards || [],
             state: data?.state,
           };
+          console.log("Handled game state", newState);
           return newState;
         });
         break;
@@ -219,12 +220,6 @@ function TexasTableGame({
               mySeat = idx;
             }
           });
-          console.log(
-            "My seat index:",
-            mySeat,
-            userInfoRef.current,
-            prevState.seats
-          );
           const newState: GameState = {
             ...prevState,
             currentPlayerSeat: data?.currentPlayerSeat || 0,
@@ -395,7 +390,6 @@ function TexasTableGame({
               alignItems: "center",
               padding: "0 30px",
               height: "400px",
-              marginTop: "calc(40vh - 200px)",
               flexWrap: "wrap",
               gap: "10px",
             }}

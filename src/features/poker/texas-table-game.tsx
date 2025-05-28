@@ -25,8 +25,7 @@ interface GameState {
   turnPlayer: User | null;
   isFolded: boolean;
   isAllIn: boolean;
-  currentBet: number;
-  currentRequiredBet: number;
+  currentBets: Record<number, number>;
   currentPot: number;
 
   seats: GamePlayer[];
@@ -58,8 +57,7 @@ function TexasTableGame({
     turnPlayer: null,
     isFolded: false,
     isAllIn: false,
-    currentBet: 0,
-    currentRequiredBet: 0,
+    currentBets: {},
     currentPot: 0,
     seats: [],
     currentPlayerSeat: 0,
@@ -212,6 +210,7 @@ function TexasTableGame({
             ...prevState,
             communityCards: data.communityCards || [],
             state: data?.state,
+            currentBets: {},
           };
           return newState;
         });
@@ -255,6 +254,7 @@ function TexasTableGame({
                   }
                 : seat
             ),
+            currentBets: data?.currentBets || {},
           };
           return newState;
         });
@@ -500,9 +500,14 @@ function TexasTableGame({
               turnPlayer={gameState.turnPlayer}
               isFolded={gameState.isFolded}
               isAllIn={gameState.isAllIn}
-              currentBet={50}
-              currentRequiredBet={100}
-              currentPot={1000}
+              currentBet={
+                gameState.currentBets[gameState.currentPlayerSeat] || 0
+              }
+              currentRequiredBet={Math.max(
+                ...Object.values(gameState.currentBets),
+                0
+              )}
+              currentPot={gameState.currentPot}
               minRaise={100}
               sendAction={(action, amount) => sendGameAction(action, amount)}
             />

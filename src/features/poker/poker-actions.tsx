@@ -1,9 +1,11 @@
-import { Button, Flex, message, Slider } from "antd";
+import { Button, Flex, message, Slider, Typography } from "antd";
 import { motion } from "motion/react";
 import { useState } from "react";
+import type { User } from "../../api/user";
 
 function PokerActions({
-  isTurn,
+  player,
+  turnPlayer,
   isFolded,
   isAllIn,
   currentBet,
@@ -13,7 +15,8 @@ function PokerActions({
   minRaise,
   sendAction,
 }: {
-  isTurn: boolean;
+  player: User | null;
+  turnPlayer: User | null;
   isFolded: boolean;
   isAllIn: boolean;
   currentBet: number;
@@ -37,7 +40,12 @@ function PokerActions({
       gap={16}
     >
       {contextHolder}
-
+      <Typography.Title
+        style={{ color: "#fff", textAlign: "center" }}
+        level={3}
+      >
+        Current Player: {turnPlayer?.username}
+      </Typography.Title>
       <Flex
         justify="center"
         align="center"
@@ -57,7 +65,9 @@ function PokerActions({
           value={selectedAmount}
           max={stack}
           onChange={(value) => setSelectedAmount(value)}
-          disabled={!isTurn || isFolded || isAllIn}
+          disabled={
+            turnPlayer?.userId !== player?.userId || isFolded || isAllIn
+          }
           styles={{
             track: { backgroundColor: "#8CC15B" },
             rail: { backgroundColor: "#192135" },
@@ -70,7 +80,9 @@ function PokerActions({
               color: "#fff",
               background: "#192135",
             }}
-            disabled={!isTurn || isFolded || isAllIn}
+            disabled={
+              turnPlayer?.userId !== player?.userId || isFolded || isAllIn
+            }
             onClick={() => {
               if (minRaise < stack) {
                 setSelectedAmount(minRaise);
@@ -88,7 +100,9 @@ function PokerActions({
               color: "#fff",
               background: "#192135",
             }}
-            disabled={!isTurn || isFolded || isAllIn}
+            disabled={
+              turnPlayer?.userId !== player?.userId || isFolded || isAllIn
+            }
             onClick={() => setSelectedAmount(stack / 2)}
           >
             Half
@@ -98,7 +112,9 @@ function PokerActions({
               color: "#fff",
               background: "#192135",
             }}
-            disabled={!isTurn || isFolded || isAllIn}
+            disabled={
+              turnPlayer?.userId !== player?.userId || isFolded || isAllIn
+            }
             onClick={() => {
               if (currentPot < stack) {
                 setSelectedAmount(currentPot);
@@ -114,7 +130,9 @@ function PokerActions({
               color: "#fff",
               background: "#192135",
             }}
-            disabled={!isTurn || isFolded || isAllIn}
+            disabled={
+              turnPlayer?.userId !== player?.userId || isFolded || isAllIn
+            }
             onClick={() => {
               if (stack > 0) {
                 setSelectedAmount(stack);
@@ -140,14 +158,19 @@ function PokerActions({
               width: "100%",
               height: "100%",
               borderRadius: "20px",
-              background: !isTurn || isFolded || isAllIn ? "#" : "#EA5C61",
+              background:
+                turnPlayer?.userId !== player?.userId || isFolded || isAllIn
+                  ? ""
+                  : "#EA5C61",
               color: "#fff",
               textTransform: "uppercase",
               fontFamily: "Roboto, sans-serif",
               fontSize: "20px",
               border: "none",
             }}
-            disabled={!isTurn || isFolded || isAllIn}
+            disabled={
+              turnPlayer?.userId !== player?.userId || isFolded || isAllIn
+            }
             onClick={() => sendAction("FOLD", 0)}
           >
             Fold
@@ -165,7 +188,10 @@ function PokerActions({
             style={{
               width: "100%",
               borderRadius: "20px",
-              background: !isTurn || isFolded || isAllIn ? "#" : "#192135",
+              background:
+                turnPlayer?.userId !== player?.userId || isFolded || isAllIn
+                  ? ""
+                  : "#192135",
               height: "50px",
               color: "#fff",
               textTransform: "uppercase",
@@ -173,7 +199,9 @@ function PokerActions({
               border: "none",
               fontSize: "20px",
             }}
-            disabled={!isTurn || isFolded || isAllIn}
+            disabled={
+              turnPlayer?.userId !== player?.userId || isFolded || isAllIn
+            }
             onClick={() => {
               if (currentBet === currentRequiredBet) {
                 sendAction("CHECK", 0);
@@ -201,13 +229,18 @@ function PokerActions({
               height: "50px",
               borderRadius: "20px",
               color: "#fff",
-              background: !isTurn || isFolded || isAllIn ? "#" : "#8CC15B",
+              background:
+                turnPlayer?.userId !== player?.userId || isFolded || isAllIn
+                  ? ""
+                  : "#8CC15B",
               textTransform: "uppercase",
               fontFamily: "Roboto, sans-serif",
               fontSize: "20px",
               border: "none",
             }}
-            disabled={!isTurn || isFolded || isAllIn}
+            disabled={
+              turnPlayer?.userId !== player?.userId || isFolded || isAllIn
+            }
             onClick={() => {
               if (selectedAmount < currentRequiredBet) {
                 messageAPI.error("You must raise at least the required bet.");

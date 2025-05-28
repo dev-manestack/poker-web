@@ -22,7 +22,7 @@ import type { User } from "../../api/user";
 interface GameState {
   isAuthenticated: boolean;
   isSpectator: boolean;
-  isMyTurn: boolean;
+  turnPlayer: User | null;
   isFolded: boolean;
   isAllIn: boolean;
   currentBet: number;
@@ -33,7 +33,14 @@ interface GameState {
 
   currentPlayerSeat: number;
   communityCards?: GameCard[];
-  state: "PRE_FLOP" | "FLOP" | "TURN" | "RIVER" | "SHOWDOWN";
+  state:
+    | "INITIAL"
+    | "PRE_FLOP"
+    | "FLOP"
+    | "TURN"
+    | "RIVER"
+    | "SHOWDOWN"
+    | "FINISHED";
 }
 
 function TexasTableGame({
@@ -48,7 +55,7 @@ function TexasTableGame({
   const [gameState, setGameState] = useState<GameState>({
     isAuthenticated: false,
     isSpectator: false,
-    isMyTurn: false,
+    turnPlayer: null,
     isFolded: false,
     isAllIn: false,
     currentBet: 0,
@@ -57,7 +64,7 @@ function TexasTableGame({
     seats: [],
     currentPlayerSeat: 0,
     communityCards: [],
-    state: "PRE_FLOP",
+    state: "INITIAL",
   });
   const userInfoRef = useRef<User | null>(null);
 
@@ -206,24 +213,16 @@ function TexasTableGame({
             communityCards: data.communityCards || [],
             state: data?.state,
           };
-          console.log("Handled game state", newState);
           return newState;
         });
         break;
       }
       case "TURN_UPDATE": {
-        console.log("Received player turn event:", data);
         setGameState((prevState) => {
-          let mySeat = -1;
-          prevState.seats.forEach((seat, idx) => {
-            if (seat.user?.userId === userInfoRef.current?.userId) {
-              mySeat = idx;
-            }
-          });
           const newState: GameState = {
             ...prevState,
             currentPlayerSeat: data?.currentPlayerSeat || 0,
-            isMyTurn: data?.currentPlayerSeat === mySeat,
+            turnPlayer: prevState.seats[data?.currentPlayerSeat]?.user || null,
           };
           return newState;
         });
@@ -241,6 +240,57 @@ function TexasTableGame({
         }));
         break;
       }
+      case "PLAYER_ACTION": {
+        console.log("Received player action event:", data);
+        setGameState((prevState) => {
+          const newState: GameState = {
+            ...prevState,
+            seats: prevState.seats.map((seat, idx) =>
+              idx === data?.seatId
+                ? {
+                    ...seat,
+                    isFolded: data?.action === "FOLD",
+                    isAllIn: data?.action === "ALL_IN",
+                    stack: seat?.stack - (data?.amount || 0),
+                  }
+                : seat
+            ),
+          };
+          return newState;
+        });
+        break;
+      }
+      case "PLAYER_STACKS": {
+        console.log("Received player stacks event:", data);
+        setGameState((prevState) => ({
+          ...prevState,
+          seats: prevState.seats.map((seat, idx) =>
+            data?.stacks?.[idx] ? { ...seat, stack: data.stacks[idx] } : seat
+          ),
+        }));
+        break;
+      }
+    }
+  };
+
+  const handleAuthEvent = (data: any) => {
+    messageAPI.success("Та амжилттай холбогдлоо");
+    setGameState((prevState) => ({
+      ...prevState,
+      isAuthenticated: true,
+    }));
+    console.log("Authenticated", data?.user);
+    if (data?.user) {
+      userInfoRef.current = data?.user;
+      ws.current?.send(
+        JSON.stringify({
+          type: "TABLE",
+          data: {
+            tableId: parseInt(tableId || "0"),
+            action: "JOIN_TABLE",
+          },
+        })
+      );
     }
   };
 
@@ -278,25 +328,7 @@ function TexasTableGame({
             break;
           }
           case "AUTH": {
-            messageAPI.success("Та амжилттай холбогдлоо");
-            setGameState((prevState) => ({
-              ...prevState,
-              isAuthenticated: true,
-            }));
-            console.log("Authenticated", message.data?.user);
-            if (message.data?.user) {
-              userInfoRef.current = message?.data?.user;
-              ws.current?.send(
-                JSON.stringify({
-                  type: "TABLE",
-                  data: {
-                    tableId: parseInt(tableId || "0"),
-                    action: "JOIN_TABLE",
-                  },
-                })
-              );
-            }
-
+            handleAuthEvent(message.data);
             break;
           }
           case "TABLE": {
@@ -383,7 +415,7 @@ function TexasTableGame({
             position: "relative",
           }}
         >
-          <div
+          <Flex
             style={{
               display: "flex",
               justifyContent: "center",
@@ -391,15 +423,25 @@ function TexasTableGame({
               padding: "0 30px",
               height: "400px",
               flexWrap: "wrap",
-              gap: "10px",
             }}
+            vertical
+            gap={12}
           >
-            {gameState.communityCards?.map((communityCard, index) => (
-              <div key={index} style={{ height: "100px" }}>
-                <PokerCard info={communityCard} />
-              </div>
-            ))}
-          </div>
+            <Typography.Text
+              style={{
+                color: "#fff",
+              }}
+            >
+              Current stage: {gameState.state}
+            </Typography.Text>
+            <Flex gap={12} style={{ width: "100%", justifyContent: "center" }}>
+              {gameState.communityCards?.map((communityCard, index) => (
+                <div key={index} style={{ height: "100px" }}>
+                  <PokerCard info={communityCard} />
+                </div>
+              ))}
+            </Flex>
+          </Flex>
           <div>
             {gameState.seats.map((seat: GamePlayer, i: number) => {
               const angle = (2 * Math.PI * i) / seatCount;
@@ -422,11 +464,13 @@ function TexasTableGame({
                   disabled={isPreview}
                 >
                   {seat?.user?.userId ? (
-                    <TablePlayer
-                      player={seat}
-                      isTurn={i === gameState.currentPlayerSeat}
-                      holeCards={seat?.holeCards || []}
-                    />
+                    <Flex style={{ marginTop: "-40px" }}>
+                      <TablePlayer
+                        player={seat}
+                        isTurn={i === gameState.currentPlayerSeat}
+                        holeCards={seat?.holeCards || []}
+                      />
+                    </Flex>
                   ) : (
                     "Суух"
                   )}
@@ -449,17 +493,20 @@ function TexasTableGame({
           justify="center"
           gap={16}
         >
-          <PokerActions
-            stack={500}
-            isTurn={gameState.isMyTurn}
-            isFolded={gameState.isFolded}
-            isAllIn={gameState.isAllIn}
-            currentBet={50}
-            currentRequiredBet={100}
-            currentPot={1000}
-            minRaise={100}
-            sendAction={(action, amount) => sendGameAction(action, amount)}
-          />
+          {gameState.state !== "INITIAL" && (
+            <PokerActions
+              stack={500}
+              player={userInfoRef.current}
+              turnPlayer={gameState.turnPlayer}
+              isFolded={gameState.isFolded}
+              isAllIn={gameState.isAllIn}
+              currentBet={50}
+              currentRequiredBet={100}
+              currentPot={1000}
+              minRaise={100}
+              sendAction={(action, amount) => sendGameAction(action, amount)}
+            />
+          )}
         </Flex>
       )}
     </Flex>

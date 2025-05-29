@@ -33,6 +33,7 @@ interface GamePlayer {
   isFolded: boolean;
   holeCards: GameCard[];
   currentBet: number;
+  seatId: number;
 }
 
 export { websocketURL };

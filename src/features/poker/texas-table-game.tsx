@@ -18,6 +18,7 @@ import { useParams } from "react-router";
 import TablePlayer from "./table-player";
 import PokerActions from "./poker-actions";
 import type { User } from "../../api/user";
+import PokerChip from "./poker-chip";
 
 interface GameState {
   isAuthenticated: boolean;
@@ -72,58 +73,8 @@ function TexasTableGame({
   const centerY = 50;
   const radiusX = 50;
   const radiusY = 50;
-  // const cardRadiusX = radiusX - 5;
-  // const cardRadiusY = radiusY - 10;
-  // const chipRadiusX = radiusX - 20;
-  // const chipRadiusY = radiusY - 20;
-
-  // const seatCards = Array.from({ length: seatCount }, (_, i) => {
-  //   const angle = (2 * Math.PI * i) / seatCount;
-  //   const x = centerX + cardRadiusX * Math.cos(angle);
-  //   const y = centerY + cardRadiusY * Math.sin(angle);
-  //   return (
-  //     <Flex
-  //       key={i}
-  //       className="seat-cards"
-  //       style={{
-  //         left: `calc(${x}% - 20px)`,
-  //         top: `${y}%`,
-  //         position: "absolute",
-  //         width: "40px",
-  //         height: "60px",
-  //         transform: "translate(-50%, -50%)",
-  //         display: isPreview ? "none" : "flex",
-  //       }}
-  //     >
-  //       <PokerCard suit="Heart" rank="Ace" isRevealed={false} />
-  //       <PokerCard suit="Spade" rank="Ace" isRevealed={false} />
-  //     </Flex>
-  //   );
-  // });
-
-  // const seatChips = Array.from({ length: seatCount }, (_, i) => {
-  //   const angle = (2 * Math.PI * i) / seatCount;
-  //   const x = centerX - 1 + chipRadiusX * Math.cos(angle);
-  //   const y = centerY - 2 + chipRadiusY * Math.sin(angle);
-  //   return (
-  //     <div
-  //       key={i}
-  //       className="seat-chip"
-  //       style={{
-  //         position: "absolute",
-  //         left: `${x}%`,
-  //         top: `${y}%`,
-  //         transform: "translate(-50%, -50%)",
-  //         width: "28px",
-  //         height: "28px",
-  //         zIndex: 2,
-  //         pointerEvents: "none",
-  //       }}
-  //     >
-  //       <PokerChip amount={5000} />
-  //     </div>
-  //   );
-  // });
+  const chipRadiusX = radiusX - 20;
+  const chipRadiusY = radiusY - 20;
 
   const authenticateSocket = () => {
     const accessToken = localStorage.getItem("accessToken");
@@ -464,7 +415,7 @@ function TexasTableGame({
                   disabled={isPreview}
                 >
                   {seat?.user?.userId ? (
-                    <Flex style={{ marginTop: "-40px" }}>
+                    <Flex style={{ marginTop: "-100px" }}>
                       <TablePlayer
                         player={seat}
                         isTurn={i === gameState.currentPlayerSeat}
@@ -476,6 +427,37 @@ function TexasTableGame({
                   )}
                 </Button>
               );
+            })}
+          </div>
+          <div>
+            {gameState.seats.map((_: GamePlayer, i: number) => {
+              const angle = (2 * Math.PI * i) / seatCount;
+              const x = centerX + chipRadiusX * Math.cos(angle);
+              const y = centerY + chipRadiusY * Math.sin(angle);
+              const playerBet = gameState.currentBets[i] || 0;
+
+              if (playerBet > 0) {
+                return (
+                  <div
+                    key={i}
+                    className="seat-chip"
+                    style={{
+                      position: "absolute",
+                      left: `${x}%`,
+                      top: `${y}%`,
+                      transform: "translate(-50%, -50%)",
+                      width: "28px",
+                      height: "28px",
+                      zIndex: 2,
+                      pointerEvents: "none",
+                    }}
+                  >
+                    <PokerChip amount={playerBet} />
+                  </div>
+                );
+              } else {
+                return null;
+              }
             })}
           </div>
         </div>
@@ -517,23 +499,5 @@ function TexasTableGame({
     </Flex>
   );
 }
-
-/*
-<Button
-          onClick={() => {
-            setCards([
-              ...cards,
-              { suit: "Heart", rank: "Ten", isRevealed: false },
-            ]);
-            const sound = new Howl({
-              src: [DealCardAudio],
-              volume: 0.5,
-            });
-            sound.play();
-          }}
-        >
-          Test
-        </Button> 
-*/
 
 export default TexasTableGame;

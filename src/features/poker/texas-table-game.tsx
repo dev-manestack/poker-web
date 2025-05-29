@@ -162,6 +162,7 @@ function TexasTableGame({
             communityCards: data.communityCards || [],
             state: data?.state,
             currentBets: {},
+            currentPot: data?.state === "FINISHED" ? 0 : data?.currentPot || 0,
           };
           return newState;
         });
@@ -205,6 +206,7 @@ function TexasTableGame({
                   }
                 : seat
             ),
+            currentPot: data?.currentPot,
             currentBets: data?.currentBets || {},
           };
           return newState;
@@ -392,6 +394,7 @@ function TexasTableGame({
                 </div>
               ))}
             </Flex>
+            <PokerChip amount={gameState.currentPot} />
           </Flex>
           <div>
             {gameState.seats.map((seat: GamePlayer, i: number) => {

@@ -199,7 +199,9 @@ function TexasTableGame({
           };
           return newState;
         });
-        startTurnTimer();
+        if (gameState.state !== "FINISHED") {
+          startTurnTimer();
+        }
         break;
       }
       case "HOLE_CARDS": {
@@ -208,7 +210,7 @@ function TexasTableGame({
           ...prevState,
           seats: prevState.seats.map((seat, idx) =>
             data?.holeCards?.[idx]
-              ? { ...seat, holeCards: data.holeCards[idx] }
+              ? { ...seat, holeCards: data.holeCards[idx], hand: null }
               : seat
           ),
         }));
@@ -241,7 +243,9 @@ function TexasTableGame({
         setGameState((prevState) => ({
           ...prevState,
           seats: prevState.seats.map((seat, idx) =>
-            data?.stacks?.[idx] ? { ...seat, stack: data.stacks[idx] } : seat
+            data?.stacks?.[idx]
+              ? { ...seat, stack: data.stacks[idx], hand: data.hands[idx] }
+              : seat
           ),
         }));
         break;
@@ -411,11 +415,31 @@ function TexasTableGame({
               Current stage: {gameState.state}
             </Typography.Text>
             <Flex gap={12} style={{ width: "100%", justifyContent: "center" }}>
-              {gameState.communityCards?.map((communityCard, index) => (
-                <div key={index} style={{ height: "100px" }}>
-                  <PokerCard info={communityCard} />
-                </div>
-              ))}
+              {gameState.communityCards?.map((communityCard, index) => {
+                let isMyCard = false;
+                gameState.seats.forEach((seat) => {
+                  if (userInfoRef.current?.userId === seat.user?.userId) {
+                    seat?.hand?.combinationCards?.forEach((card) => {
+                      if (
+                        card.suit === communityCard.suit &&
+                        card.rank === communityCard.rank
+                      ) {
+                        isMyCard = true;
+                      }
+                    });
+                  }
+                });
+                return (
+                  <div key={index} style={{ height: "100px" }}>
+                    <PokerCard
+                      info={communityCard}
+                      style={{
+                        outline: isMyCard ? `5px solid red` : "none",
+                      }}
+                    />
+                  </div>
+                );
+              })}
             </Flex>
             <PokerChip amount={gameState.currentPot} />
           </Flex>

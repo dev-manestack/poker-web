@@ -19,12 +19,49 @@ function TablePlayer({
   const circumference = 2 * Math.PI * radius;
   const offset = circumference * (1 - progress);
 
+  /*
+
+*/
+  const isMyCard = (holeCard: GameCard) => {
+    let isMyCard = false;
+    player?.hand?.combinationCards?.forEach((card) => {
+      if (card.suit === holeCard.suit && card.rank === holeCard.rank) {
+        isMyCard = true;
+      }
+    });
+    return isMyCard;
+  };
+
   return (
     <Flex vertical justify="center" align="center">
+      {player?.hand?.rank && (
+        <Typography.Text
+          style={{
+            background: "#fff",
+            borderRadius: "10px",
+            marginBottom: "4px",
+            padding: "4px 8px",
+          }}
+        >
+          {player?.hand?.rank}
+        </Typography.Text>
+      )}
       <Flex style={{ height: "80px", marginBottom: "-40px" }}>
-        {holeCards[0] && <PokerCard info={holeCards[0]} />}
+        {holeCards[0] && (
+          <PokerCard
+            info={holeCards[0]}
+            style={{
+              outline: isMyCard(holeCards[0]) ? `5px solid red` : "none",
+            }}
+          />
+        )}
         {holeCards[1] && (
-          <PokerCard info={holeCards[1]} style={{ marginLeft: "-30px" }} />
+          <PokerCard
+            info={holeCards[1]}
+            style={{
+              outline: isMyCard(holeCards[0]) ? `5px solid red` : "none",
+            }}
+          />
         )}
       </Flex>
       <div style={{ position: "relative", width: size, height: size }}>

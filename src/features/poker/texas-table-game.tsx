@@ -65,6 +65,8 @@ function TexasTableGame({
     communityCards: [],
     state: "INITIAL",
   });
+  const [turnProgress, setTurnProgress] = useState(1); // 1 = 100%, 0 = 0%
+  const timerRef = useRef<number | null>(null);
   const userInfoRef = useRef<User | null>(null);
 
   const ws = useRef<WebSocket | null>(null);
@@ -75,6 +77,26 @@ function TexasTableGame({
   const radiusY = 50;
   const chipRadiusX = radiusX - 20;
   const chipRadiusY = radiusY - 20;
+  const turnDuration = 10; // seconds
+
+  const startTurnTimer = () => {
+    if (timerRef.current) {
+      cancelAnimationFrame(timerRef.current);
+    }
+    setTurnProgress(1);
+    const start = Date.now();
+
+    function tick() {
+      const elapsed = (Date.now() - start) / 1000;
+      const percent = Math.max(1 - elapsed / turnDuration, 0);
+      setTurnProgress(percent);
+      if (percent > 0) {
+        timerRef.current = requestAnimationFrame(tick);
+      }
+    }
+
+    timerRef.current = requestAnimationFrame(tick);
+  };
 
   const authenticateSocket = () => {
     const accessToken = localStorage.getItem("accessToken");
@@ -177,6 +199,7 @@ function TexasTableGame({
           };
           return newState;
         });
+        startTurnTimer();
         break;
       }
       case "HOLE_CARDS": {
@@ -240,7 +263,7 @@ function TexasTableGame({
           type: "TABLE",
           data: {
             tableId: parseInt(tableId || "0"),
-            action: "JOIN_TABLE",
+            action: "SUBSCRIBE",
           },
         })
       );
@@ -423,6 +446,9 @@ function TexasTableGame({
                         player={seat}
                         isTurn={i === gameState.currentPlayerSeat}
                         holeCards={seat?.holeCards || []}
+                        progress={
+                          i === gameState.currentPlayerSeat ? turnProgress : 0
+                        }
                       />
                     </Flex>
                   ) : (

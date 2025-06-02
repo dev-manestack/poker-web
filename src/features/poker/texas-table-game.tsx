@@ -216,23 +216,6 @@ function TexasTableGame({
         }));
         break;
       }
-      case "REVEAL_CARDS": {
-        console.log("Received reveal cards event:", data);
-        setGameState((prevState) => {
-          const newState = {
-            ...prevState,
-            seats: prevState.seats.map((seat, idx) => {
-              console.log(data?.revealedCards?.[idx]);
-              return data?.revealedCards?.[idx]
-                ? { ...seat, holeCards: data.revealedCards?.[idx] }
-                : seat;
-            }),
-          };
-          console.log("Updated game state with revealed cards:", newState);
-          return newState;
-        });
-        break;
-      }
       case "PLAYER_ACTION": {
         console.log("Received player action event:", data);
         setGameState((prevState) => {
@@ -259,11 +242,22 @@ function TexasTableGame({
         console.log("Received player stacks event:", data);
         setGameState((prevState) => ({
           ...prevState,
-          seats: prevState.seats.map((seat, idx) =>
-            data?.stacks?.[idx]
-              ? { ...seat, stack: data.stacks[idx], hand: data.hands[idx] }
-              : seat
-          ),
+          seats: prevState.seats.map((seat, idx) => {
+            console.log(
+              "HERE"
+              // data?.stacks?.[idx],
+              // data?.hands?.[idx],
+              // data?.revealedCards?.[idx]
+            );
+            return data?.stacks?.[idx]
+              ? {
+                  ...seat,
+                  stack: data.stacks[idx],
+                  hand: data.hands[idx],
+                  holeCards: data.revealedCards?.[idx],
+                }
+              : seat;
+          }),
         }));
         break;
       }
@@ -546,7 +540,7 @@ function TexasTableGame({
               stack={500}
               player={userInfoRef.current}
               turnPlayer={gameState.turnPlayer}
-              isFolded={gameState.isFolded}
+              isFolded={gameState.isFolded || gameState.state === "FINISHED"}
               isAllIn={gameState.isAllIn}
               currentBet={
                 gameState.currentBets[gameState.currentPlayerSeat] || 0

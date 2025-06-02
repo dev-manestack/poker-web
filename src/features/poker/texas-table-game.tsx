@@ -216,6 +216,23 @@ function TexasTableGame({
         }));
         break;
       }
+      case "REVEAL_CARDS": {
+        console.log("Received reveal cards event:", data);
+        setGameState((prevState) => {
+          const newState = {
+            ...prevState,
+            seats: prevState.seats.map((seat, idx) => {
+              console.log(data?.revealedCards?.[idx]);
+              return data?.revealedCards?.[idx]
+                ? { ...seat, holeCards: data.revealedCards?.[idx] }
+                : seat;
+            }),
+          };
+          console.log("Updated game state with revealed cards:", newState);
+          return newState;
+        });
+        break;
+      }
       case "PLAYER_ACTION": {
         console.log("Received player action event:", data);
         setGameState((prevState) => {
@@ -287,10 +304,6 @@ function TexasTableGame({
       })
     );
   };
-
-  useEffect(() => {
-    console.log("Game state updated:", gameState);
-  }, [gameState]);
 
   const establishWebSocketConnection = (delay = 0) => {
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {

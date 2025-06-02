@@ -1,5 +1,4 @@
 import { Flex, Table, Typography } from "antd";
-import TableGame from "./texas-table-game";
 
 const { Title } = Typography;
 
@@ -43,14 +42,6 @@ function TableDetails({ table }: { table: any }) {
           width: "100%",
         }}
       />
-      <Flex
-        style={{
-          height: "300px",
-          width: "100%",
-        }}
-      >
-        <TableGame isPreview={true} />
-      </Flex>
     </Flex>
   );
 }

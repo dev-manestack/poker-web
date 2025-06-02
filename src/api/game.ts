@@ -1,7 +1,8 @@
 import type { PokerCardImage } from "../assets/card";
 import type { User } from "./user";
+const baseURL = import.meta.env.VITE_BACKEND_URL;
 
-const websocketURL = "ws://127.0.0.1:8080/ws/table";
+const websocketURL = baseURL + "/ws/table";
 
 interface WebsocketEvent {
   id: string;

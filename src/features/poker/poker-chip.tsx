@@ -28,7 +28,8 @@ function PokerChip({ amount }: { amount: number }) {
           textAlign: "center",
           lineHeight: "30px",
           color: "#fff",
-          background: "rgba(0, 0, 0, 0.7)",
+          // background: "rgba(0, 0, 0, 0.7)",
+          fontFamily: "'Bebas Neue', sans-serif",
         }}
       >
         {amount}

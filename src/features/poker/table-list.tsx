@@ -111,6 +111,7 @@ function TableList({
     <Table
       columns={columns}
       dataSource={tableData}
+      rowKey="tableId"
       onRow={(record) => {
         return {
           onClick: () => setSelectedTable(record),

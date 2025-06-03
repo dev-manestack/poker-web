@@ -19,6 +19,17 @@ import TablePlayer from "./table-player";
 import PokerActions from "./poker-actions";
 import type { User } from "../../api/user";
 import PokerChip from "./poker-chip";
+import {
+  containerStyles,
+  tableWrapperStyles,
+  tableStyles,
+  contentStyles,
+  playerCardStyle,
+  seatChipStyle,
+  playerSeatStyle,
+  actionBarStyles,
+  authLoadingStyles,
+} from "../../styles/PokerTableStyles.ts";
 
 interface GameState {
   isAuthenticated: boolean;
@@ -270,7 +281,7 @@ function TexasTableGame({
       ...prevState,
       isAuthenticated: true,
     }));
-    console.log("Authenticated", data?.user);
+    // console.log("Authenticated", data?.user);
     if (data?.user) {
       userInfoRef.current = data?.user;
       ws.current?.send(
@@ -360,16 +371,7 @@ function TexasTableGame({
 
   if (!gameState.isAuthenticated) {
     return (
-      <Flex
-        vertical
-        justify="center"
-        align="center"
-        gap={16}
-        style={{
-          height: "100vh",
-          width: "100vw",
-        }}
-      >
+      <Flex style={authLoadingStyles}>
         <Spin />
         <Typography.Text>Та түр хүлээнэ үү.</Typography.Text>
       </Flex>
@@ -377,50 +379,15 @@ function TexasTableGame({
   }
 
   return (
-    <Flex
-      vertical
-      style={{ width: "100vw", height: "100%", overflow: "hidden" }}
-    >
-      <Flex
-        style={{
-          position: "absolute",
-          width: "60%",
-          height: "40%",
-          marginTop: "10%",
-          marginLeft: "20%",
-        }}
-      >
+    <Flex vertical style={containerStyles}>
+      <Flex style={tableWrapperStyles}>
         {contextHolder}
-        <div
-          style={{
-            width: "100%",
-            height: "100%",
-            background: "#314361",
-            border: "30px solid #3B4F6F",
-            borderRadius: "50% / 40%",
-            boxShadow: "0 0 15px rgba(0, 0, 0, 0.6)",
-            position: "relative",
-          }}
-        >
-          <Flex
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              padding: "0 30px",
-              height: "400px",
-              flexWrap: "wrap",
-            }}
-            vertical
-            gap={12}
-          >
-            <Typography.Text
-              style={{
-                color: "#fff",
-              }}
-            >
+        <div style={tableStyles}>
+          <Flex style={contentStyles} vertical gap={12}>
+            <Typography.Text style={{ color: "#fff" }}>
               Current stage: {gameState.state}
             </Typography.Text>
+
             <Flex gap={12} style={{ width: "100%", justifyContent: "center" }}>
               {gameState.communityCards?.map((communityCard, index) => {
                 let isMyCard = false;
@@ -437,7 +404,7 @@ function TexasTableGame({
                   }
                 });
                 return (
-                  <div key={index} style={{ height: "100px" }}>
+                  <div key={index} style={playerCardStyle}>
                     <PokerCard
                       info={communityCard}
                       style={{
@@ -448,28 +415,23 @@ function TexasTableGame({
                 );
               })}
             </Flex>
+
             <PokerChip amount={gameState.currentPot} />
           </Flex>
+
           <div>
             {gameState.seats.map((seat: GamePlayer, i: number) => {
               const angle = (2 * Math.PI * i) / seatCount;
               const x = centerX + radiusX * Math.cos(angle);
               const y = centerY + radiusY * Math.sin(angle);
-              const style = {
-                left: `${x}%`,
-                top: `${y}%`,
-                height: "50px",
-                width: "50px",
-              };
+
               return (
                 <Button
                   className="seat"
-                  style={style}
                   key={i}
-                  onClick={() => {
-                    takeSeat(i);
-                  }}
+                  onClick={() => takeSeat(i)}
                   disabled={isPreview}
+                  style={{ ...playerSeatStyle, left: `${x}%`, top: `${y}%` }}
                 >
                   {seat?.user?.userId ? (
                     <Flex style={{ marginTop: "-100px" }}>
@@ -489,6 +451,7 @@ function TexasTableGame({
               );
             })}
           </div>
+
           <div>
             {gameState.seats.map((_: GamePlayer, i: number) => {
               const angle = (2 * Math.PI * i) / seatCount;
@@ -502,14 +465,9 @@ function TexasTableGame({
                     key={i}
                     className="seat-chip"
                     style={{
-                      position: "absolute",
+                      ...seatChipStyle,
                       left: `${x}%`,
                       top: `${y}%`,
-                      transform: "translate(-50%, -50%)",
-                      width: "28px",
-                      height: "28px",
-                      zIndex: 2,
-                      pointerEvents: "none",
                     }}
                   >
                     <PokerChip amount={playerBet} />
@@ -522,19 +480,9 @@ function TexasTableGame({
           </div>
         </div>
       </Flex>
+
       {!isPreview && (
-        <Flex
-          style={{
-            width: "100%",
-            position: "absolute",
-            bottom: 0,
-            right: 10,
-            paddingTop: "16px",
-          }}
-          align="center"
-          justify="center"
-          gap={16}
-        >
+        <Flex style={actionBarStyles} align="center" justify="center" gap={16}>
           {gameState.state !== "INITIAL" && (
             <PokerActions
               stack={500}

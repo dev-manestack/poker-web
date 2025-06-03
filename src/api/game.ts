@@ -15,6 +15,10 @@ interface WebsocketEvent {
 }
 
 interface TableState {
+  minBuyIn: number;
+  maxBuyIn: number;
+  smallBlind: number;
+  bigBlind: number;
   seats: Record<number, GamePlayer>;
 }
 

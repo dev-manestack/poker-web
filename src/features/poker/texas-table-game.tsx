@@ -1,4 +1,13 @@
-import { Button, Flex, message, Spin, Typography } from "antd";
+import {
+  Button,
+  Flex,
+  Form,
+  message,
+  Modal,
+  Slider,
+  Spin,
+  Typography,
+} from "antd";
 import { useEffect, useRef, useState } from "react";
 import PokerCard from "./poker-card";
 import "./texas-table-game.css";
@@ -32,6 +41,12 @@ import {
 } from "../../styles/PokerTableStyles.ts";
 
 interface GameState {
+  minBuyIn: number;
+  maxBuyIn: number;
+  smallBlind: number;
+  bigBlind: number;
+
+  usableBalance: number;
   isAuthenticated: boolean;
   isSpectator: boolean;
   turnPlayer: User | null;
@@ -45,7 +60,7 @@ interface GameState {
   currentPlayerSeat: number;
   communityCards?: GameCard[];
   state:
-    | "INITIAL"
+    | "WAITING_FOR_PLAYERS"
     | "PRE_FLOP"
     | "FLOP"
     | "TURN"
@@ -63,7 +78,15 @@ function TexasTableGame({
 }) {
   const { id: tableId } = useParams();
   const [messageAPI, contextHolder] = message.useMessage();
+  const [isTakeSeatModalOpen, setTakeSeatModalOpen] = useState(false);
+  const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
   const [gameState, setGameState] = useState<GameState>({
+    minBuyIn: 0,
+    maxBuyIn: 0,
+    smallBlind: 0,
+    bigBlind: 0,
+
+    usableBalance: 0,
     isAuthenticated: false,
     isSpectator: false,
     turnPlayer: null,
@@ -74,7 +97,7 @@ function TexasTableGame({
     seats: [],
     currentPlayerSeat: 0,
     communityCards: [],
-    state: "INITIAL",
+    state: "WAITING_FOR_PLAYERS",
   });
   const [turnProgress, setTurnProgress] = useState(1); // 1 = 100%, 0 = 0%
   const timerRef = useRef<number | null>(null);
@@ -121,7 +144,7 @@ function TexasTableGame({
     );
   };
 
-  const takeSeat = (seatIndex: number) => {
+  const takeSeat = (seatIndex: number, amount: number) => {
     if (gameState.isAuthenticated) {
       ws.current?.send(
         JSON.stringify({
@@ -130,6 +153,7 @@ function TexasTableGame({
             tableId: parseInt(tableId || "0"),
             action: "TAKE_SEAT",
             seatIndex: seatIndex,
+            amount: amount,
           },
         })
       );
@@ -149,6 +173,10 @@ function TexasTableGame({
     });
     setGameState((prevState) => ({
       ...prevState,
+      maxBuyIn: tableState?.maxBuyIn || 0,
+      minBuyIn: tableState?.minBuyIn || 0,
+      smallBlind: tableState?.smallBlind || 0,
+      bigBlind: tableState?.bigBlind || 0,
       // seats: tempArray,
       seats: tempArray.map((seat) => ({
         ...seat,
@@ -164,6 +192,7 @@ function TexasTableGame({
           volume: 0.5,
         });
         sound.play();
+        setTakeSeatModalOpen(false);
         break;
       }
       case "LEAVE_SEAT": {
@@ -196,6 +225,15 @@ function TexasTableGame({
             state: data?.state,
             currentBets: {},
             currentPot: data?.state === "FINISHED" ? 0 : data?.currentPot || 0,
+            seats:
+              data?.state === "FINISHED"
+                ? prevState.seats.map((seat) => {
+                    return {
+                      ...seat,
+                      holeCards: [],
+                    };
+                  })
+                : prevState.seats,
           };
           return newState;
         });
@@ -210,7 +248,10 @@ function TexasTableGame({
           };
           return newState;
         });
-        if (gameState.state !== "FINISHED") {
+        if (
+          gameState.state !== "FINISHED" &&
+          gameState.state !== "WAITING_FOR_PLAYERS"
+        ) {
           startTurnTimer();
         }
         break;
@@ -254,12 +295,6 @@ function TexasTableGame({
         setGameState((prevState) => ({
           ...prevState,
           seats: prevState.seats.map((seat, idx) => {
-            console.log(
-              "HERE"
-              // data?.stacks?.[idx],
-              // data?.hands?.[idx],
-              // data?.revealedCards?.[idx]
-            );
             return data?.stacks?.[idx]
               ? {
                   ...seat,
@@ -280,7 +315,9 @@ function TexasTableGame({
     setGameState((prevState) => ({
       ...prevState,
       isAuthenticated: true,
+      usableBalance: data?.balance || 0,
     }));
+    console.log(data);
     // console.log("Authenticated", data?.user);
     if (data?.user) {
       userInfoRef.current = data?.user;
@@ -311,7 +348,7 @@ function TexasTableGame({
   };
 
   const establishWebSocketConnection = (delay = 0) => {
-    if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+    if (ws.current) {
       return;
     }
 
@@ -382,6 +419,39 @@ function TexasTableGame({
     <Flex vertical style={containerStyles}>
       <Flex style={tableWrapperStyles}>
         {contextHolder}
+        <Modal
+          open={isTakeSeatModalOpen}
+          footer={null}
+          title="Суух"
+          onCancel={() => setTakeSeatModalOpen(false)}
+        >
+          <Form
+            onFinish={(e) =>
+              takeSeat(selectedSeat ? selectedSeat : -1, e.amount)
+            }
+          >
+            <Form.Item label="Хэмжээ" name={"amount"}>
+              <Slider
+                min={gameState.minBuyIn}
+                max={
+                  gameState.usableBalance > gameState.maxBuyIn
+                    ? gameState.maxBuyIn
+                    : gameState.usableBalance
+                }
+              />
+            </Form.Item>
+            <Form.Item
+              style={{
+                display: "flex",
+                justifyContent: "end",
+              }}
+            >
+              <Button type="primary" htmlType="submit">
+                Суух
+              </Button>
+            </Form.Item>
+          </Form>
+        </Modal>
         <div style={tableStyles}>
           <Flex style={contentStyles} vertical gap={12}>
             <Typography.Text style={{ color: "#fff" }}>
@@ -429,7 +499,10 @@ function TexasTableGame({
                 <Button
                   className="seat"
                   key={i}
-                  onClick={() => takeSeat(i)}
+                  onClick={() => {
+                    setSelectedSeat(i);
+                    setTakeSeatModalOpen(true);
+                  }}
                   disabled={isPreview}
                   style={{ ...playerSeatStyle, left: `${x}%`, top: `${y}%` }}
                 >
@@ -483,7 +556,7 @@ function TexasTableGame({
 
       {!isPreview && (
         <Flex style={actionBarStyles} align="center" justify="center" gap={16}>
-          {gameState.state !== "INITIAL" && (
+          {gameState.state !== "WAITING_FOR_PLAYERS" && (
             <PokerActions
               stack={500}
               player={userInfoRef.current}

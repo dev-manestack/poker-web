@@ -7,6 +7,7 @@ import {
   MessageOutlined,
   MoonFilled,
   SunFilled,
+  UserOutlined,
 } from "@ant-design/icons";
 import { Avatar, Button, Dropdown, Flex, Modal, Typography } from "antd";
 import { useEffect, useState } from "react";
@@ -33,7 +34,7 @@ function UserHeader() {
   const items = [
     {
       key: "1",
-      label: "Admin",
+      label: "Админ цэс",
       onClick: () => {
         navigate("/admin");
       },
@@ -41,7 +42,23 @@ function UserHeader() {
     },
     {
       key: "2",
-      label: "Logout",
+      label: "Хэрэглэгч",
+      onClick: () => {
+        navigate("/profile");
+      },
+      icon: <UserOutlined />,
+    },
+    {
+      key: "3",
+      label: "Татан авалт",
+      onClick: () => {
+        navigate("/settings");
+      },
+      icon: <UserOutlined />,
+    },
+    {
+      key: "4",
+      label: "Гарах",
       onClick: () => dispatch(logout()),
       danger: true,
       icon: <LogoutOutlined />,

@@ -1,5 +1,7 @@
 import { ConfigProvider, theme } from "antd";
-import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setMode } from "./theme-slice";
 
 const pokerLightTheme = {
   token: {
@@ -59,6 +61,12 @@ const pokerDarkTheme = {
 
 function ThemeProvider({ children }: { children: React.ReactNode }) {
   const mode = useSelector((state: any) => state.theme.mode);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const savedMode = localStorage.getItem("themeMode");
+    dispatch(setMode(savedMode));
+  }, []);
 
   return (
     <ConfigProvider theme={mode === "dark" ? pokerDarkTheme : pokerLightTheme}>

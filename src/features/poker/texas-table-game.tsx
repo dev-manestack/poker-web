@@ -39,7 +39,7 @@ import {
   actionBarStyles,
   authLoadingStyles,
 } from "../../styles/PokerTableStyles.ts";
-import { LeftOutlined } from "@ant-design/icons";
+import { LeftOutlined, PlusOutlined } from "@ant-design/icons";
 
 interface GameState {
   minBuyIn: number;
@@ -80,7 +80,7 @@ function TexasTableGame({
   const navigate = useNavigate();
   const { id: tableId } = useParams();
   const [messageAPI, contextHolder] = message.useMessage();
-  const [isTakeSeatModalOpen, setTakeSeatModalOpen] = useState(false);
+  const [modalType, setModalType] = useState("");
   const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
   const [gameState, setGameState] = useState<GameState>({
     minBuyIn: 0,
@@ -164,6 +164,24 @@ function TexasTableGame({
     }
   };
 
+  const recharge = (amount: number) => {
+    if (gameState.isAuthenticated) {
+      ws.current?.send(
+        JSON.stringify({
+          type: "TABLE",
+          data: {
+            tableId: parseInt(tableId || "0"),
+            action: "RECHARGE",
+            amount: amount,
+          },
+        })
+      );
+      console.log(amount);
+    } else {
+      messageAPI.error("Та цэнэглэхийн тулд эхлээд холбогдох хэрэгтэй");
+    }
+  };
+
   const leaveSeat = (seatIndex: number) => {
     if (gameState.isAuthenticated) {
       ws.current?.send(
@@ -222,7 +240,7 @@ function TexasTableGame({
           volume: 0.5,
         });
         sound.play();
-        setTakeSeatModalOpen(false);
+        setModalType("");
         break;
       }
       case "LEAVE_SEAT": {
@@ -239,6 +257,15 @@ function TexasTableGame({
           volume: 0.5,
         });
         sound.play();
+        break;
+      }
+      case "RECHARGE": {
+        const sound = new Howl({
+          src: [SuccessAudio],
+          volume: 0.5,
+        });
+        sound.play();
+        setModalType("");
         break;
       }
     }
@@ -457,23 +484,40 @@ function TexasTableGame({
         icon={<LeftOutlined />}
         onClick={() => {
           leaveSeat(selectedSeat || 0);
-          navigate("");
+          navigate("/");
         }}
       >
         Гарах
       </Button>
+      <Button
+        style={{
+          position: "absolute",
+          top: 20,
+          right: 20,
+        }}
+        icon={<PlusOutlined />}
+        onClick={() => {
+          setModalType("RECHARGE");
+        }}
+      >
+        Цэнэглэх
+      </Button>
       <Flex style={tableWrapperStyles}>
         {contextHolder}
         <Modal
-          open={isTakeSeatModalOpen}
+          open={modalType?.length > 0}
           footer={null}
-          title="Суух"
-          onCancel={() => setTakeSeatModalOpen(false)}
+          title={modalType === "RECHARGE" ? "Цэнэглэх" : "Суух"}
+          onCancel={() => setModalType("")}
         >
           <Form
-            onFinish={(e) =>
-              takeSeat(selectedSeat ? selectedSeat : -1, e.amount)
-            }
+            onFinish={(e) => {
+              if (modalType === "RECHARGE") {
+                recharge(e.amount);
+              } else {
+                takeSeat(selectedSeat ? selectedSeat : -1, e.amount);
+              }
+            }}
           >
             <Form.Item label="Хэмжээ" name={"amount"}>
               <Slider
@@ -492,7 +536,7 @@ function TexasTableGame({
               }}
             >
               <Button type="primary" htmlType="submit">
-                Суух
+                {modalType === "RECHARGE" ? "Цэнэглэх" : "Суух"}
               </Button>
             </Form.Item>
           </Form>
@@ -546,7 +590,7 @@ function TexasTableGame({
                   key={i}
                   onClick={() => {
                     setSelectedSeat(i);
-                    setTakeSeatModalOpen(true);
+                    setModalType("TAKE_SEAT");
                   }}
                   disabled={isPreview}
                   style={{ ...playerSeatStyle, left: `${x}%`, top: `${y}%` }}

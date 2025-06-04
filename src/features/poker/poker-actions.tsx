@@ -63,6 +63,7 @@ function PokerActions({
         <Slider
           style={{ width: "100%" }}
           value={selectedAmount}
+          min={minRaise}
           max={stack}
           onChange={(value) => setSelectedAmount(value)}
           disabled={
@@ -206,7 +207,12 @@ function PokerActions({
               if (currentBet === currentRequiredBet) {
                 sendAction("CHECK", 0);
               } else {
-                sendAction("CALL", currentRequiredBet - currentBet);
+                let missingBet = currentRequiredBet - currentBet;
+                let amount = missingBet;
+                if (missingBet > stack) {
+                  amount = stack;
+                }
+                sendAction("CALL", amount);
               }
             }}
           >

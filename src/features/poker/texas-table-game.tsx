@@ -23,7 +23,7 @@ import {
   type TableState,
   type WebsocketEvent,
 } from "../../api/game";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import TablePlayer from "./table-player";
 import PokerActions from "./poker-actions";
 import type { User } from "../../api/user";
@@ -39,6 +39,7 @@ import {
   actionBarStyles,
   authLoadingStyles,
 } from "../../styles/PokerTableStyles.ts";
+import { LeftOutlined } from "@ant-design/icons";
 
 interface GameState {
   minBuyIn: number;
@@ -76,6 +77,7 @@ function TexasTableGame({
   isPreview?: boolean;
   seatCount?: number;
 }) {
+  const navigate = useNavigate();
   const { id: tableId } = useParams();
   const [messageAPI, contextHolder] = message.useMessage();
   const [isTakeSeatModalOpen, setTakeSeatModalOpen] = useState(false);
@@ -159,6 +161,23 @@ function TexasTableGame({
       );
     } else {
       messageAPI.error("Та ширээнд суухын тулд эхлээд холбогдох хэрэгтэй");
+    }
+  };
+
+  const leaveSeat = (seatIndex: number) => {
+    if (gameState.isAuthenticated) {
+      ws.current?.send(
+        JSON.stringify({
+          type: "TABLE",
+          data: {
+            tableId: parseInt(tableId || "0"),
+            action: "LEAVE_SEAT",
+            seatIndex: seatIndex,
+          },
+        })
+      );
+    } else {
+      messageAPI.error("Та ширээнээс гарахын тулд эхлээд холбогдох хэрэгтэй");
     }
   };
 
@@ -428,6 +447,21 @@ function TexasTableGame({
 
   return (
     <Flex vertical style={containerStyles}>
+      <Button
+        type="primary"
+        style={{
+          position: "absolute",
+          top: 20,
+          left: 20,
+        }}
+        icon={<LeftOutlined />}
+        onClick={() => {
+          leaveSeat(selectedSeat || 0);
+          navigate("");
+        }}
+      >
+        Гарах
+      </Button>
       <Flex style={tableWrapperStyles}>
         {contextHolder}
         <Modal
@@ -590,7 +624,7 @@ function TexasTableGame({
                 0
               )}
               currentPot={gameState.currentPot}
-              minRaise={100}
+              minRaise={gameState.bigBlind}
               sendAction={(action, amount) => sendGameAction(action, amount)}
             />
           )}

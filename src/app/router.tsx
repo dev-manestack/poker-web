@@ -9,6 +9,8 @@ import UserPage from "../pages/admin/user-page";
 import DepositPage from "../pages/admin/deposit-page";
 import AdminSettingsPage from "../pages/admin/admin-settings-page";
 import AdminTable from "../pages/admin/admin-table";
+import ProfilePage from "../pages/user/profile-page";
+import UserWithdrawPage from "../pages/user/user-withdraw-page";
 
 function Router() {
   return (
@@ -91,6 +93,22 @@ function Router() {
             }
           />
         </Route>
+        <Route
+          path="/profile"
+          element={
+            <UserLayout>
+              <ProfilePage />
+            </UserLayout>
+          }
+        />
+        <Route
+          path="/withdraw"
+          element={
+            <UserLayout>
+              <UserWithdrawPage />
+            </UserLayout>
+          }
+        />
         <Route
           index
           element={

@@ -2,6 +2,7 @@ import {
   BellOutlined,
   CloseOutlined,
   CrownOutlined,
+  DollarOutlined,
   LogoutOutlined,
   MenuOutlined,
   MessageOutlined,
@@ -42,6 +43,14 @@ function UserHeader() {
     },
     {
       key: "2",
+      label: "Тоглох",
+      onClick: () => {
+        navigate("/");
+      },
+      icon: <DollarOutlined />,
+    },
+    {
+      key: "3",
       label: "Хэрэглэгч",
       onClick: () => {
         navigate("/profile");
@@ -49,15 +58,15 @@ function UserHeader() {
       icon: <UserOutlined />,
     },
     {
-      key: "3",
+      key: "4",
       label: "Татан авалт",
       onClick: () => {
-        navigate("/settings");
+        navigate("/withdraw");
       },
       icon: <UserOutlined />,
     },
     {
-      key: "4",
+      key: "5",
       label: "Гарах",
       onClick: () => dispatch(logout()),
       danger: true,

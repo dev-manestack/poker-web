@@ -164,6 +164,7 @@ function TexasTableGame({
 
   const handleTableEvent = (data: any) => {
     const tableState: TableState = data?.table;
+    const currentSession = data?.session;
     const tempArray = new Array(seatCount).fill(null);
     Object.entries(tableState.seats).forEach(([index, seat]) => {
       tempArray[parseInt(index)] = {
@@ -177,13 +178,23 @@ function TexasTableGame({
       minBuyIn: tableState?.minBuyIn || 0,
       smallBlind: tableState?.smallBlind || 0,
       bigBlind: tableState?.bigBlind || 0,
-      // seats: tempArray,
       seats: tempArray.map((seat) => ({
         ...seat,
         holeCards: seat?.holeCards || [],
         isAllIn: seat?.isAllIn || false,
         isFolded: seat?.isFolded || false,
       })),
+      turnPlayer: currentSession?.turnPlayer || gameState.turnPlayer,
+      isFolded: currentSession?.isFolded || gameState.isFolded,
+      isAllIn: currentSession?.isAllIn || gameState.isAllIn,
+      currentBets: currentSession?.currentBets || gameState.currentBets,
+      currentPot: currentSession?.currentPot || gameState.currentPot,
+      state: currentSession?.state || gameState.state,
+      currentPlayerSeat:
+        currentSession?.currentPlayerSeat || gameState.currentPlayerSeat,
+      communityCards:
+        currentSession?.communityCards || gameState.communityCards,
+      isSpectator: data?.isSpectator || false,
     }));
     switch (data.action) {
       case "TAKE_SEAT": {
@@ -558,10 +569,18 @@ function TexasTableGame({
         <Flex style={actionBarStyles} align="center" justify="center" gap={16}>
           {gameState.state !== "WAITING_FOR_PLAYERS" && (
             <PokerActions
-              stack={500}
+              stack={
+                gameState.seats?.filter(
+                  (seat) => seat.user?.userId === userInfoRef.current?.userId
+                )[0]?.stack || 0
+              }
               player={userInfoRef.current}
               turnPlayer={gameState.turnPlayer}
-              isFolded={gameState.isFolded || gameState.state === "FINISHED"}
+              isFolded={
+                gameState.isFolded ||
+                gameState.state === "FINISHED" ||
+                gameState.state === "SHOWDOWN"
+              }
               isAllIn={gameState.isAllIn}
               currentBet={
                 gameState.currentBets[gameState.currentPlayerSeat] || 0

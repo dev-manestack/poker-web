@@ -212,6 +212,8 @@ function PokerActions({
           >
             {currentBet === currentRequiredBet
               ? "Check"
+              : currentRequiredBet - currentBet > stack
+              ? `All-In ${currentRequiredBet - currentBet}`
               : `Call ${currentRequiredBet - currentBet}₮`}
           </Button>
         </motion.div>
@@ -259,7 +261,7 @@ function PokerActions({
               }
             }}
           >
-            Raise
+            {selectedAmount === stack ? "All In" : `Raise ${selectedAmount}₮`}
           </Button>
         </motion.div>
       </Flex>

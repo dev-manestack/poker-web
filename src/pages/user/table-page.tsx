@@ -23,7 +23,7 @@ function TablePage() {
         icon={<LeftOutlined />}
         onClick={() => navigate("/")}
       >
-        Back
+        Буцах
       </Button>
       <TexasTableGame />
     </Flex>

@@ -547,9 +547,9 @@ function TexasTableGame({
           <Form
             onFinish={(e) => {
               if (modalType === "RECHARGE") {
-                recharge(e.amount);
+                recharge(rechargeAmount);
               } else {
-                takeSeat(selectedSeat ? selectedSeat : -1, e.amount);
+                takeSeat(selectedSeat ? selectedSeat : -1, rechargeAmount);
               }
             }}
           >

@@ -1,5 +1,8 @@
-import { Table, Typography, Grid } from "antd";
+import { Table, Typography, Grid, Flex } from "antd";
 import type { ColumnsType } from "antd/es/table";
+import type { GameTable } from "../../api/admin";
+import TexasTableGame from "./texas-table-game";
+import { useState } from "react";
 
 const { Title } = Typography;
 const { useBreakpoint } = Grid;
@@ -10,22 +13,9 @@ interface Player {
   amount: number;
 }
 
-interface TableDetailsProps {
-  table: {
-    tableName?: string;
-    players?: Player[];
-  } | null;
-}
-
-function TableDetails({ table }: TableDetailsProps) {
+function TableDetails({ table }: { table: GameTable | null }) {
   const screens = useBreakpoint();
-
-  const dataSource =
-    table?.players?.map((player) => ({
-      key: player.key,
-      name: player.name,
-      amount: player.amount,
-    })) || [];
+  const [dataSource, setDataSource] = useState<Player[]>([]);
 
   const mobileColumns: ColumnsType<Player> = [
     {
@@ -63,7 +53,7 @@ function TableDetails({ table }: TableDetailsProps) {
     <div
       style={{
         width: "100%",
-        height: "100%",
+        height: "400px",
       }}
     >
       <Table
@@ -85,6 +75,25 @@ function TableDetails({ table }: TableDetailsProps) {
           </Title>
         )}
       />
+      <Flex style={{ marginTop: "50px" }}>
+        <TexasTableGame
+          isPreview
+          previewTableId={table?.tableId ? String(table?.tableId) : ""}
+          setPreviewSeats={(seats) => {
+            const players: Player[] = [];
+            seats?.forEach((seat) => {
+              if (seat?.user) {
+                players.push({
+                  key: String(seat.user.userId),
+                  name: seat.user.username,
+                  amount: seat.stack,
+                });
+              }
+            });
+            setDataSource(players);
+          }}
+        />
+      </Flex>
     </div>
   );
 }

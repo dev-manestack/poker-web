@@ -6,14 +6,6 @@ export const containerStyles: CSSProperties = {
   overflow: "hidden",
 };
 
-export const tableWrapperStyles: CSSProperties = {
-  position: "absolute",
-  width: "60%",
-  height: "40%",
-  marginTop: "10%",
-  marginLeft: "20%",
-};
-
 export const tableStyles: CSSProperties = {
   width: "100%",
   height: "100%",

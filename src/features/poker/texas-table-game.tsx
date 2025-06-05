@@ -30,7 +30,6 @@ import type { User } from "../../api/user";
 import PokerChip from "./poker-chip";
 import {
   containerStyles,
-  tableWrapperStyles,
   tableStyles,
   contentStyles,
   playerCardStyle,
@@ -74,12 +73,18 @@ interface GameState {
 function TexasTableGame({
   isPreview = false,
   seatCount = 8,
+  previewTableId,
+  setPreviewSeats,
 }: {
   isPreview?: boolean;
   seatCount?: number;
+  previewTableId?: string;
+  setPreviewSeats?: (seats: GamePlayer[]) => void;
 }) {
   const navigate = useNavigate();
-  const { id: tableId } = useParams();
+  const { id: pathTableId } = useParams();
+  const [tableId, setTableId] = useState<string>("");
+  const [isDisconnected, setIsDisconnected] = useState(false);
   const [messageAPI, contextHolder] = message.useMessage();
   const [modalType, setModalType] = useState("");
   const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
@@ -283,15 +288,6 @@ function TexasTableGame({
             state: data?.state,
             currentBets: {},
             currentPot: data?.state === "FINISHED" ? 0 : data?.currentPot || 0,
-            seats:
-              data?.state === "FINISHED"
-                ? prevState.seats.map((seat) => {
-                    return {
-                      ...seat,
-                      holeCards: [],
-                    };
-                  })
-                : prevState.seats,
           };
           return newState;
         });
@@ -417,6 +413,7 @@ function TexasTableGame({
         const message: WebsocketEvent = JSON.parse(event.data);
         switch (message.type) {
           case "CONNECTED": {
+            setIsDisconnected(false);
             authenticateSocket();
             break;
           }
@@ -447,7 +444,11 @@ function TexasTableGame({
 
       ws.current.onclose = () => {
         console.log("WebSocket disconnected");
-        messageAPI.error("Таны холболт тасарлаа");
+        if (!isDisconnected) {
+          messageAPI.error("Холболт тасалдлаа. Дахин холбогдож байна...");
+          setIsDisconnected(true);
+        }
+
         ws.current = null;
         establishWebSocketConnection(2000);
       };
@@ -461,8 +462,24 @@ function TexasTableGame({
   };
 
   useEffect(() => {
-    establishWebSocketConnection();
-  }, []);
+    if (tableId.length > 0) {
+      establishWebSocketConnection();
+    }
+  }, [tableId]);
+
+  useEffect(() => {
+    if (previewTableId) {
+      setTableId(previewTableId);
+    } else if (pathTableId) {
+      setTableId(pathTableId);
+    }
+  }, [previewTableId, pathTableId]);
+
+  useEffect(() => {
+    if (setPreviewSeats) {
+      setPreviewSeats(gameState.seats);
+    }
+  }, [gameState]);
 
   if (!gameState.isAuthenticated) {
     return (
@@ -476,7 +493,12 @@ function TexasTableGame({
   }
 
   return (
-    <Flex vertical style={containerStyles}>
+    <Flex
+      vertical
+      style={{
+        ...containerStyles,
+      }}
+    >
       <Button
         type="primary"
         style={{
@@ -505,7 +527,15 @@ function TexasTableGame({
       >
         Цэнэглэх
       </Button>
-      <Flex style={tableWrapperStyles}>
+      <Flex
+        style={{
+          position: "absolute",
+          width: isPreview ? "100%" : "60%",
+          height: isPreview ? "100%" : "40%",
+          marginTop: isPreview ? "16px" : "10%",
+          marginLeft: isPreview ? "" : "20%",
+        }}
+      >
         {contextHolder}
         <Modal
           open={modalType?.length > 0}

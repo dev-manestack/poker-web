@@ -59,9 +59,9 @@ function UserHeader() {
     },
     {
       key: "4",
-      label: "Татан авалт",
+      label: "Данс",
       onClick: () => {
-        navigate("/withdraw");
+        navigate("/balance");
       },
       icon: <UserOutlined />,
     },

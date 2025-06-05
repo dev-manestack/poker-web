@@ -1,13 +1,4 @@
-import {
-  Button,
-  Flex,
-  Form,
-  message,
-  Modal,
-  Slider,
-  Spin,
-  Typography,
-} from "antd";
+import { Button, Flex, Form, message, Modal, Slider, Spin, Typography } from "antd";
 import { useEffect, useRef, useState } from "react";
 import PokerCard from "./poker-card";
 import "./texas-table-game.css";
@@ -16,13 +7,7 @@ import {
   DisconnectAudio,
   SuccessAudio,
 } from "../../assets/sounds";
-import {
-  websocketURL,
-  type GameCard,
-  type GamePlayer,
-  type TableState,
-  type WebsocketEvent,
-} from "../../api/game";
+import { websocketURL, type GameCard, type GamePlayer, type TableState, type WebsocketEvent } from "../../api/game";
 import { useNavigate, useParams } from "react-router";
 import TablePlayer from "./table-player";
 import PokerActions from "./poker-actions";
@@ -38,8 +23,13 @@ import {
   actionBarStyles,
   authLoadingStyles,
 } from "../../styles/PokerTableStyles.ts";
-import { LeftOutlined, PlusOutlined } from "@ant-design/icons";
 import { FundOutlined, WalletOutlined } from "@ant-design/icons";
+import { MdFullscreen } from "react-icons/md";
+import { FcMoneyTransfer } from "react-icons/fc";
+import { CiLogout } from "react-icons/ci";
+import { CiSaveUp1 } from "react-icons/ci";
+
+import { Tooltip } from "antd";
 
 interface GameState {
   minBuyIn: number;
@@ -60,14 +50,7 @@ interface GameState {
 
   currentPlayerSeat: number;
   communityCards?: GameCard[];
-  state:
-    | "WAITING_FOR_PLAYERS"
-    | "PRE_FLOP"
-    | "FLOP"
-    | "TURN"
-    | "RIVER"
-    | "SHOWDOWN"
-    | "FINISHED";
+  state: "WAITING_FOR_PLAYERS" | "PRE_FLOP" | "FLOP" | "TURN" | "RIVER" | "SHOWDOWN" | "FINISHED";
 }
 
 function TexasTableGame({
@@ -121,6 +104,8 @@ function TexasTableGame({
   const chipRadiusX = radiusX - 20;
   const chipRadiusY = radiusY - 20;
   const turnDuration = 10; // seconds
+
+  const userHasSeat = gameState.seats.some((seat) => seat.user?.userId === userInfoRef.current?.userId);
 
   const startTurnTimer = () => {
     if (timerRef.current) {
@@ -234,10 +219,8 @@ function TexasTableGame({
       currentBets: currentSession?.currentBets || gameState.currentBets,
       currentPot: currentSession?.currentPot || gameState.currentPot,
       state: currentSession?.state || gameState.state,
-      currentPlayerSeat:
-        currentSession?.currentPlayerSeat || gameState.currentPlayerSeat,
-      communityCards:
-        currentSession?.communityCards || gameState.communityCards,
+      currentPlayerSeat: currentSession?.currentPlayerSeat || gameState.currentPlayerSeat,
+      communityCards: currentSession?.communityCards || gameState.communityCards,
       isSpectator: data?.isSpectator || false,
     }));
     switch (data.action) {
@@ -303,10 +286,7 @@ function TexasTableGame({
           };
           return newState;
         });
-        if (
-          gameState.state !== "FINISHED" &&
-          gameState.state !== "WAITING_FOR_PLAYERS"
-        ) {
+        if (gameState.state !== "FINISHED" && gameState.state !== "WAITING_FOR_PLAYERS") {
           startTurnTimer();
         }
         break;
@@ -316,9 +296,7 @@ function TexasTableGame({
         setGameState((prevState) => ({
           ...prevState,
           seats: prevState.seats.map((seat, idx) =>
-            data?.holeCards?.[idx]
-              ? { ...seat, holeCards: data.holeCards[idx], hand: null }
-              : seat
+            data?.holeCards?.[idx] ? { ...seat, holeCards: data.holeCards[idx], hand: null } : seat
           ),
         }));
         break;
@@ -402,6 +380,13 @@ function TexasTableGame({
     );
   };
 
+  const seatOut = () => {
+    // Remove player from their seat
+    leaveSeat(selectedSeat || 0); // your existing seat leave logic
+    setSelectedSeat(null); // or however you're clearing the seat
+    console.log("Player has left the seat");
+  };
+
   const establishWebSocketConnection = (delay = 0) => {
     if (ws.current) {
       return;
@@ -431,9 +416,7 @@ function TexasTableGame({
             break;
           }
           case "ERROR": {
-            messageAPI.error(
-              message.data?.error ? message.data.error : "Алдаа гарлаа"
-            );
+            messageAPI.error(message.data?.error ? message.data.error : "Алдаа гарлаа");
             break;
           }
         }
@@ -486,9 +469,7 @@ function TexasTableGame({
     return (
       <Flex style={authLoadingStyles}>
         <Spin />
-        <Typography.Text className="auth-waiting-text">
-          Та түр хүлээнэ үү.
-        </Typography.Text>
+        <Typography.Text className="auth-waiting-text">Та түр хүлээнэ үү.</Typography.Text>
       </Flex>
     );
   }
@@ -500,34 +481,97 @@ function TexasTableGame({
         ...containerStyles,
       }}
     >
-      <Button
-        type="primary"
-        style={{
-          position: "absolute",
-          top: 20,
-          left: 20,
-        }}
-        icon={<LeftOutlined />}
-        onClick={() => {
-          leaveSeat(selectedSeat || 0);
-          navigate("/");
-        }}
-      >
-        Гарах
-      </Button>
-      <Button
-        style={{
-          position: "absolute",
-          top: 20,
-          right: 20,
-        }}
-        icon={<PlusOutlined />}
-        onClick={() => {
-          setModalType("RECHARGE");
-        }}
-      >
-        Цэнэглэх
-      </Button>
+      {!isPreview && (
+        <Button
+          type="primary"
+          style={{
+            position: "absolute",
+            top: 20,
+            left: 20,
+            padding: "6px 12px",
+            width: 40,
+            height: 40,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+          icon={<CiLogout size={24} />}
+          onClick={() => {
+            leaveSeat(selectedSeat || 0);
+            navigate("/");
+          }}
+        />
+      )}
+
+      {!isPreview && (
+        <Button
+          style={{
+            position: "absolute",
+            top: 17,
+            right: 130,
+            width: 40,
+            height: 40,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: userHasSeat ? "white" : "#888888",
+            backgroundColor: "transparent",
+            border: "none",
+            boxShadow: "none",
+            outline: "none",
+          }}
+          icon={<CiSaveUp1 size={35} />}
+          disabled={!userHasSeat}
+          onClick={() => {
+            if (userHasSeat) {
+              seatOut(); // use the function
+            }
+          }}
+        />
+      )}
+      {!isPreview && (
+        <Button
+          type="text"
+          style={{
+            position: "absolute",
+            top: 21,
+            right: 80,
+            padding: 0,
+            height: "auto",
+            width: "auto",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+          onClick={() => setModalType("RECHARGE")}
+        >
+          <FcMoneyTransfer style={{ fontSize: 30, color: "white" }} />
+        </Button>
+      )}
+
+      {!isPreview && (
+        <Tooltip title="Full screen" mouseEnterDelay={0} mouseLeaveDelay={0}>
+          <MdFullscreen
+            onClick={() => {
+              const elem = document.documentElement;
+              if (!document.fullscreenElement) {
+                elem.requestFullscreen();
+              } else {
+                document.exitFullscreen();
+              }
+            }}
+            style={{
+              fontSize: 35,
+              color: "white",
+              position: "absolute",
+              top: 18,
+              right: 30,
+              cursor: "pointer",
+            }}
+          />
+        </Tooltip>
+      )}
+
       <Flex
         style={{
           position: "absolute",
@@ -563,8 +607,7 @@ function TexasTableGame({
                   </p>
                   <p>
                     <WalletOutlined style={{ marginRight: 8 }} />
-                    Available balance:{" "}
-                    {gameState.usableBalance.toLocaleString("mn-MN")}₮
+                    Available balance: {gameState.usableBalance.toLocaleString("mn-MN")}₮
                   </p>
                 </div>
 
@@ -600,10 +643,7 @@ function TexasTableGame({
                   <Button
                     onClick={() => {
                       setRechargeAmount((prevValue) => {
-                        if (
-                          prevValue - gameState.bigBlind <
-                          gameState.minBuyIn
-                        ) {
+                        if (prevValue - gameState.bigBlind < gameState.minBuyIn) {
                           return gameState.minBuyIn;
                         }
                         return prevValue - gameState.bigBlind;
@@ -624,16 +664,10 @@ function TexasTableGame({
                   <Button
                     onClick={() =>
                       setRechargeAmount((prevValue) => {
-                        if (
-                          prevValue + gameState.bigBlind >
-                          gameState.maxBuyIn
-                        ) {
+                        if (prevValue + gameState.bigBlind > gameState.maxBuyIn) {
                           return gameState.maxBuyIn;
                         }
-                        if (
-                          prevValue + gameState.bigBlind >
-                          gameState.usableBalance
-                        ) {
+                        if (prevValue + gameState.bigBlind > gameState.usableBalance) {
                           return prevValue;
                         }
                         return prevValue + gameState.bigBlind;
@@ -706,9 +740,7 @@ function TexasTableGame({
         </Modal>
         <div style={tableStyles}>
           <Flex style={contentStyles} vertical gap={12}>
-            <Typography.Text style={{ color: "#fff" }}>
-              Current stage: {gameState.state}
-            </Typography.Text>
+            <Typography.Text style={{ color: "#fff" }}>Current stage: {gameState.state}</Typography.Text>
 
             <Flex gap={12} style={{ width: "100%", justifyContent: "center" }}>
               {gameState.communityCards?.map((communityCard, index) => {
@@ -716,10 +748,7 @@ function TexasTableGame({
                 gameState.seats.forEach((seat) => {
                   if (userInfoRef.current?.userId === seat.user?.userId) {
                     seat?.hand?.combinationCards?.forEach((card) => {
-                      if (
-                        card.suit === communityCard.suit &&
-                        card.rank === communityCard.rank
-                      ) {
+                      if (card.suit === communityCard.suit && card.rank === communityCard.rank) {
                         isMyCard = true;
                       }
                     });
@@ -764,9 +793,7 @@ function TexasTableGame({
                         player={seat}
                         isTurn={i === gameState.currentPlayerSeat}
                         holeCards={seat?.holeCards || []}
-                        progress={
-                          i === gameState.currentPlayerSeat ? turnProgress : 0
-                        }
+                        progress={i === gameState.currentPlayerSeat ? turnProgress : 0}
                       />
                     </Flex>
                   ) : (
@@ -811,25 +838,14 @@ function TexasTableGame({
           {gameState.state !== "WAITING_FOR_PLAYERS" && (
             <PokerActions
               stack={
-                gameState.seats?.filter(
-                  (seat) => seat.user?.userId === userInfoRef.current?.userId
-                )[0]?.stack || 0
+                gameState.seats?.filter((seat) => seat.user?.userId === userInfoRef.current?.userId)[0]?.stack || 0
               }
               player={userInfoRef.current}
               turnPlayer={gameState.turnPlayer}
-              isFolded={
-                gameState.isFolded ||
-                gameState.state === "FINISHED" ||
-                gameState.state === "SHOWDOWN"
-              }
+              isFolded={gameState.isFolded || gameState.state === "FINISHED" || gameState.state === "SHOWDOWN"}
               isAllIn={gameState.isAllIn}
-              currentBet={
-                gameState.currentBets[gameState.currentPlayerSeat] || 0
-              }
-              currentRequiredBet={Math.max(
-                ...Object.values(gameState.currentBets),
-                0
-              )}
+              currentBet={gameState.currentBets[gameState.currentPlayerSeat] || 0}
+              currentRequiredBet={Math.max(...Object.values(gameState.currentBets), 0)}
               currentPot={gameState.currentPot}
               minRaise={gameState.bigBlind}
               sendAction={(action, amount) => sendGameAction(action, amount)}

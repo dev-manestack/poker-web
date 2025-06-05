@@ -9,14 +9,8 @@ import type { ColumnsType } from "antd/es/table";
 const currencySymbol = "₮";
 const { useBreakpoint } = Grid;
 
-function TableList({
-  setSelectedTable,
-}: {
-  setSelectedTable: (table: any) => void;
-}) {
-  const [selectedRowKey, setSelectedRowKey] = useState<string | number | null>(
-    null
-  );
+function TableList({ setSelectedTable }: { setSelectedTable: (table: any) => void }) {
+  const [selectedRowKey, setSelectedRowKey] = useState<string | number | null>(null);
   const navigate = useNavigate();
   const { data: tableData } = useFetchTablesQuery();
   const screens = useBreakpoint();
@@ -32,9 +26,9 @@ function TableList({
 
   const renderBuyInRange = useCallback(
     (_: any, record: GameTable) =>
-      `${currencySymbol}${record.minBuyIn.toLocaleString(
+      `${currencySymbol}${record.minBuyIn.toLocaleString("mn-MN")} / ${currencySymbol}${record.maxBuyIn.toLocaleString(
         "mn-MN"
-      )} / ${currencySymbol}${record.maxBuyIn.toLocaleString("mn-MN")}`,
+      )}`,
     []
   );
 
@@ -88,7 +82,7 @@ function TableList({
         key: "maxPlayers",
       },
       {
-        title: "Үл",
+        title: "Ул",
         key: "blinds",
         render: renderBlinds,
       },
@@ -103,9 +97,7 @@ function TableList({
 
   const renderMobileVariant = useCallback(
     (_: any, record: GameTable) => (
-      <div style={{ fontSize: 12, padding: "8px 12px" }}>
-        {record.variant === "TEXAS" ? "HOLD'EM" : "Unknown"}
-      </div>
+      <div style={{ fontSize: 12, padding: "8px 12px" }}>{record.variant === "TEXAS" ? "HOLD'EM" : "Unknown"}</div>
     ),
     []
   );
@@ -122,18 +114,14 @@ function TableList({
   const renderMobileBlinds = useCallback(
     (_: any, record: GameTable) => (
       <div style={{ padding: "8px 12px" }}>
-        {`${record.smallBlind.toLocaleString(
-          "mn-MN"
-        )} / ${record.bigBlind.toLocaleString("mn-MN")}`}
+        {`${record.smallBlind.toLocaleString("mn-MN")} / ${record.bigBlind.toLocaleString("mn-MN")}`}
       </div>
     ),
     []
   );
 
   const renderMobilePlayers = useCallback(
-    (_: any, record: GameTable) => (
-      <div style={{ padding: "8px 12px" }}>{record.maxPlayers}</div>
-    ),
+    (_: any, record: GameTable) => <div style={{ padding: "8px 12px" }}>{record.maxPlayers}</div>,
     []
   );
 
@@ -165,12 +153,7 @@ function TableList({
         render: renderMobilePlayers,
       },
     ],
-    [
-      renderMobileVariant,
-      renderMobileTableName,
-      renderMobileBlinds,
-      renderMobilePlayers,
-    ]
+    [renderMobileVariant, renderMobileTableName, renderMobileBlinds, renderMobilePlayers]
   );
 
   const handleRowClick = useCallback(
@@ -193,14 +176,12 @@ function TableList({
           columns={screens.xs ? mobileColumns : desktopColumns}
           dataSource={tableData}
           rowKey="tableId"
-          pagination={{ pageSize: screens.xs ? 5 : 10 }}
+          pagination={false}
           scroll={{ x: "max-content" }}
           onRow={(record) => ({
             onClick: () => handleRowClick(record),
           })}
-          rowClassName={(record) =>
-            record.tableId === selectedRowKey ? "selected-row" : "hover-row"
-          }
+          rowClassName={(record) => (record.tableId === selectedRowKey ? "selected-row" : "hover-row")}
           style={{
             fontSize: screens.xs ? 14 : 16,
           }}

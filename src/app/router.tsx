@@ -102,7 +102,7 @@ function Router() {
           }
         />
         <Route
-          path="/withdraw"
+          path="/balance"
           element={
             <UserLayout>
               <UserWithdrawPage />

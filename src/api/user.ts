@@ -13,11 +13,26 @@ interface User {
   bankName: string;
   accountNumber: string;
   password: string;
+  userBalance: {
+    balance: number;
+    lockedAmount: number;
+  };
 }
 
 interface LoginCredentials {
   email: string;
   password: string;
+}
+
+interface Outcome {
+  outcomeId: number;
+  user: User;
+  amount: number;
+  type: string; // e.g., "GAMEPLAY"
+  gameSessionId: number;
+  createDate: string; // ISO date string
+  accountDate: string | null; // ISO date string or null
+  accounted: boolean;
 }
 
 const rawBaseQuery = fetchBaseQuery({
@@ -44,7 +59,13 @@ const baseQuery: typeof rawBaseQuery = async (args, api, extraOptions) => {
 export const userApi = createApi({
   reducerPath: "userApi",
   baseQuery: baseQuery,
-  tagTypes: ["UserList", "tables"],
+  tagTypes: [
+    "UserList",
+    "tables",
+    "DepositList",
+    "WithdrawList",
+    "OutcomeList",
+  ],
   endpoints: (builder) => ({
     login: builder.mutation({
       query: (credentials: LoginCredentials) => ({
@@ -80,6 +101,35 @@ export const userApi = createApi({
       }),
       providesTags: ["tables"],
     }),
+    fetchDeposits: builder.query<any, void>({
+      query: () => ({
+        url: "/deposit",
+        method: "GET",
+      }),
+      providesTags: ["DepositList"],
+    }),
+    fetchWithdrawals: builder.query<any, void>({
+      query: () => ({
+        url: "/withdrawal",
+        method: "GET",
+      }),
+      providesTags: ["WithdrawList"],
+    }),
+    createWithdrawal: builder.mutation({
+      query: (withdrawalData: { amount: number; details: any }) => ({
+        url: "/withdrawal",
+        method: "POST",
+        body: withdrawalData,
+      }),
+      invalidatesTags: ["WithdrawList"],
+    }),
+    fetchOutcomes: builder.query<Outcome[], void>({
+      query: () => ({
+        url: "/outcome",
+        method: "GET",
+      }),
+      providesTags: ["OutcomeList"],
+    }),
   }),
 });
 
@@ -89,5 +139,9 @@ export const {
   useMeQuery,
   useFetchTablesQuery,
   useSearchUsersQuery,
+  useFetchDepositsQuery,
+  useFetchWithdrawalsQuery,
+  useCreateWithdrawalMutation,
+  useFetchOutcomesQuery,
 } = userApi;
 export type { User, LoginCredentials };

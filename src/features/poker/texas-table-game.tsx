@@ -110,6 +110,7 @@ function TexasTableGame({
   const [turnProgress, setTurnProgress] = useState(1); // 1 = 100%, 0 = 0%
   const timerRef = useRef<number | null>(null);
   const userInfoRef = useRef<User | null>(null);
+  const [rechargeAmount, setRechargeAmount] = useState<number>(0);
 
   const ws = useRef<WebSocket | null>(null);
 
@@ -558,11 +559,12 @@ function TexasTableGame({
                 <div style={{ marginBottom: 16 }}>
                   <p>
                     <FundOutlined style={{ marginRight: 8 }} />
-                    Game Type: Texas 2,500/5,000
+                    Game Type: Texas {gameState.smallBlind}/{gameState.bigBlind}
                   </p>
                   <p>
                     <WalletOutlined style={{ marginRight: 8 }} />
-                    Available balance: 120,000₮
+                    Available balance:{" "}
+                    {gameState.usableBalance.toLocaleString("mn-MN")}₮
                   </p>
                 </div>
 
@@ -584,11 +586,10 @@ function TexasTableGame({
                       fontWeight: 600,
                     }}
                   >
-                    100,000₮
+                    {rechargeAmount.toLocaleString("mn-MN")}₮
                   </span>
                 </div>
 
-                {/* Slider with - and + buttons */}
                 <div
                   style={{
                     display: "flex",
@@ -596,24 +597,97 @@ function TexasTableGame({
                     gap: 8,
                   }}
                 >
-                  <Button>-</Button>
+                  <Button
+                    onClick={() => {
+                      setRechargeAmount((prevValue) => {
+                        if (
+                          prevValue - gameState.bigBlind <
+                          gameState.minBuyIn
+                        ) {
+                          return gameState.minBuyIn;
+                        }
+                        return prevValue - gameState.bigBlind;
+                      });
+                    }}
+                  >
+                    -
+                  </Button>
                   <div style={{ flexGrow: 1 }}>
                     <Slider
-                      min={25000}
-                      max={100000}
-                      defaultValue={100000}
-                      style={{ height: 8 }} // Increased height
+                      min={gameState.minBuyIn}
+                      max={gameState.maxBuyIn}
+                      value={rechargeAmount}
+                      onChange={(value) => setRechargeAmount(value)}
+                      style={{ height: 8 }}
                     />
                   </div>
-                  <Button>+</Button>
+                  <Button
+                    onClick={() =>
+                      setRechargeAmount((prevValue) => {
+                        if (
+                          prevValue + gameState.bigBlind >
+                          gameState.maxBuyIn
+                        ) {
+                          return gameState.maxBuyIn;
+                        }
+                        if (
+                          prevValue + gameState.bigBlind >
+                          gameState.usableBalance
+                        ) {
+                          return prevValue;
+                        }
+                        return prevValue + gameState.bigBlind;
+                      })
+                    }
+                  >
+                    +
+                  </Button>
                 </div>
 
                 {/* Preset Buttons */}
                 <div style={{ marginTop: 16, display: "flex", gap: 8 }}>
-                  <Button>Min</Button>
-                  <Button>40BB</Button>
-                  <Button>70BB</Button>
-                  <Button>Max</Button>
+                  <Button
+                    onClick={() => {
+                      setRechargeAmount(gameState.minBuyIn);
+                    }}
+                  >
+                    Min
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      if (gameState.usableBalance < gameState.bigBlind * 40) {
+                        setRechargeAmount(gameState.usableBalance);
+                      } else if (gameState.maxBuyIn < gameState.bigBlind * 40) {
+                        setRechargeAmount(gameState.maxBuyIn);
+                      } else {
+                        setRechargeAmount(gameState.bigBlind * 40);
+                      }
+                    }}
+                  >
+                    40BB
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      if (gameState.usableBalance < gameState.bigBlind * 20) {
+                        setRechargeAmount(gameState.usableBalance);
+                      } else {
+                        setRechargeAmount(gameState.bigBlind * 20);
+                      }
+                    }}
+                  >
+                    70BB
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      if (gameState.usableBalance < gameState.maxBuyIn) {
+                        setRechargeAmount(gameState.usableBalance);
+                      } else {
+                        setRechargeAmount(gameState.maxBuyIn);
+                      }
+                    }}
+                  >
+                    Max
+                  </Button>
                 </div>
               </>
             </Form.Item>

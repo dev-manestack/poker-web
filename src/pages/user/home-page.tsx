@@ -2,9 +2,10 @@ import { Row, Col, Tabs, type TabsProps } from "antd";
 import TableList from "../../features/poker/table-list";
 import { useState } from "react";
 import TableDetails from "../../features/poker/table-details";
+import type { GameTable } from "../../api/admin";
 
 function HomePage() {
-  const [selectedTable, setSelectedTable] = useState<any>(null);
+  const [selectedTable, setSelectedTable] = useState<GameTable | null>(null);
 
   const tabItems: TabsProps["items"] = [
     {

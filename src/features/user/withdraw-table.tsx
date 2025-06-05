@@ -6,7 +6,7 @@ import {
 import { PlusOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 
-function WithdrawTable() {
+function WithdrawTable({ balance }: { balance?: number }) {
   const { data } = useFetchWithdrawalsQuery();
   const [messageAPI, contextHolder] = message.useMessage();
   const [
@@ -136,7 +136,7 @@ function WithdrawTable() {
             name="amount"
             rules={[{ required: true, message: "Дүнг оруулна уу!" }]}
           >
-            <Slider />
+            <Slider max={balance ? balance : 0} min={1000} />
           </Form.Item>
           <Form.Item wrapperCol={{ offset: 6, span: 18 }}>
             <Flex justify="end" align="center" gap={8}>

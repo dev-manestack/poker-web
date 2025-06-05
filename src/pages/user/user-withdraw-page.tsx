@@ -71,7 +71,7 @@ function UserWithdrawPage() {
           {
             key: "2",
             label: "Татан авалт",
-            children: <WithdrawTable />,
+            children: <WithdrawTable balance={data?.userBalance?.balance} />,
           },
           {
             key: "3",

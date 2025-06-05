@@ -219,7 +219,7 @@ function PokerActions({
             {currentBet === currentRequiredBet
               ? "Check"
               : currentRequiredBet - currentBet > stack
-              ? `All-In ${currentRequiredBet - currentBet}`
+              ? `All-In ${stack}`
               : `Call ${currentRequiredBet - currentBet}₮`}
           </Button>
         </motion.div>

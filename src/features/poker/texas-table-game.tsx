@@ -79,6 +79,7 @@ function TexasTableGame({
 }) {
   const navigate = useNavigate();
   const { id: tableId } = useParams();
+  const [isDisconnected, setIsDisconnected] = useState(false);
   const [messageAPI, contextHolder] = message.useMessage();
   const [modalType, setModalType] = useState("");
   const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
@@ -282,15 +283,6 @@ function TexasTableGame({
             state: data?.state,
             currentBets: {},
             currentPot: data?.state === "FINISHED" ? 0 : data?.currentPot || 0,
-            seats:
-              data?.state === "FINISHED"
-                ? prevState.seats.map((seat) => {
-                    return {
-                      ...seat,
-                      holeCards: [],
-                    };
-                  })
-                : prevState.seats,
           };
           return newState;
         });
@@ -416,6 +408,7 @@ function TexasTableGame({
         const message: WebsocketEvent = JSON.parse(event.data);
         switch (message.type) {
           case "CONNECTED": {
+            setIsDisconnected(false);
             authenticateSocket();
             break;
           }
@@ -446,7 +439,11 @@ function TexasTableGame({
 
       ws.current.onclose = () => {
         console.log("WebSocket disconnected");
-        messageAPI.error("Таны холболт тасарлаа");
+        if (!isDisconnected) {
+          messageAPI.error("Холболт тасалдлаа. Дахин холбогдож байна...");
+          setIsDisconnected(true);
+        }
+
         ws.current = null;
         establishWebSocketConnection(2000);
       };

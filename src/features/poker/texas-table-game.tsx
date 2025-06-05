@@ -467,7 +467,9 @@ function TexasTableGame({
     return (
       <Flex style={authLoadingStyles}>
         <Spin />
-        <Typography.Text>Та түр хүлээнэ үү.</Typography.Text>
+        <Typography.Text className="auth-waiting-text">
+          Та түр хүлээнэ үү.
+        </Typography.Text>
       </Flex>
     );
   }

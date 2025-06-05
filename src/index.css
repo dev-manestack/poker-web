@@ -4,3 +4,15 @@
   margin: 0;
   padding: 0;
 }
+
+.custom-menu-icon {
+  color: black !important;
+}
+.dark .custom-menu-icon {
+  color: #fff !important;
+}
+
+.auth-waiting-text {
+  color: #fff;
+  font-weight: 500;
+}

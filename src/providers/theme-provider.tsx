@@ -39,9 +39,9 @@ const pokerDarkTheme = {
     colorWarning: "#ffb300",
     colorError: "#e53935",
     borderRadius: 6,
-    colorBgBase: "#121212", // dark background
+    colorBgBase: "#2C2F33", // dark background
     colorTextBase: "#e0e0e0",
-    colorBgContainer: "#1e1e1e",
+    colorBgContainer: "#2C2F33",
     fontFamily: "Play, sans-serif",
   },
   components: {

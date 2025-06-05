@@ -16,3 +16,26 @@
     display: none;
   }
 }
+
+.ant-slider {
+  height: 8px;
+}
+
+.ant-slider-track {
+  height: 8px;
+}
+
+.ant-slider-rail {
+  height: 8px;
+}
+
+.ant-slider-handle::after {
+  height: 13px !important;
+  width: 13px !important;
+}
+.ant-slider-handle::before {
+  height: 13px !important;
+  width: 13px !important;
+  inset-inline-start: 0px !important;
+  inset-block-start: 0px !important;
+}

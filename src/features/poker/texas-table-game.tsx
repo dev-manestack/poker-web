@@ -40,6 +40,7 @@ import {
   authLoadingStyles,
 } from "../../styles/PokerTableStyles.ts";
 import { LeftOutlined, PlusOutlined } from "@ant-design/icons";
+import { FundOutlined, WalletOutlined } from "@ant-design/icons";
 
 interface GameState {
   minBuyIn: number;
@@ -521,16 +522,72 @@ function TexasTableGame({
               }
             }}
           >
-            <Form.Item label="Хэмжээ" name={"amount"}>
-              <Slider
-                min={gameState.minBuyIn}
-                max={
-                  gameState.usableBalance > gameState.maxBuyIn
-                    ? gameState.maxBuyIn
-                    : gameState.usableBalance
-                }
-              />
+            <Form.Item>
+              <>
+                {/* Game Info with icons */}
+                <div style={{ marginBottom: 16 }}>
+                  <p>
+                    <FundOutlined style={{ marginRight: 8 }} />
+                    Game Type: Texas 2,500/5,000
+                  </p>
+                  <p>
+                    <WalletOutlined style={{ marginRight: 8 }} />
+                    Available balance: 120,000₮
+                  </p>
+                </div>
+
+                {/* Хэмжээ and Selected Amount */}
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: 12,
+                  }}
+                >
+                  <span style={{ fontWeight: 500 }}>Хэмжээ</span>
+                  <span
+                    style={{
+                      padding: "6px 10px",
+                      background: "#f5f5f5 !important",
+                      borderRadius: 8,
+                      fontWeight: 600,
+                    }}
+                  >
+                    100,000₮
+                  </span>
+                </div>
+
+                {/* Slider with - and + buttons */}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                  }}
+                >
+                  <Button>-</Button>
+                  <div style={{ flexGrow: 1 }}>
+                    <Slider
+                      min={25000}
+                      max={100000}
+                      defaultValue={100000}
+                      style={{ height: 8 }} // Increased height
+                    />
+                  </div>
+                  <Button>+</Button>
+                </div>
+
+                {/* Preset Buttons */}
+                <div style={{ marginTop: 16, display: "flex", gap: 8 }}>
+                  <Button>Min</Button>
+                  <Button>40BB</Button>
+                  <Button>70BB</Button>
+                  <Button>Max</Button>
+                </div>
+              </>
             </Form.Item>
+
             <Form.Item
               style={{
                 display: "flex",

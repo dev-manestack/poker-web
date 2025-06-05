@@ -1,0 +1,27 @@
+.ant-table-thead > tr > th {
+  border: none !important;
+  cursor: pointer;
+}
+
+:where(.ant-table-wrapper) .ant-table-thead > tr > th::before,
+:where(.ant-table-wrapper) .ant-table-thead > tr > td::before {
+  display: none !important;
+  width: 0 !important;
+  background: none !important;
+  content: none !important;
+}
+
+@media (max-width: 768px) {
+  .ant-table {
+    width: 100% !important;
+  }
+  .ant-table-cell {
+    font-size: 12px !important;
+    padding: 0 !important;
+  }
+
+  .ant-btn {
+    font-size: 12px !important;
+    padding: 4px 8px !important;
+  }
+}

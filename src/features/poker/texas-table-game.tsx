@@ -545,7 +545,7 @@ function TexasTableGame({
           onCancel={() => setModalType("")}
         >
           <Form
-            onFinish={(e) => {
+            onFinish={() => {
               if (modalType === "RECHARGE") {
                 recharge(rechargeAmount);
               } else {

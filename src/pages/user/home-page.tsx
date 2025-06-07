@@ -3,6 +3,7 @@ import TableList from "../../features/poker/table-list";
 import { useState } from "react";
 import TableDetails from "../../features/poker/table-details";
 import type { GameTable } from "../../api/admin";
+import "../../index.css"; // 👈 Add this line for custom styling
 
 function HomePage() {
   const [selectedTable, setSelectedTable] = useState<GameTable | null>(null);
@@ -10,7 +11,7 @@ function HomePage() {
   const tabItems: TabsProps["items"] = [
     {
       key: "1",
-      label: "Ширээ",
+      label: <div className="custom-tab-label">Ширээ</div>,
       children: (
         <Row gutter={[16, 16]} style={{ height: "100%" }}>
           <Col xs={24} md={16} style={{ height: "100%" }}>
@@ -39,7 +40,7 @@ function HomePage() {
     },
     {
       key: "2",
-      label: "Тэмцээн",
+      label: <div className="custom-tab-label">Тэмцээн</div>,
       children: <div>Тоглогчид</div>,
       disabled: true,
     },
@@ -47,11 +48,7 @@ function HomePage() {
 
   return (
     <div style={{ padding: 20, height: "100%" }}>
-      <Tabs
-        style={{ width: "100%", height: "100%" }}
-        defaultActiveKey="1"
-        items={tabItems}
-      />
+      <Tabs className="custom-tabs" style={{ width: "100%", height: "100%" }} defaultActiveKey="1" items={tabItems} />
     </div>
   );
 }

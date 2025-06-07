@@ -4,6 +4,7 @@ export const containerStyles: CSSProperties = {
   width: "100vw",
   height: "100%",
   overflow: "hidden",
+  background: "#2C2F33",
 };
 
 export const tableStyles: CSSProperties = {

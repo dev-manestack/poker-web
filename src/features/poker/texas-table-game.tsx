@@ -24,12 +24,8 @@ import {
   authLoadingStyles,
 } from "../../styles/PokerTableStyles.ts";
 import { FundOutlined, WalletOutlined } from "@ant-design/icons";
-import { MdFullscreen } from "react-icons/md";
-import { FcMoneyTransfer } from "react-icons/fc";
-import { CiLogout } from "react-icons/ci";
-import { CiSaveUp1 } from "react-icons/ci";
-
-import { Tooltip } from "antd";
+import TableActionButtons from "./TableActionButtons.tsx"; // adjust path
+import useResponsiveTableSize from "../../hooks/useResponsiveTableSize.tsx"; // adjust path as needed
 
 interface GameState {
   minBuyIn: number;
@@ -104,6 +100,8 @@ function TexasTableGame({
   const chipRadiusX = radiusX - 20;
   const chipRadiusY = radiusY - 20;
   const turnDuration = 10; // seconds
+
+  const { width, height } = useResponsiveTableSize(isPreview);
 
   const userHasSeat = gameState.seats.some((seat) => seat.user?.userId === userInfoRef.current?.userId);
 
@@ -474,6 +472,12 @@ function TexasTableGame({
     );
   }
 
+  const iconBtnStyle = () => ({
+    background: "transparent",
+    border: "none",
+    color: "white",
+  });
+
   return (
     <Flex
       vertical
@@ -481,105 +485,40 @@ function TexasTableGame({
         ...containerStyles,
       }}
     >
-      {!isPreview && (
-        <Button
-          type="primary"
-          style={{
-            position: "absolute",
-            top: 20,
-            left: 20,
-            padding: "6px 12px",
-            width: 40,
-            height: 40,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-          icon={<CiLogout size={24} />}
-          onClick={() => {
-            leaveSeat(selectedSeat || 0);
-            navigate("/");
-          }}
-        />
-      )}
-
-      {!isPreview && (
-        <Button
-          style={{
-            position: "absolute",
-            top: 17,
-            right: 130,
-            width: 40,
-            height: 40,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: userHasSeat ? "white" : "#888888",
-            backgroundColor: "transparent",
-            border: "none",
-            boxShadow: "none",
-            outline: "none",
-          }}
-          icon={<CiSaveUp1 size={35} />}
-          disabled={!userHasSeat}
-          onClick={() => {
-            if (userHasSeat) {
-              seatOut(); // use the function
-            }
-          }}
-        />
-      )}
-      {!isPreview && (
-        <Button
-          type="text"
-          style={{
-            position: "absolute",
-            top: 21,
-            right: 80,
-            padding: 0,
-            height: "auto",
-            width: "auto",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-          onClick={() => setModalType("RECHARGE")}
-        >
-          <FcMoneyTransfer style={{ fontSize: 30, color: "white" }} />
-        </Button>
-      )}
-
-      {!isPreview && (
-        <Tooltip title="Full screen" mouseEnterDelay={0} mouseLeaveDelay={0}>
-          <MdFullscreen
-            onClick={() => {
-              const elem = document.documentElement;
-              if (!document.fullscreenElement) {
-                elem.requestFullscreen();
-              } else {
-                document.exitFullscreen();
-              }
-            }}
-            style={{
-              fontSize: 35,
-              color: "white",
-              position: "absolute",
-              top: 18,
-              right: 30,
-              cursor: "pointer",
-            }}
-          />
-        </Tooltip>
-      )}
-
+      <TableActionButtons
+        isPreview={isPreview}
+        iconBtnStyle={iconBtnStyle}
+        setModalType={setModalType}
+        userHasSeat={userHasSeat}
+        seatOut={seatOut}
+        leaveSeat={leaveSeat}
+        selectedSeat={selectedSeat ?? undefined}
+        navigate={navigate}
+      />
       <Flex
-        style={{
-          position: "absolute",
-          width: isPreview ? "100%" : "60%",
-          height: isPreview ? "100%" : "40%",
-          marginTop: isPreview ? "16px" : "10%",
-          marginLeft: isPreview ? "" : "20%",
-        }}
+        style={
+          isPreview
+            ? {
+                position: "absolute",
+                top: "100%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                width: width,
+                height: height,
+                marginTop: 0,
+                marginLeft: 0,
+              }
+            : {
+                position: "absolute",
+                top: "45%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                width: width,
+                height: height,
+                marginTop: 0,
+                marginLeft: 0,
+              }
+        }
       >
         {contextHolder}
         <Modal
@@ -778,14 +717,18 @@ function TexasTableGame({
 
               return (
                 <Button
-                  className="seat"
+                  className={`seat${isPreview ? " preview" : ""}`}
                   key={i}
                   onClick={() => {
                     setSelectedSeat(i);
                     setModalType("TAKE_SEAT");
                   }}
                   disabled={isPreview}
-                  style={{ ...playerSeatStyle, left: `${x}%`, top: `${y}%` }}
+                  style={{
+                    ...playerSeatStyle,
+                    left: `${x}%`,
+                    top: `${y}%`,
+                  }}
                 >
                   {seat?.user?.userId ? (
                     <Flex style={{ marginTop: "-100px" }}>

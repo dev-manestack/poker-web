@@ -16,3 +16,35 @@
   color: #fff;
   font-weight: 500;
 }
+
+/* HomePage.css */
+
+.custom-tabs .ant-tabs-tab {
+  background-color: #1e1e1e;
+  border-radius: 10px;
+  margin-right: 12px;
+  padding: 8px 16px;
+  color: white;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.custom-tabs .ant-tabs-tab-active {
+  background-color: #f37b06 !important;
+  color: white !important;
+}
+
+.custom-tabs .ant-tabs-ink-bar {
+  display: none !important;
+}
+
+.custom-tabs .ant-tabs-tab-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.custom-tab-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

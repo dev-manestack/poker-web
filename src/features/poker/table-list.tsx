@@ -44,6 +44,7 @@ function TableList({ setSelectedTable }: { setSelectedTable: (table: any) => voi
     (_: any, record: GameTable) => (
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
         <Button
+          style={{ background: "#f37b06" }}
           type="primary"
           onClick={() => {
             navigate("/table/" + record.tableId);

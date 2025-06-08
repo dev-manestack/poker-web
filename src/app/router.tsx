@@ -11,6 +11,7 @@ import AdminSettingsPage from "../pages/admin/admin-settings-page";
 import AdminTable from "../pages/admin/admin-table";
 import ProfilePage from "../pages/user/profile-page";
 import UserWithdrawPage from "../pages/user/user-withdraw-page";
+import AdminGameSession from "../features/admin/admin-game-session";
 
 function Router() {
   return (
@@ -47,6 +48,14 @@ function Router() {
             element={
               <AdminLayout>
                 <AdminSettingsPage />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="/admin/table/:id"
+            element={
+              <AdminLayout>
+                <AdminGameSession />
               </AdminLayout>
             }
           />

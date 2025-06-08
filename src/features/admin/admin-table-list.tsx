@@ -1,6 +1,7 @@
 import { Button, Flex, Table } from "antd";
 import { type GameTable } from "../../api/admin";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router";
 
 function AdminTableList({
   tables,
@@ -11,6 +12,7 @@ function AdminTableList({
   editTable: (table: GameTable) => void;
   deleteTable: (table: GameTable) => void;
 }) {
+  const navigate = useNavigate();
   const columns = [
     {
       title: "Нэр",
@@ -79,6 +81,11 @@ function AdminTableList({
       key: "actions",
       render: (_: any, record: GameTable) => (
         <Flex gap={5} justify="center" align="center">
+          <Button
+            type="primary"
+            icon={<EyeOutlined />}
+            onClick={() => navigate("/admin/table/" + record.tableId)}
+          />
           <Button
             type="primary"
             icon={<EditOutlined />}

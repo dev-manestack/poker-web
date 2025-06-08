@@ -38,6 +38,12 @@ interface GameTable {
   createdBy: number;
 }
 
+interface GameSessionSnapshot {
+  sessionId: string;
+  tableId: number;
+  details: any;
+}
+
 const rawBaseQuery = fetchBaseQuery({
   baseUrl: `${baseURL}/api/v1/admin`,
   prepareHeaders: (headers) => {
@@ -62,7 +68,7 @@ const baseQuery: typeof rawBaseQuery = async (args, api, extraOptions) => {
 export const adminApi = createApi({
   reducerPath: "adminApi",
   baseQuery: baseQuery,
-  tagTypes: ["withdrawals", "deposits", "tables"],
+  tagTypes: ["withdrawals", "deposits", "tables", "gameSessions"],
   endpoints: (builder) => ({
     fetchWithdrawals: builder.query<Withdrawal[], void>({
       query: () => ({
@@ -126,6 +132,16 @@ export const adminApi = createApi({
       }),
       invalidatesTags: ["tables"],
     }),
+    fetchGameSessions: builder.query<
+      GameSessionSnapshot[],
+      { tableId: number }
+    >({
+      query: (data) => ({
+        url: `/table/session?tableId=${data.tableId}`,
+        method: "GET",
+      }),
+      providesTags: ["gameSessions"],
+    }),
   }),
 });
 
@@ -138,5 +154,6 @@ export const {
   useCreateTableMutation,
   useUpdateTableMutation,
   useDeleteTableMutation,
+  useFetchGameSessionsQuery,
 } = adminApi;
 export type { Withdrawal, Deposit, GameTable };

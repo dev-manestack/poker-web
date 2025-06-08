@@ -9,16 +9,31 @@ import type { ColumnsType } from "antd/es/table";
 const currencySymbol = "₮";
 const { useBreakpoint } = Grid;
 
-function TableList({ setSelectedTable }: { setSelectedTable: (table: any) => void }) {
+interface TableListProps {
+  setSelectedTable: (table: GameTable | null) => void;
+  tableType?: string; // Optional filter for table variant type (e.g. "texas", "omaha")
+}
+
+function TableList({ setSelectedTable, tableType }: TableListProps) {
   const [selectedRowKey, setSelectedRowKey] = useState<string | number | null>(null);
   const navigate = useNavigate();
   const { data: tableData } = useFetchTablesQuery();
   const screens = useBreakpoint();
 
+  // Filter tables by the optional tableType prop (variant normalized to lowercase)
+  const filteredTables = useMemo(() => {
+    if (!tableData) return [];
+    if (!tableType) return tableData;
+
+    return tableData.filter((table) => table.variant?.toLowerCase() === tableType.toLowerCase());
+  }, [tableData, tableType]);
+
   const renderVariant = useCallback((text: string) => {
-    switch (text) {
+    switch (text.toUpperCase()) {
       case "TEXAS":
-        return "Texas Holdem";
+        return "Texas Hold'em";
+      case "OMAHA":
+        return "Omaha";
       default:
         return "Unknown";
     }
@@ -98,7 +113,13 @@ function TableList({ setSelectedTable }: { setSelectedTable: (table: any) => voi
 
   const renderMobileVariant = useCallback(
     (_: any, record: GameTable) => (
-      <div style={{ fontSize: 12, padding: "8px 12px" }}>{record.variant === "TEXAS" ? "HOLD'EM" : "Unknown"}</div>
+      <div style={{ fontSize: 12, padding: "8px 12px" }}>
+        {record.variant?.toUpperCase() === "TEXAS"
+          ? "HOLD'EM"
+          : record.variant?.toUpperCase() === "OMAHA"
+          ? "OMAHA"
+          : "Unknown"}
+      </div>
     ),
     []
   );
@@ -175,7 +196,7 @@ function TableList({ setSelectedTable }: { setSelectedTable: (table: any) => voi
       <Col xs={24} sm={24} md={24} lg={24} xl={24}>
         <Table
           columns={screens.xs ? mobileColumns : desktopColumns}
-          dataSource={tableData}
+          dataSource={filteredTables}
           rowKey="tableId"
           pagination={false}
           scroll={{ x: "max-content" }}

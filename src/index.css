@@ -17,25 +17,23 @@
   font-weight: 500;
 }
 
-/* HomePage.css */
-
+/*------------------------- home-page.css-------------------------- */
+/* tabs css */
 .custom-tabs .ant-tabs-tab {
-  background-color: #1e1e1e;
   border-radius: 10px;
   margin-right: 12px;
   padding: 8px 16px;
-  color: white;
+  color: white !important;
   font-weight: 600;
   transition: all 0.3s ease;
 }
 
-.custom-tabs .ant-tabs-tab-active {
-  background-color: #f37b06 !important;
+.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
   color: white !important;
 }
 
 .custom-tabs .ant-tabs-ink-bar {
-  display: none !important;
+  background-color: #f37b06;
 }
 
 .custom-tabs .ant-tabs-tab-disabled {
@@ -47,4 +45,91 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.ant-tabs-nav::before {
+  display: none;
+}
+
+.table-type-tabs {
+  margin-bottom: 16px;
+  padding: 12px;
+  border-radius: 6px;
+}
+
+.table-type-tabs .ant-tabs-nav {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.table-type-tabs .ant-tabs-tab {
+  flex: 1;
+  text-align: center;
+  padding: 12px 0;
+  margin: 0;
+  border-radius: 8px;
+  background-color: #242830;
+  color: white;
+  transition: background-color 0.3s;
+  max-width: none;
+}
+
+.custom-tab-btn {
+  width: 100%;
+}
+
+.custom-tab-btn.active {
+  background-color: #d46b08;
+  color: white;
+}
+
+/* Remove underline */
+.table-type-tabs .ant-tabs-ink-bar {
+  display: none !important;
+}
+
+.table-type-tabs {
+  background-color: #33363a; /* entire tabs background */
+  padding: 8px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+}
+
+/* Remove underline bar */
+.table-type-tabs .ant-tabs-ink-bar {
+  display: none !important;
+}
+
+/* Each tab */
+.table-type-tabs .ant-tabs-tab {
+  background-color: #242830; /* unselected tab label bg */
+  color: white;
+  border-radius: 6px;
+  margin-right: 8px;
+  padding: 8px 16px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Selected tab */
+.table-type-tabs .ant-tabs-tab.ant-tabs-tab-active {
+  background-color: #d46b08; /* selected tab label bg */
+  color: white;
+  width: 100%;
+}
+
+/* home-page "row" */
+
+.full-height {
+  height: 100%;
+}
+
+.empty-placeholder {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  font-style: italic;
 }

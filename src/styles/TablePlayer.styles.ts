@@ -1,19 +1,11 @@
 import type { CSSProperties } from "react";
 
-const baseSize = 80;
-const previewSize = 40;
+const size = 80;
 const stroke = 3;
+const radius = (size - stroke) / 2;
+const circumference = 2 * Math.PI * radius;
 
-const size = (isPreview = false) => (isPreview ? previewSize : baseSize);
-const radius = (isPreview = false) => (size(isPreview) - stroke) / 2;
-const circumference = (isPreview = false) => 2 * Math.PI * radius(isPreview);
-
-export const sizeConst = (isPreview = false) => ({
-  size: size(isPreview),
-  stroke,
-  radius: radius(isPreview),
-  circumference: circumference(isPreview),
-});
+export const sizeConst = { size, stroke, radius, circumference };
 
 export const rankText: CSSProperties = {
   background: "#fff",
@@ -28,32 +20,27 @@ export const holeCardsContainer: CSSProperties = {
   display: "flex",
 };
 
-export const pokerCardOutline = (highlight: boolean, isPreview = false): CSSProperties => ({
+export const pokerCardOutline = (highlight: boolean): CSSProperties => ({
   outline: highlight ? "5px solid red" : "none",
-  width: isPreview ? 40 : 80,
-  height: isPreview ? 60 : 120,
-  borderRadius: 6,
 });
 
-export const playerImageWrapper = (isPreview = false): CSSProperties => ({
+export const playerImageWrapper: CSSProperties = {
   position: "relative",
-  width: size(isPreview),
-  height: size(isPreview),
-});
+  width: size,
+  height: size,
+};
 
-export const svgCircle = (isPreview = false): CSSProperties => ({
+export const svgCircle: CSSProperties = {
   position: "absolute",
   top: 0,
   left: 0,
   zIndex: 2,
   pointerEvents: "none",
-  width: size(isPreview),
-  height: size(isPreview),
-});
+};
 
-export const playerImage = (isTurnActive: boolean, isPreview = false): CSSProperties => ({
-  width: size(isPreview),
-  height: size(isPreview),
+export const playerImage = (isTurnActive: boolean): CSSProperties => ({
+  width: size,
+  height: size,
   background: "#030A01",
   borderRadius: "50%",
   border: isTurnActive ? "3px solid rgba(255,255,255,0.5)" : undefined,
@@ -96,5 +83,6 @@ export const usernameText: CSSProperties = {
   fontSize: "14px",
   letterSpacing: "0.5px",
   borderRadius: "10px",
+
   textAlign: "center",
 };

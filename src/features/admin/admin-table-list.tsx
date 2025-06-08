@@ -1,4 +1,4 @@
-import { Button, Flex, Table } from "antd";
+import { Button, Flex, Table, Typography } from "antd";
 import { type GameTable } from "../../api/admin";
 import { DeleteOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router";
@@ -14,6 +14,14 @@ function AdminTableList({
 }) {
   const navigate = useNavigate();
   const columns = [
+    {
+      title: "№",
+      dataIndex: "index",
+      key: "index",
+      render: (_: any, __: any, index: number) => {
+        return <Typography.Text>{index + 1}</Typography.Text>;
+      },
+    },
     {
       title: "Нэр",
       dataIndex: "tableName",

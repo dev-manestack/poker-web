@@ -7,7 +7,9 @@ import "../../index.css";
 
 function HomePage() {
   const [selectedTable, setSelectedTable] = useState<GameTable | null>(null);
-  const [activeTableType, setActiveTableType] = useState<"texas" | "omaha">("texas");
+  const [activeTableType, setActiveTableType] = useState<"texas" | "omaha">(
+    "texas"
+  );
 
   const onTableTypeChange = (key: string) => {
     setActiveTableType(key as "texas" | "omaha");
@@ -29,20 +31,44 @@ function HomePage() {
               {
                 key: "texas",
                 label: (
-                  <div className={`custom-tab-btn ${activeTableType === "texas" ? "active" : ""}`}>Texas Hold'em</div>
+                  <div
+                    className={`custom-tab-btn ${
+                      activeTableType === "texas" ? "active" : ""
+                    }`}
+                  >
+                    Texas Hold'em
+                  </div>
                 ),
               },
               {
                 key: "omaha",
-                label: <div className={`custom-tab-btn ${activeTableType === "omaha" ? "active" : ""}`}>Omaha</div>,
+                disabled: true,
+                label: (
+                  <div
+                    className={`custom-tab-btn ${
+                      activeTableType === "omaha" ? "active" : ""
+                    }`}
+                  >
+                    Omaha
+                  </div>
+                ),
               },
             ]}
           />
 
           <Row gutter={[16, 16]} className="full-height">
             <Col xs={24} md={16} className="full-height">
-              <div className={activeTableType === "texas" ? "table-list-texas" : "table-list-omaha"}>
-                <TableList setSelectedTable={setSelectedTable} tableType={activeTableType} />
+              <div
+                className={
+                  activeTableType === "texas"
+                    ? "table-list-texas"
+                    : "table-list-omaha"
+                }
+              >
+                <TableList
+                  setSelectedTable={setSelectedTable}
+                  tableType={activeTableType}
+                />
               </div>
             </Col>
             <Col xs={24} md={8} className="full-height">
@@ -59,13 +85,19 @@ function HomePage() {
     {
       key: "2",
       label: <div className="custom-tab-label">Тэмцээн</div>,
-      children: <div>Tournament game tables will appear here.</div>,
+      disabled: true,
+      children: <div>Тэмцээн одоогийн байдлаар хөгжүүлэлтэнд байгаа.</div>,
     },
   ];
 
   return (
     <div style={{ padding: 20, height: "100%" }}>
-      <Tabs className="custom-tabs" style={{ width: "100%", height: "100%" }} defaultActiveKey="1" items={tabItems} />
+      <Tabs
+        className="custom-tabs"
+        style={{ width: "100%", height: "100%" }}
+        defaultActiveKey="1"
+        items={tabItems}
+      />
     </div>
   );
 }

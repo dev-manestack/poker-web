@@ -1,9 +1,17 @@
-import { Table } from "antd";
+import { Table, Typography } from "antd";
 import type { User } from "../../api/user";
 import banks from "../../assets/data/banks";
 
 function AdminUserList({ users }: { users: User[] }) {
   const columns = [
+    {
+      title: "№",
+      dataIndex: "index",
+      key: "index",
+      render: (_: any, __: any, index: number) => {
+        return <Typography.Text>{index + 1}</Typography.Text>;
+      },
+    },
     {
       title: "Хэрэглэгч",
       dataIndex: "email",

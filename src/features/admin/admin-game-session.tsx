@@ -7,6 +7,14 @@ function AdminGameSession() {
 
   const columns = [
     {
+      title: "№",
+      dataIndex: "index",
+      key: "index",
+      render: (_: any, __: any, index: number) => {
+        return <Typography.Text>{index + 1}</Typography.Text>;
+      },
+    },
+    {
       title: "ID",
       dataIndex: "sessionId",
       key: "sessionId",
@@ -85,8 +93,18 @@ function AdminGameSession() {
   ];
 
   return (
-    <Flex>
-      <Table dataSource={data} columns={columns} />
+    <Flex
+      style={{
+        width: "100%",
+      }}
+    >
+      <Table
+        dataSource={data}
+        columns={columns}
+        style={{
+          width: "100%",
+        }}
+      />
     </Flex>
   );
 }

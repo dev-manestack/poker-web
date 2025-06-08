@@ -6,6 +6,14 @@ function AdminWithdrawList({ withdrawals }: { withdrawals: Withdrawal[] }) {
 
   const columns = [
     {
+      title: "№",
+      dataIndex: "index",
+      key: "index",
+      render: (_: any, __: any, index: number) => {
+        return <Typography.Text>{index + 1}</Typography.Text>;
+      },
+    },
+    {
       title: "Хэрэглэгч",
       dataIndex: "userId",
       key: "userId",

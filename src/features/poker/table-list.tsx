@@ -1,4 +1,4 @@
-import { Button, Row, Col, Table, Grid } from "antd";
+import { Button, Row, Col, Table, Grid, Typography } from "antd";
 import { useNavigate } from "react-router";
 import type { GameTable } from "../../api/admin";
 import { useFetchTablesQuery } from "../../api/user";
@@ -15,7 +15,9 @@ interface TableListProps {
 }
 
 function TableList({ setSelectedTable, tableType }: TableListProps) {
-  const [selectedRowKey, setSelectedRowKey] = useState<string | number | null>(null);
+  const [selectedRowKey, setSelectedRowKey] = useState<string | number | null>(
+    null
+  );
   const navigate = useNavigate();
   const { data: tableData } = useFetchTablesQuery();
   const screens = useBreakpoint();
@@ -25,7 +27,9 @@ function TableList({ setSelectedTable, tableType }: TableListProps) {
     if (!tableData) return [];
     if (!tableType) return tableData;
 
-    return tableData.filter((table) => table.variant?.toLowerCase() === tableType.toLowerCase());
+    return tableData.filter(
+      (table) => table.variant?.toLowerCase() === tableType.toLowerCase()
+    );
   }, [tableData, tableType]);
 
   const renderVariant = useCallback((text: string) => {
@@ -41,9 +45,9 @@ function TableList({ setSelectedTable, tableType }: TableListProps) {
 
   const renderBuyInRange = useCallback(
     (_: any, record: GameTable) =>
-      `${currencySymbol}${record.minBuyIn.toLocaleString("mn-MN")} / ${currencySymbol}${record.maxBuyIn.toLocaleString(
+      `${currencySymbol}${record.minBuyIn.toLocaleString(
         "mn-MN"
-      )}`,
+      )} / ${currencySymbol}${record.maxBuyIn.toLocaleString("mn-MN")}`,
     []
   );
 
@@ -76,6 +80,14 @@ function TableList({ setSelectedTable, tableType }: TableListProps) {
 
   const desktopColumns = useMemo(
     () => [
+      {
+        title: "№",
+        dataIndex: "index",
+        key: "index",
+        render: (_: any, __: any, index: number) => {
+          return <Typography.Text>{index + 1}</Typography.Text>;
+        },
+      },
       {
         title: "Нэр",
         dataIndex: "tableName",
@@ -136,14 +148,18 @@ function TableList({ setSelectedTable, tableType }: TableListProps) {
   const renderMobileBlinds = useCallback(
     (_: any, record: GameTable) => (
       <div style={{ padding: "8px 12px" }}>
-        {`${record.smallBlind.toLocaleString("mn-MN")} / ${record.bigBlind.toLocaleString("mn-MN")}`}
+        {`${record.smallBlind.toLocaleString(
+          "mn-MN"
+        )} / ${record.bigBlind.toLocaleString("mn-MN")}`}
       </div>
     ),
     []
   );
 
   const renderMobilePlayers = useCallback(
-    (_: any, record: GameTable) => <div style={{ padding: "8px 12px" }}>{record.maxPlayers}</div>,
+    (_: any, record: GameTable) => (
+      <div style={{ padding: "8px 12px" }}>{record.maxPlayers}</div>
+    ),
     []
   );
 
@@ -175,7 +191,12 @@ function TableList({ setSelectedTable, tableType }: TableListProps) {
         render: renderMobilePlayers,
       },
     ],
-    [renderMobileVariant, renderMobileTableName, renderMobileBlinds, renderMobilePlayers]
+    [
+      renderMobileVariant,
+      renderMobileTableName,
+      renderMobileBlinds,
+      renderMobilePlayers,
+    ]
   );
 
   const handleRowClick = useCallback(
@@ -203,7 +224,9 @@ function TableList({ setSelectedTable, tableType }: TableListProps) {
           onRow={(record) => ({
             onClick: () => handleRowClick(record),
           })}
-          rowClassName={(record) => (record.tableId === selectedRowKey ? "selected-row" : "hover-row")}
+          rowClassName={(record) =>
+            record.tableId === selectedRowKey ? "selected-row" : "hover-row"
+          }
           style={{
             fontSize: screens.xs ? 14 : 16,
           }}

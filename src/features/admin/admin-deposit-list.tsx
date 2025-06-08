@@ -1,8 +1,16 @@
-import { Button, Flex, Popover, Table } from "antd";
+import { Button, Flex, Popover, Table, Typography } from "antd";
 import type { Deposit } from "../../api/admin";
 
 function AdminDepositList({ deposits }: { deposits: Deposit[] }) {
   const columns = [
+    {
+      title: "№",
+      dataIndex: "index",
+      key: "index",
+      render: (_: any, __: any, index: number) => {
+        return <Typography.Text>{index + 1}</Typography.Text>;
+      },
+    },
     {
       title: "Хэрэглэгч",
       dataIndex: "userId",

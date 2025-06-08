@@ -1,4 +1,4 @@
-import { useFetchDepositsQuery } from "../../api/admin";
+import { useFetchDepositsQuery } from "../../api/user";
 import { Table } from "antd";
 
 function DepositTable() {

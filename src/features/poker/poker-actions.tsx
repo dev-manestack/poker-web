@@ -1,7 +1,7 @@
-import { Button, Flex, message, Slider, Typography } from "antd";
-import { motion } from "motion/react";
-import { useState } from "react";
+import { Button, Checkbox, Flex, message } from "antd";
+import { useEffect, useState } from "react";
 import type { User } from "../../api/user";
+import ArcSlider from "./arc-slider";
 
 function PokerActions({
   player,
@@ -28,181 +28,59 @@ function PokerActions({
 }) {
   const [messageAPI, contextHolder] = message.useMessage();
   const [selectedAmount, setSelectedAmount] = useState(0);
+  const [isDisabled, setDisabled] = useState(false);
+
+  useEffect(() => {
+    if (turnPlayer && turnPlayer?.userId === player?.userId) {
+      setDisabled(false);
+      setSelectedAmount(currentRequiredBet + minRaise);
+    } else {
+      setDisabled(true);
+      setSelectedAmount(0);
+    }
+  }, [turnPlayer, turnPlayer, isFolded, isAllIn]);
 
   return (
     <Flex
       style={{
-        width: "50%",
-        backgroundColor: "#192135",
-        padding: "16px",
+        width: "100%",
+        height: "100px",
+        marginBottom: "16px",
       }}
-      vertical
-      gap={16}
+      justify="space-between"
+      align="center"
     >
       {contextHolder}
-      <Typography.Title
-        style={{ color: "#fff", textAlign: "center" }}
-        level={3}
-      >
-        Current Player: {turnPlayer?.username}
-      </Typography.Title>
       <Flex
+        style={{ width: "150px", height: "100px" }}
         justify="center"
         align="center"
-        style={{
-          color: "#fff",
-          fontSize: "24px",
-          width: "200px",
-          padding: "16px",
-          background: "#192135",
-        }}
       >
-        {selectedAmount}₮
+        <p></p>
       </Flex>
-      <Flex gap={16}>
-        <Slider
-          style={{ width: "100%" }}
-          value={selectedAmount}
-          min={minRaise}
-          max={stack}
-          onChange={(value) => setSelectedAmount(value)}
-          disabled={
-            turnPlayer?.userId !== player?.userId || isFolded || isAllIn
-          }
-          styles={{
-            track: { backgroundColor: "#8CC15B" },
-            rail: { backgroundColor: "#192135" },
-            handle: { backgroundColor: "#8CC15B", borderColor: "#8CC15B" },
-          }}
-        />
-        <Flex justify="end" gap={8} align="center">
+      <Flex gap={12} vertical>
+        <Flex gap={12}>
           <Button
             style={{
-              color: "#fff",
-              background: "#192135",
+              borderRadius: "50px",
+              height: "75px",
+              width: "75px",
+              background: "#2D3038",
             }}
-            disabled={
-              turnPlayer?.userId !== player?.userId || isFolded || isAllIn
-            }
-            onClick={() => {
-              if (minRaise < stack) {
-                setSelectedAmount(minRaise);
-              } else {
-                messageAPI.error(
-                  "You cannot raise less than the minimum raise."
-                );
-              }
-            }}
-          >
-            Min
-          </Button>
-          <Button
-            style={{
-              color: "#fff",
-              background: "#192135",
-            }}
-            disabled={
-              turnPlayer?.userId !== player?.userId || isFolded || isAllIn
-            }
-            onClick={() => setSelectedAmount(stack / 2)}
-          >
-            Half
-          </Button>
-          <Button
-            style={{
-              color: "#fff",
-              background: "#192135",
-            }}
-            disabled={
-              turnPlayer?.userId !== player?.userId || isFolded || isAllIn
-            }
-            onClick={() => {
-              if (currentPot < stack) {
-                setSelectedAmount(currentPot);
-              } else {
-                messageAPI.error("You cannot bet more than your stack.");
-              }
-            }}
-          >
-            Pot
-          </Button>
-          <Button
-            style={{
-              color: "#fff",
-              background: "#192135",
-            }}
-            disabled={
-              turnPlayer?.userId !== player?.userId || isFolded || isAllIn
-            }
-            onClick={() => {
-              if (stack > 0) {
-                setSelectedAmount(stack);
-              } else {
-                messageAPI.error("You cannot go all in with a zero stack.");
-              }
-            }}
-          >
-            All In
-          </Button>
-        </Flex>
-      </Flex>
-      <Flex justify="space-around" align="center" gap={16}>
-        <motion.div
-          style={{
-            width: "100%",
-            height: "50px",
-          }}
-          whileHover={{ scale: 1.1 }}
-        >
-          <Button
-            style={{
-              width: "100%",
-              height: "100%",
-              borderRadius: "20px",
-              background:
-                turnPlayer?.userId !== player?.userId || isFolded || isAllIn
-                  ? ""
-                  : "#EA5C61",
-              color: "#fff",
-              textTransform: "uppercase",
-              fontFamily: "Roboto, sans-serif",
-              fontSize: "20px",
-              border: "none",
-            }}
-            disabled={
-              turnPlayer?.userId !== player?.userId || isFolded || isAllIn
-            }
+            disabled={isDisabled}
             onClick={() => sendAction("FOLD", 0)}
           >
             Fold
           </Button>
-        </motion.div>
-
-        <motion.div
-          style={{
-            width: "100%",
-            height: "50px",
-          }}
-          whileHover={{ scale: 1.1 }}
-        >
           <Button
             style={{
-              width: "100%",
-              borderRadius: "20px",
-              background:
-                turnPlayer?.userId !== player?.userId || isFolded || isAllIn
-                  ? ""
-                  : "#192135",
-              height: "50px",
-              color: "#fff",
-              textTransform: "uppercase",
-              fontFamily: "Roboto, sans-serif",
-              border: "none",
-              fontSize: "20px",
+              width: "150px",
+              height: "75px",
+              background: "#04BA78",
+              fontSize: "16px",
+              fontWeight: "bold",
             }}
-            disabled={
-              turnPlayer?.userId !== player?.userId || isFolded || isAllIn
-            }
+            disabled={isDisabled}
             onClick={() => {
               if (currentBet === currentRequiredBet) {
                 sendAction("CHECK", 0);
@@ -222,33 +100,15 @@ function PokerActions({
               ? `All-In ${stack}`
               : `Call ${currentRequiredBet - currentBet}₮`}
           </Button>
-        </motion.div>
-
-        <motion.div
-          style={{
-            width: "100%",
-            height: "50px",
-          }}
-          whileHover={{ scale: 1.1 }}
-        >
           <Button
             style={{
-              width: "100%",
-              height: "50px",
-              borderRadius: "20px",
-              color: "#fff",
-              background:
-                turnPlayer?.userId !== player?.userId || isFolded || isAllIn
-                  ? ""
-                  : "#8CC15B",
-              textTransform: "uppercase",
-              fontFamily: "Roboto, sans-serif",
-              fontSize: "20px",
-              border: "none",
+              width: "150px",
+              height: "75px",
+              background: "#EF800D",
+              fontSize: "16px",
+              fontWeight: "bold",
             }}
-            disabled={
-              turnPlayer?.userId !== player?.userId || isFolded || isAllIn
-            }
+            disabled={isDisabled}
             onClick={() => {
               if (selectedAmount < currentRequiredBet) {
                 messageAPI.error("You must raise at least the required bet.");
@@ -263,13 +123,77 @@ function PokerActions({
                 return;
               }
               if (typeof sendAction === "function") {
-                sendAction("RAISE", selectedAmount);
+                sendAction("RAISE", Number(selectedAmount));
               }
             }}
           >
             {selectedAmount === stack ? "All In" : `Raise ${selectedAmount}₮`}
           </Button>
-        </motion.div>
+        </Flex>
+        <Flex gap={8} justify="space-between" align="center">
+          <Checkbox>Fold to any bet</Checkbox>
+          <Checkbox>Check/Fold</Checkbox>
+        </Flex>
+      </Flex>
+      <Flex style={{ marginTop: "-300px" }} vertical gap={8}>
+        <Button
+          onClick={() => {
+            if (stack <= 0) {
+              messageAPI.error("You cannot go all-in with no stack.");
+              return;
+            }
+            setSelectedAmount(stack);
+          }}
+        >
+          Max
+        </Button>
+        <Button
+          onClick={() => {
+            const amount =
+              currentRequiredBet + Math.min(stack, currentPot, minRaise);
+            if (amount < minRaise) {
+              messageAPI.error("You must raise at least the minimum raise.");
+              return;
+            }
+            setSelectedAmount(amount);
+          }}
+        >
+          Pot
+        </Button>
+        <Button
+          onClick={() => {
+            const amount = currentRequiredBet + Math.min(stack, minRaise * 3);
+            if (amount < minRaise) {
+              messageAPI.error("You must raise at least the minimum raise.");
+              return;
+            }
+            setSelectedAmount(amount);
+          }}
+        >
+          3BB
+        </Button>
+        <Button
+          onClick={() => {
+            const amount = currentRequiredBet + Math.min(stack, minRaise);
+            if (amount < minRaise) {
+              messageAPI.error("You must raise at least the minimum raise.");
+              return;
+            }
+            setSelectedAmount(amount);
+          }}
+        >
+          Min
+        </Button>
+        <ArcSlider
+          value={selectedAmount}
+          onChange={(value) => {
+            setSelectedAmount(Number(value.toFixed(0)));
+          }}
+          onClick={() => {}}
+          minValue={minRaise}
+          maxValue={stack}
+          label="Bet"
+        />
       </Flex>
     </Flex>
   );

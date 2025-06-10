@@ -362,7 +362,6 @@ function TexasTableGame({
       }
       case "PLAYER_STACKS": {
         console.log("Received player stacks event:", data);
-        console.log("It's here?", data?.winners);
         setGameState((prevState) => ({
           ...prevState,
           winners: data?.winners || [],
@@ -822,17 +821,30 @@ function TexasTableGame({
           </Flex>
 
           <div>
-            {gameState.seats.map((seat: GamePlayer, i: number) => {
-              const angle = (2 * Math.PI * i) / seatCount;
+            {gameState.seats.map((seat: GamePlayer, ind: number) => {
+              const myUserId = userInfoRef.current?.userId;
+              const mySeatIndex = gameState.seats.findIndex(
+                (seat) => seat.user?.userId === myUserId
+              );
+              const centerIndex = Math.floor(seatCount / 4);
+              let rotatedIndex = ind;
+
+              if (mySeatIndex !== -1) {
+                const relativePosition = ind - mySeatIndex;
+                rotatedIndex =
+                  (relativePosition + centerIndex + seatCount) % seatCount;
+              }
+
+              const angle = (2 * Math.PI * rotatedIndex) / seatCount;
               const x = centerX + radiusX * Math.cos(angle);
               const y = centerY + radiusY * Math.sin(angle);
 
               return (
                 <Button
                   className={`seat${isPreview ? " preview" : ""}`}
-                  key={i}
+                  key={ind}
                   onClick={() => {
-                    setSelectedSeat(i);
+                    setSelectedSeat(ind);
                     setModalType("TAKE_SEAT");
                   }}
                   disabled={isPreview}
@@ -846,15 +858,15 @@ function TexasTableGame({
                     <Flex style={{ marginTop: "-100px" }}>
                       <TablePlayer
                         player={seat}
-                        isTurn={i === gameState.currentPlayerSeat}
+                        isTurn={ind === gameState.currentPlayerSeat}
                         holeCards={seat?.holeCards || []}
                         progress={
-                          i === gameState.currentPlayerSeat ? turnProgress : 0
+                          ind === gameState.currentPlayerSeat ? turnProgress : 0
                         }
                       />
                     </Flex>
                   ) : (
-                    "Суух"
+                    `Суух ${ind + 1}`
                   )}
                 </Button>
               );
@@ -863,7 +875,20 @@ function TexasTableGame({
 
           <div>
             {gameState.seats.map((_: GamePlayer, i: number) => {
-              const angle = (2 * Math.PI * i) / seatCount;
+              const myUserId = userInfoRef.current?.userId;
+              const mySeatIndex = gameState.seats.findIndex(
+                (seat) => seat.user?.userId === myUserId
+              );
+              const centerIndex = Math.floor(seatCount / 4);
+              let rotatedIndex = i;
+
+              if (mySeatIndex !== -1) {
+                const relativePosition = i - mySeatIndex;
+                rotatedIndex =
+                  (relativePosition + centerIndex + seatCount) % seatCount;
+              }
+
+              const angle = (2 * Math.PI * rotatedIndex) / seatCount;
               const x = centerX + chipRadiusX * Math.cos(angle);
               const y = centerY + chipRadiusY * Math.sin(angle);
               const playerBet = gameState.currentBets[i] || 0;

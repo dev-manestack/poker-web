@@ -1,4 +1,13 @@
-import { Button, Flex, Form, message, Modal, Slider, Spin, Typography } from "antd";
+import {
+  Button,
+  Flex,
+  Form,
+  message,
+  Modal,
+  Slider,
+  Spin,
+  Typography,
+} from "antd";
 import { useEffect, useRef, useState } from "react";
 import PokerCard from "./poker-card";
 import "./texas-table-game.css";
@@ -7,7 +16,13 @@ import {
   DisconnectAudio,
   SuccessAudio,
 } from "../../assets/sounds";
-import { websocketURL, type GameCard, type GamePlayer, type TableState, type WebsocketEvent } from "../../api/game";
+import {
+  websocketURL,
+  type GameCard,
+  type GamePlayer,
+  type TableState,
+  type WebsocketEvent,
+} from "../../api/game";
 import { useNavigate, useParams } from "react-router";
 import TablePlayer from "./table-player";
 import PokerActions from "./poker-actions";
@@ -43,10 +58,18 @@ interface GameState {
   currentPot: number;
 
   seats: GamePlayer[];
+  winners: GamePlayer[];
 
   currentPlayerSeat: number;
   communityCards?: GameCard[];
-  state: "WAITING_FOR_PLAYERS" | "PRE_FLOP" | "FLOP" | "TURN" | "RIVER" | "SHOWDOWN" | "FINISHED";
+  state:
+    | "WAITING_FOR_PLAYERS"
+    | "PRE_FLOP"
+    | "FLOP"
+    | "TURN"
+    | "RIVER"
+    | "SHOWDOWN"
+    | "FINISHED";
 }
 
 function TexasTableGame({
@@ -82,6 +105,7 @@ function TexasTableGame({
     currentBets: {},
     currentPot: 0,
     seats: [],
+    winners: [],
     currentPlayerSeat: 0,
     communityCards: [],
     state: "WAITING_FOR_PLAYERS",
@@ -103,7 +127,9 @@ function TexasTableGame({
 
   const { width, height } = useResponsiveTableSize(isPreview);
 
-  const userHasSeat = gameState.seats.some((seat) => seat.user?.userId === userInfoRef.current?.userId);
+  const userHasSeat = gameState.seats.some(
+    (seat) => seat.user?.userId === userInfoRef.current?.userId
+  );
 
   const startTurnTimer = () => {
     if (timerRef.current) {
@@ -217,8 +243,10 @@ function TexasTableGame({
       currentBets: currentSession?.currentBets || gameState.currentBets,
       currentPot: currentSession?.currentPot || gameState.currentPot,
       state: currentSession?.state || gameState.state,
-      currentPlayerSeat: currentSession?.currentPlayerSeat || gameState.currentPlayerSeat,
-      communityCards: currentSession?.communityCards || gameState.communityCards,
+      currentPlayerSeat:
+        currentSession?.currentPlayerSeat || gameState.currentPlayerSeat,
+      communityCards:
+        currentSession?.communityCards || gameState.communityCards,
       isSpectator: data?.isSpectator || false,
     }));
     switch (data.action) {
@@ -264,13 +292,19 @@ function TexasTableGame({
       case "GAME_STATE_UPDATE": {
         console.log("Received game state event:", data);
         setGameState((prevState) => {
-          const newState: GameState = {
+          let newState: GameState = {
             ...prevState,
             communityCards: data.communityCards || [],
             state: data?.state,
             currentBets: {},
             currentPot: data?.state === "FINISHED" ? 0 : data?.currentPot || 0,
           };
+          if (data?.state === "PRE_FLOP") {
+            newState = {
+              ...newState,
+              winners: [],
+            };
+          }
           return newState;
         });
         break;
@@ -284,7 +318,10 @@ function TexasTableGame({
           };
           return newState;
         });
-        if (gameState.state !== "FINISHED" && gameState.state !== "WAITING_FOR_PLAYERS") {
+        if (
+          gameState.state !== "FINISHED" &&
+          gameState.state !== "WAITING_FOR_PLAYERS"
+        ) {
           startTurnTimer();
         }
         break;
@@ -294,7 +331,9 @@ function TexasTableGame({
         setGameState((prevState) => ({
           ...prevState,
           seats: prevState.seats.map((seat, idx) =>
-            data?.holeCards?.[idx] ? { ...seat, holeCards: data.holeCards[idx], hand: null } : seat
+            data?.holeCards?.[idx]
+              ? { ...seat, holeCards: data.holeCards[idx], hand: null }
+              : seat
           ),
         }));
         break;
@@ -323,8 +362,10 @@ function TexasTableGame({
       }
       case "PLAYER_STACKS": {
         console.log("Received player stacks event:", data);
+        console.log("It's here?", data?.winners);
         setGameState((prevState) => ({
           ...prevState,
+          winners: data?.winners || [],
           seats: prevState.seats.map((seat, idx) => {
             return data?.stacks?.[idx]
               ? {
@@ -386,7 +427,11 @@ function TexasTableGame({
   };
 
   const establishWebSocketConnection = (delay = 0) => {
-    if (ws.current) {
+    if (
+      ws.current &&
+      (ws.current.readyState === WebSocket.OPEN ||
+        ws.current.readyState === WebSocket.CONNECTING)
+    ) {
       return;
     }
 
@@ -414,7 +459,9 @@ function TexasTableGame({
             break;
           }
           case "ERROR": {
-            messageAPI.error(message.data?.error ? message.data.error : "Алдаа гарлаа");
+            messageAPI.error(
+              message.data?.error ? message.data.error : "Алдаа гарлаа"
+            );
             break;
           }
         }
@@ -447,6 +494,12 @@ function TexasTableGame({
     if (tableId.length > 0) {
       establishWebSocketConnection();
     }
+    return () => {
+      if (ws.current) {
+        ws.current.close();
+        ws.current = null;
+      }
+    };
   }, [tableId]);
 
   useEffect(() => {
@@ -467,7 +520,9 @@ function TexasTableGame({
     return (
       <Flex style={authLoadingStyles}>
         <Spin />
-        <Typography.Text className="auth-waiting-text">Та түр хүлээнэ үү.</Typography.Text>
+        <Typography.Text className="auth-waiting-text">
+          Та түр хүлээнэ үү.
+        </Typography.Text>
       </Flex>
     );
   }
@@ -546,7 +601,8 @@ function TexasTableGame({
                   </p>
                   <p>
                     <WalletOutlined style={{ marginRight: 8 }} />
-                    Available balance: {gameState.usableBalance.toLocaleString("mn-MN")}₮
+                    Available balance:{" "}
+                    {gameState.usableBalance.toLocaleString("mn-MN")}₮
                   </p>
                 </div>
 
@@ -582,7 +638,10 @@ function TexasTableGame({
                   <Button
                     onClick={() => {
                       setRechargeAmount((prevValue) => {
-                        if (prevValue - gameState.bigBlind < gameState.minBuyIn) {
+                        if (
+                          prevValue - gameState.bigBlind <
+                          gameState.minBuyIn
+                        ) {
                           return gameState.minBuyIn;
                         }
                         return prevValue - gameState.bigBlind;
@@ -603,10 +662,16 @@ function TexasTableGame({
                   <Button
                     onClick={() =>
                       setRechargeAmount((prevValue) => {
-                        if (prevValue + gameState.bigBlind > gameState.maxBuyIn) {
+                        if (
+                          prevValue + gameState.bigBlind >
+                          gameState.maxBuyIn
+                        ) {
                           return gameState.maxBuyIn;
                         }
-                        if (prevValue + gameState.bigBlind > gameState.usableBalance) {
+                        if (
+                          prevValue + gameState.bigBlind >
+                          gameState.usableBalance
+                        ) {
                           return prevValue;
                         }
                         return prevValue + gameState.bigBlind;
@@ -677,17 +742,66 @@ function TexasTableGame({
             </Form.Item>
           </Form>
         </Modal>
+        <Modal
+          open={gameState.winners?.length > 0}
+          onCancel={() => {}}
+          footer={null}
+        >
+          <Flex vertical>
+            <Typography.Text style={{ textAlign: "center", fontSize: "16px" }}>
+              Тоглолтын ялагчид:
+            </Typography.Text>
+            {gameState.winners?.map((winner, index) => {
+              return (
+                <Flex
+                  key={index}
+                  style={{
+                    marginTop: "8px",
+                    padding: "8px",
+                    borderRadius: "8px",
+                  }}
+                >
+                  <TablePlayer
+                    player={winner}
+                    isTurn={false}
+                    holeCards={winner?.holeCards || []}
+                    progress={1} // 100% for winners
+                  />
+                  <Typography.Text style={{ marginLeft: "12px" }}>
+                    {winner.user?.username} - {winner.winnings}₮
+                  </Typography.Text>
+                </Flex>
+              );
+            })}
+          </Flex>
+        </Modal>
         <div style={tableStyles}>
           <Flex style={contentStyles} vertical gap={12}>
-            <Typography.Text style={{ color: "#fff" }}>Current stage: {gameState.state}</Typography.Text>
-
-            <Flex gap={12} style={{ width: "100%", justifyContent: "center" }}>
+            <Flex>
+              <Typography.Text style={{ fontSize: "16px", fontWeight: "bold" }}>
+                Total Pot: {gameState.currentPot}
+              </Typography.Text>
+            </Flex>
+            <Flex
+              gap={12}
+              style={{
+                width: "50%",
+                height: "200px",
+                background: "#133446",
+                borderRadius: "100%",
+              }}
+              justify="center"
+              align="center"
+            >
               {gameState.communityCards?.map((communityCard, index) => {
                 let isMyCard = false;
                 gameState.seats.forEach((seat) => {
                   if (userInfoRef.current?.userId === seat.user?.userId) {
                     seat?.hand?.combinationCards?.forEach((card) => {
-                      if (card.suit === communityCard.suit && card.rank === communityCard.rank) {
+                      if (
+                        card.suit === communityCard.suit &&
+                        card.rank === communityCard.rank
+                      ) {
                         isMyCard = true;
                       }
                     });
@@ -705,8 +819,6 @@ function TexasTableGame({
                 );
               })}
             </Flex>
-
-            <PokerChip amount={gameState.currentPot} />
           </Flex>
 
           <div>
@@ -736,7 +848,9 @@ function TexasTableGame({
                         player={seat}
                         isTurn={i === gameState.currentPlayerSeat}
                         holeCards={seat?.holeCards || []}
-                        progress={i === gameState.currentPlayerSeat ? turnProgress : 0}
+                        progress={
+                          i === gameState.currentPlayerSeat ? turnProgress : 0
+                        }
                       />
                     </Flex>
                   ) : (
@@ -781,14 +895,25 @@ function TexasTableGame({
           {gameState.state !== "WAITING_FOR_PLAYERS" && (
             <PokerActions
               stack={
-                gameState.seats?.filter((seat) => seat.user?.userId === userInfoRef.current?.userId)[0]?.stack || 0
+                gameState.seats?.filter(
+                  (seat) => seat.user?.userId === userInfoRef.current?.userId
+                )[0]?.stack || 0
               }
               player={userInfoRef.current}
               turnPlayer={gameState.turnPlayer}
-              isFolded={gameState.isFolded || gameState.state === "FINISHED" || gameState.state === "SHOWDOWN"}
+              isFolded={
+                gameState.isFolded ||
+                gameState.state === "FINISHED" ||
+                gameState.state === "SHOWDOWN"
+              }
               isAllIn={gameState.isAllIn}
-              currentBet={gameState.currentBets[gameState.currentPlayerSeat] || 0}
-              currentRequiredBet={Math.max(...Object.values(gameState.currentBets), 0)}
+              currentBet={
+                gameState.currentBets[gameState.currentPlayerSeat] || 0
+              }
+              currentRequiredBet={Math.max(
+                ...Object.values(gameState.currentBets),
+                0
+              )}
               currentPot={gameState.currentPot}
               minRaise={gameState.bigBlind}
               sendAction={(action, amount) => sendGameAction(action, amount)}

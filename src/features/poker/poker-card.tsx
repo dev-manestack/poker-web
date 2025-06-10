@@ -47,11 +47,6 @@ function PokerCard({
   return (
     <motion.img
       src={cardImage}
-      // src={info.isRevealed ? cardImage : BackCard}
-      // initial={{ y: -100, opacity: 0 }}
-      // animate={{ y: 0, opacity: 1, rotateY: info.isRevealed ? 0 : 180 }}
-      // animate={{ y: 0, opacity: 1 }}
-      // transition={{ type: "spring", stiffness: 300, damping: 20 }}
       style={{
         ...style,
         width: "100%",

@@ -39,6 +39,7 @@ interface GamePlayer {
   holeCards: GameCard[];
   currentBet: number;
   seatId: number;
+  winnings: number;
   hand: GameHand | null;
 }
 

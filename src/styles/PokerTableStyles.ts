@@ -10,8 +10,8 @@ export const containerStyles: CSSProperties = {
 export const tableStyles: CSSProperties = {
   width: "100%",
   height: "100%",
-  background: "#314361",
-  border: "30px solid #3B4F6F",
+  background: "#326E81",
+  border: "30px solid #234CAB",
   borderRadius: "50% / 40%",
   boxShadow: "0 0 15px rgba(0, 0, 0, 0.6)",
   position: "relative",

@@ -1,0 +1,105 @@
+{
+  "language": "Хэл",
+  "connectionSpeed": "Холболтын Хурд",
+  "offline": "Сүлжээ унтарсан",
+  "loading": "Ачааллаж байна...",
+  "version": "Хувилбар",
+  "name": "Нэр",
+  "amount": "Мөнгөн дүн",
+  "noPlayers": "Тоглогч байхгүй",
+  "noTableSelected": "Ширээ сонгоогүй байна",
+  "variant": {
+    "texas": "ТЕКСАС ХОЛДЭМ",
+    "holdem": "ХОЛДЭМ",
+    "omaha": "ОМАХА",
+    "unknown": "Тодорхойгүй"
+  },
+  "actions": {
+    "play": "Тоглох",
+    "actions": "Үйлдлүүд"
+  },
+  "tableList": {
+    "index": "Д/д",
+    "name": "Нэр",
+    "variant": "Төрөл",
+    "buyIn": "Оролт",
+    "players": "Тоглогч",
+    "blinds": "Ул",
+    "table": "Ширээ"
+  },
+  "homePage": {
+    "tabs": {
+      "tables": "ШИРЭЭ",
+      "tournament": "ТЭМЦЭЭН"
+    },
+    "tableTypes": {
+      "texas": "ТЕКСАС ХОЛДЭМ",
+      "omaha": "ОМАХА"
+    },
+    "tournament": {
+      "comingSoon": "Тэмцээн одоогийн байдлаар хөгжүүлэлтэнд байгаа."
+    }
+  },
+  "userHeader": {
+    "menu": "Цэс",
+    "login": "Нэвтрэх",
+    "register": "Бүртгүүлэх",
+    "forgotPassword": "Нууц үг сэргээх",
+    "adminMenu": "Админ цэс",
+    "userProfile": "Хэрэглэгч",
+    "logout": "Гарах",
+    "balanceLabel": "Үлдэгдэл :",
+    "usernameLabel": "Хэрэглэгчийн нэр",
+    "aria": {
+      "menuButton": "Цэс",
+      "userBalance": "Хэрэглэгчийн үлдэгдэл",
+      "avatar": "Хэрэглэгчийн дүрс"
+    }
+  },
+  "userWithdrawPage": {
+    "balanceTitle": "Үлдэгдэл :",
+    "balance": "Үлдэгдэл :",
+    "locked": "Түгжигдсэн :",
+    "tabs": {
+      "deposit": "Цэнэглэлт",
+      "withdraw": "Татан авалт",
+      "outcome": "Тоглолтын түүх"
+    }
+  },
+  "withdrawal": {
+    "code": "Код",
+    "requestDate": "Хүсэлтийн огноо",
+    "amount": "Дүн",
+    "approvedBy": "Баталсан Админ",
+    "approveDate": "Баталсан огноо",
+    "status": "Төлөв",
+    "approved": "Батлагдсан",
+    "notApproved": "Батлагдаагүй",
+    "createTitle": "Татан авалт үүсгэх",
+    "amountRequired": "Дүнг оруулна уу!",
+    "amountRange": "Дүн {{min}} - {{max}} хооронд байх ёстой",
+    "submit": "Илгээх",
+    "back": "Буцах",
+    "createButton": "Үүсгэх",
+    "createSuccess": "Татан авалт амжилттай үүслээ",
+    "unknownError": "Алдаа гарлаа"
+  },
+  "deposit": {
+    "code": "Код",
+    "amount": "Дүн",
+    "createDate": "Батлагдсан огноо"
+  },
+  "outcome": {
+    "code": "Код",
+    "type": {
+      "title": "Төрөл",
+      "gameplay": "Тоглолтын хожил",
+      "bonus": "Бонус",
+      "recharge": "Явцын цэнэглэлт",
+      "leave_seat": "Босох",
+      "buy_in": "Суух"
+    },
+    "amount": "Дүн",
+    "date": "Огноо"
+  }
+}

@@ -1,0 +1,159 @@
+.user-withdraw-page {
+  width: 100%;
+  height: 100%;
+  padding: 8px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.user-withdraw-page__title {
+  text-align: center;
+}
+
+.user-withdraw-page__balance-cards {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.user-withdraw-page__card {
+  width: 200px;
+  height: 200px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-withdraw-page__card-text-small {
+  font-size: 16px;
+  text-align: center;
+}
+
+.user-withdraw-page__card-text-large {
+  font-size: 24px;
+  text-align: center;
+}
+
+.user-withdraw-page__tabs {
+  width: 100%;
+  height: 400px;
+  overflow: auto;
+}
+
+@media (max-width: 768px) {
+  .user-withdraw-page__balance-cards {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .user-withdraw-page__card {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    padding: 16px 0;
+  }
+
+  .user-withdraw-page__tabs {
+    height: auto;
+    max-height: 600px;
+  }
+
+  .user-withdraw-page__card-text-small {
+    font-size: 14px;
+  }
+
+  .user-withdraw-page__card-text-large {
+    font-size: 20px;
+  }
+}
+
+/* iPad portrait and smaller tablets (~768px to 1024px) */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .user-withdraw-page__balance-cards {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .user-withdraw-page__card {
+    width: 45%;
+    max-width: none;
+    height: 180px;
+    padding: 12px 0;
+  }
+
+  .user-withdraw-page__tabs {
+    height: 450px;
+  }
+
+  .user-withdraw-page__card-text-small {
+    font-size: 15px;
+  }
+
+  .user-withdraw-page__card-text-large {
+    font-size: 22px;
+  }
+}
+
+/* Samsung Galaxy S8 (~360px wide) and similar phones */
+@media (max-width: 375px) and (min-width: 320px) {
+  .user-withdraw-page__balance-cards {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .user-withdraw-page__card {
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    padding: 14px 0;
+  }
+
+  .user-withdraw-page__tabs {
+    height: auto;
+    max-height: 550px;
+  }
+
+  .user-withdraw-page__card-text-small {
+    font-size: 13px;
+  }
+
+  .user-withdraw-page__card-text-large {
+    font-size: 18px;
+  }
+}
+
+/* iPhone SE and smaller phones (~320px wide and below) */
+@media (max-width: 320px) {
+  .user-withdraw-page__balance-cards {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .user-withdraw-page__card {
+    width: 100%;
+    max-width: 280px;
+    height: auto;
+    padding: 12px 0;
+  }
+
+  .user-withdraw-page__tabs {
+    height: auto;
+    max-height: 500px;
+  }
+
+  .user-withdraw-page__card-text-small {
+    font-size: 12px;
+  }
+
+  .user-withdraw-page__card-text-large {
+    font-size: 16px;
+  }
+}

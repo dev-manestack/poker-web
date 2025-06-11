@@ -1,8 +1,24 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap");
+@font-face {
+  font-family: "VeniteAdoremus";
+  src: url("./fonts/VeniteAdoremus-rgRBA.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
 
 * {
   margin: 0;
   padding: 0;
+}
+
+:lang(mn) {
+  font-family: "Montserrat", sans-serif;
+}
+
+:lang(en) {
+  font-family: "VeniteAdoremus", sans-serif;
 }
 
 .custom-menu-icon {
@@ -20,12 +36,17 @@
 /*------------------------- home-page.css-------------------------- */
 /* tabs css */
 .custom-tabs .ant-tabs-tab {
-  border-radius: 10px;
   margin-right: 12px;
   padding: 8px 16px;
   color: white !important;
   font-weight: 600;
   transition: all 0.3s ease;
+  width: 50%;
+  justify-content: center;
+}
+
+.custom-tabs .ant-tabs-tab-active {
+  border-bottom: 3px solid #d49e2f; /* bright yellow underline */
 }
 
 .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
@@ -33,7 +54,7 @@
 }
 
 .custom-tabs .ant-tabs-ink-bar {
-  background-color: #f37b06;
+  display: none;
 }
 
 .custom-tabs .ant-tabs-tab-disabled {
@@ -41,10 +62,8 @@
   cursor: not-allowed;
 }
 
-.custom-tab-label {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.ant-tabs-nav-list {
+  width: 100%;
 }
 
 .ant-tabs-nav::before {
@@ -53,77 +72,27 @@
 
 .table-type-tabs {
   margin-bottom: 16px;
-  padding: 12px;
-  border-radius: 6px;
-}
-
-.table-type-tabs .ant-tabs-nav {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 16px;
-}
-
-.table-type-tabs .ant-tabs-tab {
-  flex: 1;
-  text-align: center;
-  padding: 12px 0;
-  margin: 0;
-  border-radius: 8px;
-  background-color: #242830;
-  color: white;
-  transition: background-color 0.3s;
-  max-width: none;
-}
-
-.custom-tab-btn {
   width: 100%;
-}
-
-.custom-tab-btn.active {
-  background-color: #d46b08;
-  color: white;
-}
-
-/* Remove underline */
-.table-type-tabs .ant-tabs-ink-bar {
-  display: none !important;
-}
-
-.table-type-tabs {
-  background-color: #33363a; /* entire tabs background */
-  padding: 8px;
   justify-content: center;
   align-items: center;
-  border-radius: 8px;
 }
 
-/* Remove underline bar */
-.table-type-tabs .ant-tabs-ink-bar {
-  display: none !important;
+.ant-tabs-nav {
+  width: 100%;
+  margin: 0 !important;
+  padding: 12px;
 }
 
 /* Each tab */
 .table-type-tabs .ant-tabs-tab {
-  background-color: #242830; /* unselected tab label bg */
   color: white;
-  border-radius: 6px;
-  margin-right: 8px;
+  margin-right: 12px;
   padding: 8px 16px;
   transition: background-color 0.3s, color 0.3s;
-}
-
-/* Selected tab */
-.table-type-tabs .ant-tabs-tab.ant-tabs-tab-active {
-  background-color: #d46b08; /* selected tab label bg */
-  color: white;
-  width: 100%;
+  text-align: center;
 }
 
 /* home-page "row" */
-
-.full-height {
-  height: 100%;
-}
 
 .empty-placeholder {
   height: 100%;
@@ -132,4 +101,406 @@
   justify-content: center;
   color: #999;
   font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .custom-tab-label {
+    font-size: 14px;
+  }
+
+  .custom-tab-btn {
+    padding: 5px 10px;
+    font-size: 13px;
+  }
+
+  .table-list-texas,
+  .table-list-omaha {
+    padding: 8px;
+  }
+}
+
+/* Large Mobile (600px and below) */
+@media (max-width: 600px) {
+  .custom-tab-label {
+    font-size: 13px;
+  }
+
+  .custom-tab-btn {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+
+  .table-list-texas,
+  .table-list-omaha {
+    padding: 6px;
+  }
+
+  .ant-tabs-nav {
+    flex-wrap: wrap !important; /* Allow tabs to wrap */
+  }
+}
+
+/* Small Mobile (390px and below, like iPhone 12 Mini) */
+@media (max-width: 390px) {
+  .custom-tab-label {
+    font-size: 12px;
+  }
+
+  .custom-tab-btn {
+    padding: 3px 6px;
+    font-size: 11px;
+  }
+
+  .table-list-texas,
+  .table-list-omaha {
+    padding: 4px;
+  }
+
+  .ant-tabs-nav {
+    flex-direction: column !important; /* Stack tabs vertically */
+    gap: 4px;
+  }
+}
+
+/* Very Small Devices (360px and below, like Samsung S8/S10) */
+@media (max-width: 360px) {
+  .custom-tab-label {
+    font-size: 11px;
+  }
+
+  .custom-tab-btn {
+    padding: 2px 4px;
+    font-size: 10px;
+  }
+
+  .table-list-texas,
+  .table-list-omaha {
+    padding: 2px;
+  }
+
+  .ant-tabs-nav {
+    flex-direction: column !important;
+    gap: 2px;
+  }
+}
+
+/* =======================media query=================== */
+
+/* =======================HEADER SECTION=================== */
+
+/* Tablets and small landscape devices (max-width: 768px) */
+
+.user-header-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.user-header-email {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  user-select: none;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  display: block;
+}
+
+.user-header-username {
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+  user-select: none;
+}
+
+.user-status-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-left: 4px;
+}
+
+.user-status-dot.active {
+  background-color: #4caf50;
+}
+
+.user-status-dot.inactive {
+  background-color: #f44336;
+}
+
+.user-header-profile {
+  cursor: pointer;
+}
+
+.user-header-balance {
+  cursor: pointer;
+  padding: 15px;
+  background-color: #0b1a48;
+  border-radius: 15px;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.7);
+}
+
+@media (max-width: 768px) {
+  .user-header-logo-section {
+    gap: 16px !important;
+  }
+
+  .user-header-logo-image {
+    height: 40px !important;
+  }
+
+  .user-header-logo-text {
+    font-size: 16px !important;
+  }
+
+  .user-header-balance {
+    padding: 6px 12px !important;
+    min-width: 80px !important;
+  }
+
+  .user-header-balance-icon {
+    font-size: 16px !important;
+  }
+
+  .user-header-balance-label {
+    font-size: 14px;
+  }
+
+  .user-header-balance > .ant-typography {
+    font-size: 14px !important;
+  }
+
+  .user-header-avatar {
+    width: 40px !important;
+    height: 40px !important;
+    border-width: 2px !important;
+    border-radius: 12px !important;
+  }
+
+  .user-header-username {
+    font-size: 12px !important;
+  }
+
+  .user-header-email {
+    font-size: 10px !important;
+  }
+
+  .user-header-level {
+    font-size: 12px;
+  }
+
+  .user-header-login-button {
+    font-size: 16px !important;
+    padding: 8px 16px !important;
+  }
+
+  .user-header-flex {
+    padding: 0 12px !important;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 600px) {
+  .user-header-logo-section {
+    gap: 12px !important;
+  }
+
+  .user-header-logo-image {
+    height: 35px !important;
+  }
+
+  .user-header-logo-text {
+    font-size: 12px !important;
+    /* display: none;  */
+  }
+
+  .user-header-balance {
+    padding: 4px 10px !important;
+    min-width: 60px !important;
+  }
+
+  .user-header-balance-label {
+    font-size: 12px;
+  }
+
+  .user-header-balance-icon {
+    font-size: 14px !important;
+    display: none;
+  }
+
+  .user-header-balance > .ant-typography {
+    font-size: 10px !important;
+  }
+
+  .user-header-avatar {
+    width: 30px !important;
+    height: 30px !important;
+    border-width: 1.5px !important;
+    border-radius: 12px !important;
+  }
+
+  .user-header-username {
+    font-size: 10px !important;
+  }
+
+  .user-header-email {
+    font-size: 8px !important;
+    display: none;
+  }
+
+  .user-header-level {
+    font-size: 10px;
+  }
+
+  .user-header-menu-button {
+    width: 20px;
+  }
+
+  .user-header-login-button {
+    font-size: 14px !important;
+    padding: 6px 12px !important;
+  }
+
+  .user-header-flex {
+    padding: 0 10px !important;
+    gap: 5px;
+  }
+}
+
+@media (max-width: 390px) {
+  .user-header-logo-section {
+    gap: 8px !important;
+  }
+
+  .user-header-logo-image {
+    height: 28px !important;
+  }
+
+  .user-header-logo-text {
+    font-size: 14px !important;
+  }
+
+  .user-header-balance {
+    padding: 3px 8px !important;
+    min-width: 50px !important;
+  }
+
+  .user-header-balance-icon {
+    font-size: 10px !important;
+  }
+
+  .user-header-balance-label {
+    font-size: 10px;
+  }
+
+  .user-header-balance > .ant-typography {
+    font-size: 10px !important;
+  }
+
+  .user-header-level {
+    font-size: 8px;
+  }
+
+  .user-header-avatar {
+    width: 24px !important;
+    height: 24px !important;
+    border-width: 1px !important;
+    border-radius: 12px !important;
+  }
+
+  .user-header-username {
+    font-size: 8px !important;
+  }
+
+  .user-header-email {
+    font-size: 9px !important;
+  }
+
+  .user-header-menu-button {
+    width: 18px !important;
+    font-size: 18px !important;
+  }
+
+  .user-header-login-button {
+    font-size: 12px !important;
+    padding: 4px 10px !important;
+  }
+
+  .user-header-flex {
+    padding: 0 10px !important;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 360px) {
+  .user-header-logo-section {
+    gap: 6px !important;
+  }
+
+  .user-header-logo-image {
+    height: 24px !important;
+  }
+
+  .user-header-logo-text {
+    font-size: 12px !important;
+  }
+
+  .user-header-balance {
+    padding: 2px 6px !important;
+    min-width: 45px !important;
+  }
+
+  .user-header-balance-icon {
+    font-size: 8px !important;
+  }
+
+  .user-header-balance-label {
+    font-size: 8px;
+  }
+
+  .user-header-balance > .ant-typography {
+    font-size: 8px !important;
+  }
+
+  .user-header-level {
+    font-size: 6px;
+  }
+
+  .user-header-avatar {
+    width: 20px !important;
+    height: 20px !important;
+    border-width: 1px !important;
+    border-radius: 12px !important;
+  }
+
+  .user-header-username {
+    font-size: 8px !important;
+  }
+
+  .user-header-email {
+    font-size: 7px !important;
+  }
+
+  .user-header-menu-button {
+    width: 16px !important;
+    font-size: 16px !important;
+  }
+
+  .user-header-login-button {
+    font-size: 10px !important;
+    padding: 4px 8px !important;
+  }
+
+  .user-header-flex {
+    padding: 0 8px !important;
+    gap: 8px;
+  }
+}
+
+.ant-drawer-content-wrapper {
+  width: auto !important;
 }

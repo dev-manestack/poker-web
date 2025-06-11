@@ -1,8 +1,9 @@
-import { Table, Typography, Grid, Flex } from "antd";
+import { Table, Typography, Grid } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import type { GameTable } from "../../api/admin";
-import TexasTableGame from "./texas-table-game";
 import { useState } from "react";
+import bannerGif from "../../assets/banner.gif";
+import { useTranslation } from "react-i18next";
 
 const { Title } = Typography;
 const { useBreakpoint } = Grid;
@@ -16,10 +17,14 @@ interface Player {
 function TableDetails({ table }: { table: GameTable | null }) {
   const screens = useBreakpoint();
   const [dataSource, setDataSource] = useState<Player[]>([]);
+  const { t, i18n } = useTranslation();
+
+  // Determine current language for lang attribute on spans
+  const lang = i18n.language === "mn" ? "mn" : "en";
 
   const mobileColumns: ColumnsType<Player> = [
     {
-      title: "Нэр",
+      title: <span lang={lang}>{t("name")}</span>,
       dataIndex: "name",
       key: "name",
       align: "center",
@@ -27,7 +32,7 @@ function TableDetails({ table }: { table: GameTable | null }) {
       render: (text: string) => <strong>{text}</strong>,
     },
     {
-      title: "Мөнгөн дүн",
+      title: <span lang={lang}>{t("amount")}</span>,
       dataIndex: "amount",
       key: "amount",
       align: "center",
@@ -37,12 +42,12 @@ function TableDetails({ table }: { table: GameTable | null }) {
 
   const desktopColumns = [
     {
-      title: "Нэр",
+      title: <span lang={lang}>{t("name")}</span>,
       dataIndex: "name",
       key: "name",
     },
     {
-      title: "Мөнгөн дүн",
+      title: <span lang={lang}>{t("amount")}</span>,
       dataIndex: "amount",
       key: "amount",
       render: (amount: number) => amount.toLocaleString("mn-MN") + "₮",
@@ -53,47 +58,47 @@ function TableDetails({ table }: { table: GameTable | null }) {
     <div
       style={{
         width: "100%",
-        height: "400px",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
       }}
     >
+      <div className="banner" style={{ marginBottom: 16 }}>
+        <img
+          src={bannerGif}
+          alt="banner"
+          style={{
+            width: "100%",
+            height: "auto",
+            borderRadius: "12px",
+            border: "2px solid rgb(14, 71, 139)",
+            objectFit: "cover",
+          }}
+        />
+      </div>
+
       <Table
         columns={screens.xs ? mobileColumns : desktopColumns}
         dataSource={dataSource}
         pagination={screens.xs ? { pageSize: 5 } : false}
         scroll={{ x: 300 }}
-        locale={{ emptyText: "Тоглогч байхгүй" }}
+        locale={{ emptyText: <span lang={lang}>{t("noPlayers")}</span> }}
         style={{
           width: "100%",
-          fontSize: screens.xs ? 14 : 16, // smaller font size on mobile
+          fontSize: screens.xs ? 14 : 16,
+          background: "#040404 !important",
+          border: "none",
         }}
         title={() => (
           <Title
-            level={screens.xs ? 5 : 4} // smaller title on mobile
-            style={{ margin: 0, textAlign: "center" }}
+            level={screens.xs ? 5 : 4}
+            style={{ margin: 0, textAlign: "center", fontFamily: "'Montserrat', sans-serif", fontSize: "14px" }}
+            lang={lang}
           >
-            {table?.tableName || "Ширээ сонгоогүй байна"}
+            {table?.tableName || t("noTableSelected")}
           </Title>
         )}
       />
-      <Flex style={{ marginTop: "50px" }}>
-        <TexasTableGame
-          isPreview
-          previewTableId={table?.tableId ? String(table?.tableId) : ""}
-          setPreviewSeats={(seats) => {
-            const players: Player[] = [];
-            seats?.forEach((seat) => {
-              if (seat?.user) {
-                players.push({
-                  key: String(seat.user.userId),
-                  name: seat.user.username,
-                  amount: seat.stack,
-                });
-              }
-            });
-            setDataSource(players);
-          }}
-        />
-      </Flex>
     </div>
   );
 }

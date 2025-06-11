@@ -1,0 +1,105 @@
+{
+  "language": "Language",
+  "connectionSpeed": "Connection Speed",
+  "offline": "Offline",
+  "loading": "Loading...",
+  "version": "Version",
+  "name": "Name",
+  "amount": "Amount",
+  "noPlayers": "No players",
+  "noTableSelected": "No table selected",
+  "variant": {
+    "texas": "Texas Hold'em",
+    "holdem": "HOLD'EM",
+    "omaha": "Omaha",
+    "unknown": "Unknown"
+  },
+  "actions": {
+    "play": "Play",
+    "actions": "Actions"
+  },
+  "tableList": {
+    "index": "No.",
+    "name": "Name",
+    "variant": "Variant",
+    "buyIn": "Buy-In",
+    "players": "Players",
+    "blinds": "Blinds",
+    "table": "Table"
+  },
+  "homePage": {
+    "tabs": {
+      "tables": "TABLES",
+      "tournament": "TOURNAMENT"
+    },
+    "tableTypes": {
+      "texas": "TEXAS HOLD'EM",
+      "omaha": "OMAHA"
+    },
+    "tournament": {
+      "comingSoon": "Tournament is currently under development."
+    }
+  },
+  "userHeader": {
+    "menu": "Menu",
+    "login": "Login",
+    "register": "Register",
+    "forgotPassword": "Forgot Password",
+    "adminMenu": "Admin Menu",
+    "userProfile": "User Profile",
+    "logout": "Logout",
+    "balanceLabel": "Balance:",
+    "usernameLabel": "Username",
+    "aria": {
+      "menuButton": "Menu",
+      "userBalance": "User balance",
+      "avatar": "User avatar"
+    }
+  },
+  "userWithdrawPage": {
+    "balanceTitle": "Balance:",
+    "balance": "Balance:",
+    "locked": "Locked:",
+    "tabs": {
+      "deposit": "Deposit",
+      "withdraw": "Withdraw",
+      "outcome": "Game History"
+    }
+  },
+  "withdrawal": {
+    "code": "Code",
+    "requestDate": "Request Date",
+    "amount": "Amount",
+    "approvedBy": "Approved By",
+    "approveDate": "Approve Date",
+    "status": "Status",
+    "approved": "Approved",
+    "notApproved": "Not Approved",
+    "createTitle": "Create Withdrawal",
+    "amountRequired": "Please enter amount!",
+    "amountRange": "Amount must be between {{min}} and {{max}}",
+    "submit": "Submit",
+    "back": "Back",
+    "createButton": "Create",
+    "createSuccess": "Withdrawal created successfully",
+    "unknownError": "Unknown error occurred"
+  },
+  "deposit": {
+    "code": "Code",
+    "amount": "Amount",
+    "createDate": "Approved Date"
+  },
+  "outcome": {
+    "code": "Code",
+    "type": {
+      "title": "Type",
+      "gameplay": "Gameplay Win",
+      "bonus": "Bonus",
+      "recharge": "In-Play Recharge",
+      "leave_seat": "Leave Seat",
+      "buy_in": "Buy In"
+    },
+    "amount": "Amount",
+    "date": "Date"
+  }
+}

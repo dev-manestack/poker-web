@@ -5,49 +5,51 @@ import { useFetchTablesQuery } from "../../api/user";
 import { useState, useMemo, useCallback } from "react";
 import "../../styles/table-list.css";
 import type { ColumnsType } from "antd/es/table";
+import { useTranslation } from "react-i18next";
 
 const currencySymbol = "₮";
 const { useBreakpoint } = Grid;
 
 interface TableListProps {
   setSelectedTable: (table: GameTable | null) => void;
-  tableType?: string; // Optional filter for table variant type (e.g. "texas", "omaha")
+  tableType?: string;
 }
 
 function TableList({ setSelectedTable, tableType }: TableListProps) {
-  const [selectedRowKey, setSelectedRowKey] = useState<string | number | null>(
-    null
-  );
+  const [selectedRowKey, setSelectedRowKey] = useState<string | number | null>(null);
   const navigate = useNavigate();
   const { data: tableData } = useFetchTablesQuery();
   const screens = useBreakpoint();
+  const isMobileOrTablet = !screens.lg;
+  const { t, i18n } = useTranslation();
 
-  // Filter tables by the optional tableType prop (variant normalized to lowercase)
+  const lang = i18n.language === "mn" ? "mn" : "en";
+
   const filteredTables = useMemo(() => {
     if (!tableData) return [];
     if (!tableType) return tableData;
-
-    return tableData.filter(
-      (table) => table.variant?.toLowerCase() === tableType.toLowerCase()
-    );
+    return tableData.filter((table) => table.variant?.toLowerCase() === tableType.toLowerCase());
   }, [tableData, tableType]);
 
-  const renderVariant = useCallback((text: string) => {
-    switch (text.toUpperCase()) {
-      case "TEXAS":
-        return "Texas Hold'em";
-      case "OMAHA":
-        return "Omaha";
-      default:
-        return "Unknown";
-    }
-  }, []);
+  const renderVariant = useCallback(
+    (text: string) => {
+      switch (text.toUpperCase()) {
+        case "TEXAS":
+          return t("variant.texas"); // e.g. "Texas Hold'em"
+        case "OMAHA":
+          return t("variant.omaha");
+        default:
+          return t("variant.unknown");
+      }
+    },
+    [t]
+  );
 
   const renderBuyInRange = useCallback(
     (_: any, record: GameTable) =>
-      `${currencySymbol}${record.minBuyIn.toLocaleString(
+      `${currencySymbol}${record.minBuyIn.toLocaleString("mn-MN")} / ${currencySymbol}${record.maxBuyIn.toLocaleString(
         "mn-MN"
-      )} / ${currencySymbol}${record.maxBuyIn.toLocaleString("mn-MN")}`,
+      )}`,
     []
   );
 
@@ -61,142 +63,155 @@ function TableList({ setSelectedTable, tableType }: TableListProps) {
 
   const renderActions = useCallback(
     (_: any, record: GameTable) => (
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+      <div className="actions-wrapper">
         <Button
-          style={{ background: "#f37b06" }}
-          type="primary"
+          className="play-button"
+          type="default"
           onClick={() => {
             navigate("/table/" + record.tableId);
           }}
           size="middle"
         >
-          Тоглох
+          {t("actions.play")}
         </Button>
-        <Button size="middle">Үзэх</Button>
       </div>
     ),
-    [navigate]
+    [navigate, t]
   );
 
   const desktopColumns = useMemo(
     () => [
       {
-        title: "№",
+        title: <span lang={lang}>{t("tableList.index")}</span>,
         dataIndex: "index",
         key: "index",
-        render: (_: any, __: any, index: number) => {
-          return <Typography.Text>{index + 1}</Typography.Text>;
-        },
+        render: (_: any, __: any, index: number) => <Typography.Text>{index + 1}</Typography.Text>,
       },
       {
-        title: "Нэр",
+        title: <span lang={lang}>{t("tableList.name")}</span>,
         dataIndex: "tableName",
         key: "tableName",
       },
       {
-        title: "Төрөл",
+        title: <span lang={lang}>{t("tableList.variant")}</span>,
         dataIndex: "variant",
         key: "variant",
         render: renderVariant,
       },
+      // {
+      //   title: <span lang={lang}>{t("tableList.buyIn")}</span>,
+      //   key: "buyInRange",
+      //   render: renderBuyInRange,
+      // },
       {
-        title: "Оролт",
-        key: "buyInRange",
-        render: renderBuyInRange,
-      },
-      {
-        title: "Тоглогчид",
+        title: <span lang={lang}>{t("tableList.players")}</span>,
         dataIndex: "maxPlayers",
         key: "maxPlayers",
       },
       {
-        title: "Ул",
+        title: <span lang={lang}>{t("tableList.blinds")}</span>,
         key: "blinds",
         render: renderBlinds,
       },
       {
-        title: "Actions",
+        title: <span lang={lang}>{t("actions.actions")}</span>,
         key: "actions",
         render: renderActions,
       },
     ],
-    [renderVariant, renderBuyInRange, renderBlinds, renderActions]
+    [renderVariant, renderBuyInRange, renderBlinds, renderActions, t, lang]
   );
 
   const renderMobileVariant = useCallback(
     (_: any, record: GameTable) => (
-      <div style={{ fontSize: 12, padding: "8px 12px" }}>
+      <div className="mobile-variant" lang={lang}>
         {record.variant?.toUpperCase() === "TEXAS"
-          ? "HOLD'EM"
+          ? t("variant.holdem")
           : record.variant?.toUpperCase() === "OMAHA"
-          ? "OMAHA"
-          : "Unknown"}
+          ? t("variant.omaha")
+          : t("variant.unknown")}
       </div>
     ),
-    []
+    [t, lang]
   );
 
   const renderMobileTableName = useCallback(
     (text: string) => (
-      <div style={{ padding: "8px 12px" }}>
-        <strong>{text}</strong>
+      <div className="mobile-table-name" lang={lang}>
+        {text}
       </div>
     ),
-    []
+    [lang]
   );
 
   const renderMobileBlinds = useCallback(
     (_: any, record: GameTable) => (
-      <div style={{ padding: "8px 12px" }}>
-        {`${record.smallBlind.toLocaleString(
-          "mn-MN"
-        )} / ${record.bigBlind.toLocaleString("mn-MN")}`}
+      <div className="mobile-blinds" lang={lang}>
+        {`${record.smallBlind.toLocaleString("mn-MN")} / ${record.bigBlind.toLocaleString("mn-MN")}`}
       </div>
     ),
-    []
+    [lang]
   );
 
   const renderMobilePlayers = useCallback(
     (_: any, record: GameTable) => (
-      <div style={{ padding: "8px 12px" }}>{record.maxPlayers}</div>
+      <div className="mobile-players" lang={lang}>
+        {record.maxPlayers}
+      </div>
     ),
-    []
+    [lang]
   );
 
   const mobileColumns: ColumnsType<GameTable> = useMemo(
     () => [
       {
-        title: () => <div style={{ padding: "8px 12px" }}>Төрөл</div>,
+        title: () => (
+          <div className="mobile-column-header" lang={lang}>
+            <span>{t("tableList.variant")}</span>
+          </div>
+        ),
         key: "variant",
         align: "center" as const,
         render: renderMobileVariant,
       },
       {
-        title: () => <div style={{ padding: "8px 12px" }}>Ширээ</div>,
+        title: () => (
+          <div className="mobile-column-header" lang={lang}>
+            <span>{t("tableList.table")}</span>
+          </div>
+        ),
         dataIndex: "tableName",
         key: "tableName",
         align: "center" as const,
         render: renderMobileTableName,
       },
       {
-        title: () => <div style={{ padding: "8px 12px" }}>Үл</div>,
+        title: () => (
+          <div className="mobile-column-header" lang={lang}>
+            <span>{t("tableList.blinds")}</span>
+          </div>
+        ),
         key: "blindStakes",
         align: "center" as const,
         render: renderMobileBlinds,
       },
       {
-        title: () => <div style={{ padding: "8px 12px" }}>Тоглогчид</div>,
+        title: () => (
+          <div className="mobile-column-header" lang={lang}>
+            <span>{t("tableList.players")}</span>
+          </div>
+        ),
         key: "players",
         align: "center" as const,
         render: renderMobilePlayers,
       },
+      {
+        title: <span lang={lang}>{t("actions.actions")}</span>,
+        key: "actions",
+        render: renderActions,
+      },
     ],
-    [
-      renderMobileVariant,
-      renderMobileTableName,
-      renderMobileBlinds,
-      renderMobilePlayers,
-    ]
+    [renderMobileVariant, renderMobileTableName, renderMobileBlinds, renderMobilePlayers, t, lang]
   );
 
   const handleRowClick = useCallback(
@@ -216,7 +231,8 @@ function TableList({ setSelectedTable, tableType }: TableListProps) {
     <Row gutter={[16, 16]}>
       <Col xs={24} sm={24} md={24} lg={24} xl={24}>
         <Table
-          columns={screens.xs ? mobileColumns : desktopColumns}
+          className={isMobileOrTablet ? "table-mobile" : "table-desktop"}
+          columns={isMobileOrTablet ? mobileColumns : desktopColumns}
           dataSource={filteredTables}
           rowKey="tableId"
           pagination={false}
@@ -224,11 +240,11 @@ function TableList({ setSelectedTable, tableType }: TableListProps) {
           onRow={(record) => ({
             onClick: () => handleRowClick(record),
           })}
-          rowClassName={(record) =>
-            record.tableId === selectedRowKey ? "selected-row" : "hover-row"
-          }
-          style={{
-            fontSize: screens.xs ? 14 : 16,
+          rowClassName={(record) => {
+            let className = "custom-table-row";
+            if (record.tableId === selectedRowKey) className += " selected-row";
+            else className += " hover-row";
+            return className;
           }}
         />
       </Col>

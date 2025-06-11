@@ -14,7 +14,7 @@ const pokerLightTheme = {
     colorBgBase: "#fafafa", // light table background
     colorTextBase: "#1a1a1a",
     colorBgContainer: "#ffffff",
-    fontFamily: "Play, sans-serif", // poker-style font if available
+    fontFamily: "Montserrat, sans-serif", // poker-style font if available
   },
   components: {
     Button: {
@@ -39,10 +39,10 @@ const pokerDarkTheme = {
     colorWarning: "#ffb300",
     colorError: "#e53935",
     borderRadius: 6,
-    colorBgBase: "#2C2F33", // dark background
+    colorBgBase: "#090F21", // dark background
     colorTextBase: "#e0e0e0",
-    colorBgContainer: "#2C2F33",
-    fontFamily: "Play, sans-serif",
+    // colorBgContainer: "#2C2F33",
+    fontFamily: "Montserrat, sans-serif",
   },
   components: {
     Button: {
@@ -68,11 +68,7 @@ function ThemeProvider({ children }: { children: React.ReactNode }) {
     dispatch(setMode(savedMode));
   }, []);
 
-  return (
-    <ConfigProvider theme={mode === "dark" ? pokerDarkTheme : pokerLightTheme}>
-      {children}
-    </ConfigProvider>
-  );
+  return <ConfigProvider theme={mode === "dark" ? pokerDarkTheme : pokerLightTheme}>{children}</ConfigProvider>;
 }
 
 export default ThemeProvider;

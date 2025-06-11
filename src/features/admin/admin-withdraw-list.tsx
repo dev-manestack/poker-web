@@ -6,27 +6,23 @@ function AdminWithdrawList({ withdrawals }: { withdrawals: Withdrawal[] }) {
 
   const columns = [
     {
-      title: "№",
+      title: <span lang="mn">№</span>,
       dataIndex: "index",
       key: "index",
-      render: (_: any, __: any, index: number) => {
-        return <Typography.Text>{index + 1}</Typography.Text>;
-      },
+      render: (_: any, __: any, index: number) => <Typography.Text>{index + 1}</Typography.Text>,
     },
     {
-      title: "Хэрэглэгч",
+      title: <span lang="mn">Хэрэглэгч</span>,
       dataIndex: "userId",
       key: "userId",
-      render: (_: string, record: Withdrawal) => {
-        return (
-          <Flex>
-            <div>{record.user?.email}</div>
-          </Flex>
-        );
-      },
+      render: (_: string, record: Withdrawal) => (
+        <Flex>
+          <div>{record.user?.email}</div>
+        </Flex>
+      ),
     },
     {
-      title: "Хүсэлтийн огноо",
+      title: <span lang="mn">Хүсэлтийн огноо</span>,
       dataIndex: "createDate",
       key: "createDate",
       render: (text: string) => {
@@ -43,23 +39,22 @@ function AdminWithdrawList({ withdrawals }: { withdrawals: Withdrawal[] }) {
       },
     },
     {
-      title: "Дүн",
+      title: <span lang="mn">Дүн</span>,
       dataIndex: "amount",
       key: "amount",
-      render: (text: number) => {
-        return text.toLocaleString("mn-MN", {
+      render: (text: number) =>
+        text.toLocaleString("mn-MN", {
           style: "currency",
           currency: "MNT",
-        });
-      },
+        }),
     },
     {
-      title: "Баталсан Админ",
+      title: <span lang="mn">Баталсан Админ</span>,
       dataIndex: "approvedBy",
       key: "approvedBy",
     },
     {
-      title: "Баталсан огноо",
+      title: <span lang="mn">Баталсан огноо</span>,
       dataIndex: "approveDate",
       key: "approveDate",
       render: (text: string) => {
@@ -76,40 +71,34 @@ function AdminWithdrawList({ withdrawals }: { withdrawals: Withdrawal[] }) {
       },
     },
     {
-      title: "Төлөв",
+      title: <span lang="mn">Төлөв</span>,
       key: "state",
-      render: (_: any, record: any) =>
+      render: (_: any, record: Withdrawal) =>
         record.approvedBy ? (
-          <span style={{ color: "green" }}>Батлагдсан</span>
+          <span style={{ color: "green" }} lang="mn">
+            Батлагдсан
+          </span>
         ) : (
-          <span style={{ color: "red" }}>Батлагдаагүй</span>
+          <span style={{ color: "red" }} lang="mn">
+            Батлагдаагүй
+          </span>
         ),
     },
     {
-      title: "Үйлдэл",
+      title: <span lang="mn">Үйлдэл</span>,
       key: "action",
-      render: (_: any, record: any) => (
+      render: (_: any, record: Withdrawal) => (
         <Flex gap={5}>
           <Button
             type="primary"
-            disabled={record?.approvedBy}
+            disabled={!!record.approvedBy}
             onClick={() => {
-              console.log(record?.withdrawalId);
-              approve({
-                id: record?.withdrawalId,
-              });
+              approve({ id: record.withdrawalId });
             }}
           >
             Батлах
           </Button>
-          <Popover
-            placement="bottom"
-            content={
-              <Typography.Text>
-                {JSON.stringify(record.details)}
-              </Typography.Text>
-            }
-          >
+          <Popover placement="bottom" content={<Typography.Text>{JSON.stringify(record.details)}</Typography.Text>}>
             <Button>Нэмэлт мэдээлэл</Button>
           </Popover>
         </Flex>
@@ -117,13 +106,7 @@ function AdminWithdrawList({ withdrawals }: { withdrawals: Withdrawal[] }) {
     },
   ];
 
-  return (
-    <Table
-      dataSource={withdrawals}
-      columns={columns}
-      style={{ width: "100%" }}
-    />
-  );
+  return <Table dataSource={withdrawals} columns={columns} style={{ width: "100%" }} />;
 }
 
 export default AdminWithdrawList;

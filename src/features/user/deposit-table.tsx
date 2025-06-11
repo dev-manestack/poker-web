@@ -1,23 +1,25 @@
 import { useFetchDepositsQuery } from "../../api/user";
 import { Table } from "antd";
+import { useTranslation } from "react-i18next";
 
 function DepositTable() {
   const { data } = useFetchDepositsQuery();
+  const { t } = useTranslation();
 
   const columns = [
     {
-      title: "Код",
+      title: t("deposit.code"),
       dataIndex: "depositId",
       key: "depositId",
     },
     {
-      title: "Дүн",
+      title: t("deposit.amount"),
       dataIndex: "amount",
       key: "amount",
       render: (text: number) => `${text.toLocaleString()}₮`,
     },
     {
-      title: "Батлагдсан огноо",
+      title: t("deposit.createDate"),
       dataIndex: "createDate",
       key: "createDate",
       render: (text: string) => new Date(text).toLocaleString(),
@@ -35,6 +37,7 @@ function DepositTable() {
       style={{
         width: "100%",
       }}
+      rowKey="depositId"
     />
   );
 }

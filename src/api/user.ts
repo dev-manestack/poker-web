@@ -59,13 +59,7 @@ const baseQuery: typeof rawBaseQuery = async (args, api, extraOptions) => {
 export const userApi = createApi({
   reducerPath: "userApi",
   baseQuery: baseQuery,
-  tagTypes: [
-    "UserList",
-    "tables",
-    "DepositList",
-    "WithdrawList",
-    "OutcomeList",
-  ],
+  tagTypes: ["UserList", "tables", "DepositList", "WithdrawList", "OutcomeList"],
   endpoints: (builder) => ({
     login: builder.mutation({
       query: (credentials: LoginCredentials) => ({

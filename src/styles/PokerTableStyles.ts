@@ -10,27 +10,8 @@ export const containerStyles: CSSProperties = {
 export const tableStyles: React.CSSProperties = {
   width: "100%",
   height: "100%",
-  borderRadius: "50% / 100%", // oval with flat top/bottom
   position: "relative",
   overflow: "visible",
-};
-
-export const feltStyles: React.CSSProperties = {
-  position: "absolute",
-  top: "15%", // leave border space
-  left: "10%",
-  width: "80%",
-  height: "70%",
-  background: "linear-gradient(145deg, #064e3b, #0b6b49)", // felt green gradient
-  borderRadius: "40% / 60%", // inner oval shape
-  boxShadow: "inset 0 0 15px #093624, 0 5px 10px rgba(0,0,0,0.4)",
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "flex-start",
-  paddingTop: "10px",
-  color: "white",
-  zIndex: 1,
 };
 
 export const contentStyles: CSSProperties = {

@@ -31,13 +31,9 @@
   left: 0;
   z-index: 2;
   pointer-events: none;
-  width: 50%;
-  height: 50%;
 }
 
 .player-image {
-  width: 50%;
-  height: 50%;
   background: #030a01;
   border-radius: 50%;
   position: relative;

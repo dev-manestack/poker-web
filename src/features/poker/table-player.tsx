@@ -77,6 +77,10 @@ function TablePlayer({
         )}
         <Image
           preview={false}
+          style={{
+            width: "100%",
+            height: "100%",
+          }}
           className={`player-image${
             isTurn && progress === 0 ? " turn-active" : ""
           }`}

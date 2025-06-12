@@ -788,7 +788,13 @@ function TexasTableGame({
             backgroundPosition: "center",
           }}
         >
-          <Flex style={{ width: "100%" }} vertical gap={12}>
+          <Flex
+            style={{ width: "100%", height: "100%" }}
+            vertical
+            justify="center"
+            align="center"
+            gap={12}
+          >
             <Flex>
               <Typography.Text
                 style={{
@@ -825,6 +831,7 @@ function TexasTableGame({
                     });
                   }
                 });
+                console.log(gameState.seats);
                 return (
                   <div key={index} style={playerCardStyle}>
                     <PokerCard

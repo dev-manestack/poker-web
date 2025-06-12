@@ -1,47 +1,16 @@
 import { ConfigProvider, theme } from "antd";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { setMode } from "./theme-slice";
-
-const pokerLightTheme = {
-  token: {
-    colorPrimary: "#d32f2f", // deep red for poker
-    colorSuccess: "#388e3c", // poker table green
-    colorInfo: "#0288d1",
-    colorWarning: "#fbc02d",
-    colorError: "#c62828",
-    borderRadius: 6,
-    colorBgBase: "#fafafa", // light table background
-    colorTextBase: "#1a1a1a",
-    colorBgContainer: "#ffffff",
-    fontFamily: "Montserrat, sans-serif", // poker-style font if available
-  },
-  components: {
-    Button: {
-      colorPrimaryHover: "#b71c1c",
-      borderRadius: 4,
-    },
-    Card: {
-      colorBgContainer: "#fffaf0",
-    },
-    Modal: {
-      colorBgElevated: "#fff",
-    },
-  },
-  algorithm: theme.defaultAlgorithm,
-};
 
 const pokerDarkTheme = {
   token: {
-    colorPrimary: "#ef5350", // vivid red
-    colorSuccess: "#66bb6a", // lighter table green
+    colorPrimary: "#ef5350",
+    colorSuccess: "#66bb6a",
     colorInfo: "#29b6f6",
     colorWarning: "#ffb300",
     colorError: "#e53935",
     borderRadius: 6,
-    colorBgBase: "#090F21", // dark background
+    colorBgBase: "#090F21",
     colorTextBase: "#e0e0e0",
-    // colorBgContainer: "#2C2F33",
+    colorBgContainer: "#0b1a48",
     fontFamily: "Montserrat, sans-serif",
   },
   components: {
@@ -55,20 +24,18 @@ const pokerDarkTheme = {
     Modal: {
       colorBgElevated: "#2c2c2c",
     },
+    Select: {
+      colorBgContainer: "#121529",
+      colorText: "#fff",
+      // colorBorder: "#6a1b9a",
+      // colorPrimaryHover: "#ff1744",
+    },
   },
   algorithm: theme.darkAlgorithm,
 };
 
-function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const mode = useSelector((state: any) => state.theme.mode);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    const savedMode = localStorage.getItem("themeMode");
-    dispatch(setMode(savedMode));
-  }, []);
-
-  return <ConfigProvider theme={mode === "dark" ? pokerDarkTheme : pokerLightTheme}>{children}</ConfigProvider>;
-}
+const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
+  return <ConfigProvider theme={pokerDarkTheme}>{children}</ConfigProvider>;
+};
 
 export default ThemeProvider;

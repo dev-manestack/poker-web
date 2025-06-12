@@ -1,12 +1,10 @@
 import {
-  BellOutlined,
   CloseOutlined,
   CrownOutlined,
-  DollarOutlined,
   LogoutOutlined,
   MenuOutlined,
   UserOutlined,
-  WalletOutlined,
+  GoldOutlined,
 } from "@ant-design/icons";
 import { Avatar, Button, Drawer, Flex, Modal, Typography } from "antd";
 import { useEffect, useState } from "react";
@@ -22,6 +20,7 @@ import "../index.css";
 import Logo from "../assets/logo.webp";
 import { useTranslation } from "react-i18next";
 import avatar from "../assets/avatar2.jpg";
+import balance from "../assets/balance-icon2.png";
 
 const { Text } = Typography;
 
@@ -103,7 +102,7 @@ function UserHeader() {
           onClick={() => navigate("/")}
           className="user-header-logo-image"
           style={{
-            height: 45,
+            height: 40,
             objectFit: "cover",
             borderRadius: 8,
             boxShadow: "0 2px 6px rgba(0, 0, 0, 0.5)",
@@ -119,7 +118,7 @@ function UserHeader() {
           className="user-header-logo-text"
           style={{
             fontWeight: "800",
-            fontSize: 24,
+            fontSize: 20,
             userSelect: "none",
             fontStyle: "italic",
           }}
@@ -141,7 +140,8 @@ function UserHeader() {
             aria-label="User balance"
             gap={8}
           >
-            <WalletOutlined className="user-header-balance-icon" />
+            <img src={balance} alt="balance icon" className="user-header-balance-icon" />
+
             <Text className="user-header-balance-value">{userInfo?.userBalance?.balance.toLocaleString()}₮</Text>
           </Flex>
 
@@ -165,7 +165,7 @@ function UserHeader() {
         </Flex>
       ) : (
         <Button
-          type="primary"
+          type="default"
           onClick={() => setModalType("login")}
           lang="mn"
           className="user-header-login-button"
@@ -180,6 +180,7 @@ function UserHeader() {
         placement="left"
         onClose={() => setDrawerOpen(false)}
         open={drawerOpen}
+        width="auto"
       >
         {isAuthenticated && (
           <Flex vertical gap={10}>
@@ -228,6 +229,7 @@ function UserHeader() {
         }
         closeIcon={<CloseOutlined style={{ color: "#EEFFFF" }} />}
         footer={null}
+        wrapClassName="custom-login-modal"
       >
         {modalType === "login" && <LoginForm setModalType={setModalType} />}
         {modalType === "register" && <RegisterForm setModalType={setModalType} />}

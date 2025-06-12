@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Button, Tooltip } from "antd";
 import { MdFullscreen } from "react-icons/md";
 import { PiPokerChipLight } from "react-icons/pi";
@@ -19,7 +19,7 @@ interface TableActionButtonsProps {
   leaveSeat: (seat: number) => void;
   selectedSeat?: number;
   navigate: (path: string) => void;
-  badBeatText?: string;
+  badBeatText?: string; // you can remove this prop if unused elsewhere
 }
 
 export default function TableActionButtons({
@@ -31,24 +31,7 @@ export default function TableActionButtons({
   leaveSeat,
   selectedSeat,
   navigate,
-  badBeatText = "Bad Beat: 1,360,000!",
 }: TableActionButtonsProps) {
-  const [showBadBeat, setShowBadBeat] = useState(true);
-  const [animating, setAnimating] = useState(false);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setAnimating(true); // start fade out and slide down
-
-      setTimeout(() => {
-        setShowBadBeat((prev) => !prev); // toggle text
-        setAnimating(false); // fade in and slide up
-      }, 500); // animation duration 0.5s fade out
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, []);
-
   if (isPreview) return null;
 
   return (
@@ -139,34 +122,6 @@ export default function TableActionButtons({
             icon={<MdFullscreen size={30} style={{ color: "white" }} />}
           />
         </Tooltip>
-      </div>
-
-      {/* Animated Bad Beat Box */}
-      <div
-        style={{
-          position: "absolute",
-          top: 20,
-          right: "50%",
-          transform: animating ? "translateX(50%) translateY(20px)" : "translateX(50%) translateY(0)",
-          padding: "10px 16px",
-          background: "linear-gradient(145deg, rgba(90, 90, 90, 0.7), rgba(55, 55, 55, 0.6))",
-          backdropFilter: "blur(10px)",
-          WebkitBackdropFilter: "blur(10px)",
-          borderRadius: 10,
-          color: "#fff",
-          fontWeight: "700",
-          fontSize: 24,
-          fontFamily: "'Bebas Neue', cursive",
-          zIndex: 10,
-          maxWidth: 280,
-          textAlign: "center",
-          userSelect: "none",
-          letterSpacing: "2px",
-          opacity: animating ? 0 : 1,
-          transition: "opacity 0.5s ease, transform 0.5s ease",
-        }}
-      >
-        💰 {showBadBeat ? badBeatText : "Win me!"}
       </div>
 
       {/* Logout Button (Top Left) */}

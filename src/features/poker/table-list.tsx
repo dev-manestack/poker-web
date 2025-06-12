@@ -231,7 +231,7 @@ function TableList({ setSelectedTable, tableType }: TableListProps) {
     <Row gutter={[16, 16]}>
       <Col xs={24} sm={24} md={24} lg={24} xl={24}>
         <Table
-          className={isMobileOrTablet ? "table-mobile" : "table-desktop"}
+          className={`${isMobileOrTablet ? "table-mobile" : "table-desktop"} ${lang === "mn" ? "lang-mn" : "lang-en"}`}
           columns={isMobileOrTablet ? mobileColumns : desktopColumns}
           dataSource={filteredTables}
           rowKey="tableId"
@@ -239,6 +239,7 @@ function TableList({ setSelectedTable, tableType }: TableListProps) {
           scroll={{ x: "max-content" }}
           onRow={(record) => ({
             onClick: () => handleRowClick(record),
+            lang: lang, // here lang="mn" or lang="en"
           })}
           rowClassName={(record) => {
             let className = "custom-table-row";

@@ -8,20 +8,11 @@
   border-radius: 50%;
   text-align: center;
   line-height: 80px;
-  font-size: 18px;
+  font-size: 14px;
   transform: translate(-50%, -50%);
   cursor: pointer;
   transition: all 0.3s ease;
   padding: 35px;
-}
-
-.seat.preview {
-  width: 50px;
-  height: 50px;
-  line-height: 50px;
-  font-size: 14px;
-  padding: 20px;
-  cursor: not-allowed;
 }
 
 .seat:hover {
@@ -29,6 +20,50 @@
   box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
   color: #fff !important;
   background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* 📱 iPhone SE / Small Phones */
+@media (max-width: 375px) {
+  .seat {
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    font-size: 10px;
+    padding: 15px;
+  }
+}
+
+/* 📱 Regular Phones (iPhone 14, Samsung Galaxy, etc.) */
+@media (min-width: 376px) and (max-width: 768px) {
+  .seat {
+    width: 60px;
+    height: 60px;
+    line-height: 60px;
+    font-size: 12px;
+    padding: 20px;
+  }
+}
+
+/* 💻 Tablets (iPad, Samsung Tab) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .seat {
+    width: 70px;
+    height: 70px;
+    line-height: 70px;
+    font-size: 13px;
+    padding: 25px;
+  }
+}
+
+/* 🖥️ Desktops - your original style remains */
+@media (min-width: 1025px) {
+  .seat {
+    width: 80px;
+    height: 80px;
+    line-height: 80px;
+    font-size: 14px;
+    padding: 35px;
+  }
 }
 
 @media (max-width: 992px) {

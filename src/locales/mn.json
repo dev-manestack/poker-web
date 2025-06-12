@@ -101,5 +101,38 @@
     },
     "amount": "Дүн",
     "date": "Огноо"
-  }
+  },
+  "loginForm": {
+    "success": "Амжилттай нэвтэрлээ",
+    "error": "Нэвтрэхэд алдаа гарлаа",
+    "emailLabel": "Цахим хаяг",
+    "emailPlaceholder": "Цахим хаягаа оруулна уу",
+    "passwordLabel": "Нууц үг",
+    "passwordPlaceholder": "Нууц үгээ оруулна уу",
+    "loginButton": "Нэвтрэх",
+    "noAccount": "Та өмнө бүртгүүлж байгаагүй юу?",
+    "register": "Бүртгүүлэх",
+    "forgotPassword": "Нууц үг сэргээх"
+  },
+  "registerForm": {
+    "emailLabel": "Цахим хаяг",
+    "emailPlaceholder": "Цахим хаягаа оруулна уу",
+    "usernameLabel": "Тоглогчийн нэр",
+    "usernamePlaceholder": "Тоглогчийн нэрээ оруулна уу",
+    "passwordLabel": "Нууц үг",
+    "passwordPlaceholder": "Нууц үгээ оруулна уу",
+    "passwordRepeatLabel": "Нууц үг давтах",
+    "passwordRepeatPlaceholder": "Нууц үгээ дахин оруулна уу",
+    "bankLabel": "Банк",
+    "bankPlaceholder": "Банк",
+    "accountNumberLabel": "Дансны дугаар",
+    "accountNumberPlaceholder": "Дансны дугаар",
+    "registerButton": "Бүртгүүлэх",
+    "haveAccount": "Та өмнө бүртгэл үүсгэж байсан уу?",
+    "loginLink": "Нэвтрэх",
+    "successMessage": "Амжилттай бүртгэгдлээ",
+    "errorMessage": "Нэвтрэхэд алдаа гарлаа: ",
+    "errorMessageGeneric": "Нэвтрэхэд алдаа гарлаа"
+  },
+  "seat": "Суух"
 }

@@ -19,7 +19,6 @@ function TableDetails({ table }: { table: GameTable | null }) {
   const [dataSource, setDataSource] = useState<Player[]>([]);
   const { t, i18n } = useTranslation();
 
-  // Determine current language for lang attribute on spans
   const lang = i18n.language === "mn" ? "mn" : "en";
 
   const mobileColumns: ColumnsType<Player> = [
@@ -29,6 +28,7 @@ function TableDetails({ table }: { table: GameTable | null }) {
       key: "name",
       align: "center",
       width: "50%",
+      className: "table-column-name",
       render: (text: string) => <strong>{text}</strong>,
     },
     {
@@ -36,6 +36,8 @@ function TableDetails({ table }: { table: GameTable | null }) {
       dataIndex: "amount",
       key: "amount",
       align: "center",
+      width: "50%",
+      className: "table-column-name",
       render: (amount: number) => amount.toLocaleString("mn-MN") + "₮",
     },
   ];
@@ -45,57 +47,35 @@ function TableDetails({ table }: { table: GameTable | null }) {
       title: <span lang={lang}>{t("name")}</span>,
       dataIndex: "name",
       key: "name",
+      className: "table-column-name",
     },
     {
       title: <span lang={lang}>{t("amount")}</span>,
       dataIndex: "amount",
       key: "amount",
+      className: "table-column-name",
       render: (amount: number) => amount.toLocaleString("mn-MN") + "₮",
     },
   ];
 
   return (
-    <div
-      style={{
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <div className="banner" style={{ marginBottom: 16 }}>
-        <img
-          src={bannerGif}
-          alt="banner"
-          style={{
-            width: "100%",
-            height: "auto",
-            borderRadius: "12px",
-            border: "2px solid rgb(14, 71, 139)",
-            objectFit: "cover",
-          }}
-        />
+    <div className="table-details-container">
+      <div className="table-details-banner">
+        <img src={bannerGif} alt="banner" className="table-details-banner-img" />
       </div>
 
       <Table
         columns={screens.xs ? mobileColumns : desktopColumns}
         dataSource={dataSource}
         pagination={screens.xs ? { pageSize: 5 } : false}
-        scroll={{ x: 300 }}
+        scroll={{ x: "max-content" }}
         locale={{ emptyText: <span lang={lang}>{t("noPlayers")}</span> }}
-        style={{
-          width: "100%",
-          fontSize: screens.xs ? 14 : 16,
-          background: "#040404 !important",
-          border: "none",
-        }}
+        className="table-details-table"
         title={() => (
-          <Title
-            level={screens.xs ? 5 : 4}
-            style={{ margin: 0, textAlign: "center", fontFamily: "'Montserrat', sans-serif", fontSize: "14px" }}
-            lang={lang}
-          >
-            {table?.tableName || t("noTableSelected")}
+          <Title level={screens.xs ? 5 : 4} className="table-details-title">
+            <span style={{ fontSize: "14px" }} lang={lang}>
+              {table?.tableName || t("noTableSelected")}
+            </span>
           </Title>
         )}
       />

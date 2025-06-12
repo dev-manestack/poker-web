@@ -101,5 +101,38 @@
     },
     "amount": "Amount",
     "date": "Date"
-  }
+  },
+  "loginForm": {
+    "success": "Successfully logged in",
+    "error": "Login failed",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Enter your email",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "loginButton": "Login",
+    "noAccount": "Don't have an account?",
+    "register": "Register",
+    "forgotPassword": "Forgot password?"
+  },
+  "registerForm": {
+    "emailLabel": "Email",
+    "emailPlaceholder": "Enter your email",
+    "usernameLabel": "Username",
+    "usernamePlaceholder": "Enter your username",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "passwordRepeatLabel": "Repeat Password",
+    "passwordRepeatPlaceholder": "Re-enter your password",
+    "bankLabel": "Bank",
+    "bankPlaceholder": "Select your bank",
+    "accountNumberLabel": "Account Number",
+    "accountNumberPlaceholder": "Enter your account number",
+    "registerButton": "Register",
+    "haveAccount": "Already have an account?",
+    "loginLink": "Login",
+    "successMessage": "Registered successfully",
+    "errorMessage": "Registration error: ",
+    "errorMessageGeneric": "An error occurred during registration"
+  },
+  "seat": "Sit"
 }

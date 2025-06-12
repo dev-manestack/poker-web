@@ -1,0 +1,331 @@
+.custom-login-modal .ant-modal-content {
+  background-color: #1a1a2e;
+  border-radius: 12px;
+  padding: 30px 24px;
+  color: #e0e0e0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 480px;
+  margin: 0 auto;
+  width: 90%;
+  box-sizing: border-box;
+}
+
+.custom-login-modal .ant-form-item-label {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.custom-login-modal .ant-form-item-label > label {
+  color: #a0a0a0;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.custom-login-modal .ant-input,
+.custom-login-modal .ant-input-password {
+  border-radius: 6px;
+  border: 1.5px solid #3f51b5;
+  background-color: #121529;
+  color: #fff;
+  transition: border-color 0.3s ease;
+  font-size: 14px;
+  padding: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: "Montserrat", sans-serif;
+}
+
+.custom-login-modal .ant-input:focus,
+.custom-login-modal .ant-input-password:focus {
+  border-color: #7e57c2;
+  box-shadow: 0 0 5px #7e57c2;
+}
+
+.custom-login-modal .login-form-button {
+  background-color: #6a1b9a;
+  border: none;
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 12px 0;
+  font-size: 18px;
+  transition: background-color 0.3s ease;
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
+  display: flex;
+  box-sizing: border-box;
+}
+
+.custom-login-modal .login-form-button:hover,
+.custom-login-modal .login-form-button:focus {
+  background-color: #7e57c2;
+}
+
+.custom-login-modal a {
+  color: #7e57c2;
+  cursor: pointer;
+  font-weight: 600;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+  font-size: 14px;
+}
+
+.custom-login-modal a:hover {
+  color: #b39ddb;
+}
+
+.custom-login-modal .ant-typography {
+  color: #cfcfcf;
+  font-size: 14px;
+  margin-top: 8px;
+  text-align: center;
+}
+
+@media (max-width: 390px) {
+  .custom-login-modal .ant-modal-content {
+    padding: 20px 12px;
+    width: 95%;
+  }
+
+  .custom-login-modal .ant-form-item-label > label {
+    font-size: 13px;
+  }
+
+  .custom-login-modal .ant-input,
+  .custom-login-modal .ant-input-password {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .custom-login-modal .login-form-button {
+    font-size: 16px;
+    padding: 10px 0;
+    max-width: 100%;
+    margin-top: 1rem;
+  }
+
+  .custom-login-modal a {
+    font-size: 13px;
+  }
+}
+
+@media (min-width: 321px) and (max-width: 414px) {
+  .custom-login-modal .ant-modal-content {
+    padding: 25px 16px;
+    width: 90%;
+  }
+
+  .custom-login-modal .ant-form-item-label > label {
+    font-size: 14px;
+  }
+
+  .custom-login-modal .ant-input,
+  .custom-login-modal .ant-input-password {
+    font-size: 15px;
+    padding: 9px;
+  }
+
+  .custom-login-modal .login-form-button {
+    font-size: 17px;
+    padding: 11px 0;
+    max-width: 320px;
+    margin-top: 1rem;
+  }
+
+  .custom-login-modal a {
+    font-size: 14px;
+  }
+}
+
+@media (min-width: 415px) and (max-width: 768px) {
+  .custom-login-modal .ant-modal-content {
+    max-width: 420px;
+    padding: 30px 20px;
+    width: 85%;
+  }
+
+  .custom-login-modal .ant-form-item-label > label {
+    font-size: 15px;
+  }
+
+  .custom-login-modal .ant-input,
+  .custom-login-modal .ant-input-password {
+    font-size: 16px;
+    padding: 10px;
+  }
+
+  .custom-login-modal .login-form-button {
+    font-size: 18px;
+    padding: 12px;
+    max-width: 320px;
+    margin-top: 1rem;
+  }
+
+  .custom-login-modal a {
+    font-size: 15px;
+  }
+}
+
+/* ======================register-form================== */
+/* Container padding */
+.register-form-container {
+  padding: 16px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* Form Items spacing */
+.register-form-container .ant-form-item {
+  margin-bottom: 16px;
+}
+
+/* Input fields full width */
+.register-form-container .ant-input,
+.register-form-container .ant-select-selector {
+  width: 100% !important;
+}
+
+/* Register Button Style (matches Login) */
+.register-form-container .register-form-button {
+  width: 100%;
+  background-color: #1890ff;
+  color: #fff;
+  border: none;
+  height: 40px;
+  font-size: 16px;
+  border-radius: 4px;
+  box-shadow: none;
+}
+
+.register-form-bank {
+  background-color: white;
+}
+
+.register-form-container .register-form-button:hover {
+  background-color: #40a9ff;
+}
+
+/* "Already have an account?" text */
+.register-form-container .register-form-footer {
+  text-align: center;
+  font-size: 14px;
+}
+
+.register-form-container .register-form-footer a {
+  color: #1890ff;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.responsive-select .ant-select-selection-placeholder {
+  font-family: "Montserrat", sans-serif; /* or your desired font */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .register-form-container {
+    padding: 12px;
+    max-width: 90%;
+  }
+
+  .responsive-input,
+  .responsive-select .ant-select-selector {
+    font-size: 13px !important;
+  }
+
+  .responsive-input::placeholder {
+    font-size: 13px;
+  }
+
+  .responsive-select .ant-select-selection-placeholder {
+    font-size: 13px;
+  }
+
+  .register-form-container .register-form-button {
+    font-size: 15px;
+    height: 38px;
+  }
+
+  .register-form-footer {
+    font-size: 13px;
+  }
+}
+
+/* Mobile (max 480px) */
+@media (max-width: 480px) {
+  .register-form-container {
+    max-width: 320px;
+    padding: 8px;
+  }
+
+  .responsive-label {
+    font-size: 12px;
+  }
+
+  .responsive-input,
+  .responsive-select .ant-select-selector {
+    font-size: 12px !important;
+  }
+
+  .responsive-input::placeholder {
+    font-size: 12px;
+  }
+
+  .responsive-select .ant-select-selection-placeholder {
+    font-size: 12px;
+  }
+
+  .ant-form-item {
+    margin-bottom: 8px;
+  }
+
+  .register-form-container .register-form-button {
+    font-size: 14px;
+    height: 36px;
+    margin-top: 1.5rem;
+  }
+
+  .register-form-footer {
+    font-size: 12px;
+  }
+}
+
+/* Very small phones (max 360px) */
+@media (max-width: 360px) {
+  .register-form-container {
+    max-width: 100%;
+    padding: 4px 6px;
+  }
+
+  .responsive-label {
+    font-size: 11px !important;
+    line-height: 1.1;
+  }
+
+  .responsive-input,
+  .responsive-select .ant-select-selector {
+    font-size: 11px !important;
+  }
+
+  .responsive-input::placeholder {
+    font-size: 11px;
+  }
+
+  .responsive-select .ant-select-selection-placeholder {
+    font-size: 11px;
+  }
+
+  .register-form-container .register-form-button {
+    font-size: 13px !important;
+    padding: 5px 0;
+    margin-top: 1.5rem;
+  }
+
+  .register-form-footer {
+    font-size: 11px !important;
+  }
+
+  .register-form-footer,
+  .register-form-footer a {
+    white-space: nowrap;
+  }
+}

@@ -4,17 +4,36 @@ export const containerStyles: CSSProperties = {
   width: "100vw",
   height: "100%",
   overflow: "hidden",
-  background: "#2C2F33",
+  background: "radial-gradient(circle, #0b1a48, #1a237e, #4a148c, #7b1fa2)",
 };
 
-export const tableStyles: CSSProperties = {
+export const tableStyles: React.CSSProperties = {
   width: "100%",
   height: "100%",
-  background: "#326E81",
-  border: "30px solid #234CAB",
-  borderRadius: "50% / 40%",
-  boxShadow: "0 0 15px rgba(0, 0, 0, 0.6)",
+  background: "#6B4F3E", // dark wood color
+  border: "30px solid #3E2F1C", // darker wood border
+  borderRadius: "50% / 100%", // oval with flat top/bottom
+  boxShadow: "inset 0 0 20px #2a1f0d, 0 0 15px rgba(0,0,0,0.7)",
   position: "relative",
+  overflow: "visible",
+};
+
+export const feltStyles: React.CSSProperties = {
+  position: "absolute",
+  top: "15%", // leave border space
+  left: "10%",
+  width: "80%",
+  height: "70%",
+  background: "linear-gradient(145deg, #064e3b, #0b6b49)", // felt green gradient
+  borderRadius: "40% / 60%", // inner oval shape
+  boxShadow: "inset 0 0 15px #093624, 0 5px 10px rgba(0,0,0,0.4)",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "flex-start",
+  paddingTop: "10px",
+  color: "white",
+  zIndex: 1,
 };
 
 export const contentStyles: CSSProperties = {
@@ -53,12 +72,12 @@ export const actionBarStyles: CSSProperties = {
   paddingTop: "16px",
 };
 
-export const authLoadingStyles: CSSProperties = {
+export const authLoadingStyles: React.CSSProperties = {
   height: "100vh",
   width: "100vw",
   display: "flex",
-  flexDirection: "column",
   justifyContent: "center",
   alignItems: "center",
-  gap: 16,
+  background: "radial-gradient(circle, #0b1a48, #1a237e, #4a148c, #7b1fa2)",
+  gap: "20px",
 };

@@ -4,7 +4,6 @@ import {
   LogoutOutlined,
   MenuOutlined,
   UserOutlined,
-  GoldOutlined,
 } from "@ant-design/icons";
 import { Avatar, Button, Drawer, Flex, Modal, Typography } from "antd";
 import { useEffect, useState } from "react";
@@ -12,14 +11,12 @@ import LoginForm from "../features/user/login-form";
 import RegisterForm from "../features/user/register-form";
 import ForgotPasswordForm from "../features/user/forgot-password-form";
 import { useDispatch, useSelector } from "react-redux";
-import { toggleMode } from "../providers/theme-slice";
 import { useMeQuery } from "../api/user";
 import { logout, setAuthenticated, setUserInfo } from "../providers/auth-slice";
 import { useNavigate } from "react-router";
 import "../index.css";
 import Logo from "../assets/logo.webp";
 import { useTranslation } from "react-i18next";
-import avatar from "../assets/avatar2.jpg";
 import balance from "../assets/balance-icon2.png";
 
 const { Text } = Typography;
@@ -32,7 +29,9 @@ function UserHeader() {
 
   const themeMode = useSelector((state: any) => state.theme.mode);
   const dispatch = useDispatch();
-  const isAuthenticated = useSelector((state: any) => state.auth.isAuthenticated);
+  const isAuthenticated = useSelector(
+    (state: any) => state.auth.isAuthenticated
+  );
   const { t, i18n } = useTranslation();
 
   const { data: userInfo, refetch } = useMeQuery();
@@ -140,24 +139,46 @@ function UserHeader() {
             aria-label="User balance"
             gap={8}
           >
-            <img src={balance} alt="balance icon" className="user-header-balance-icon" />
+            <img
+              src={balance}
+              alt="balance icon"
+              className="user-header-balance-icon"
+            />
 
-            <Text className="user-header-balance-value">{userInfo?.userBalance?.balance.toLocaleString()}₮</Text>
+            <Text className="user-header-balance-value">
+              {userInfo?.userBalance?.balance.toLocaleString()}₮
+            </Text>
           </Flex>
 
-          <Flex className="user-header-profile" onClick={() => navigate("/profile")} align="center" gap={12}>
-            <Avatar className="user-header-avatar" src={avatar} alt={`${userInfo?.username}'s avatar`} />
+          <Flex
+            className="user-header-profile"
+            onClick={() => navigate("/profile")}
+            align="center"
+            gap={12}
+          >
+            <Avatar
+              className="user-header-avatar"
+              src={"https://i.imgur.com/SyIZEu7.png"}
+              alt={`${userInfo?.username}'s avatar`}
+            />
 
             <Flex vertical style={{ flex: 1 }}>
               <Flex align="center" gap={6}>
-                <Text className="user-header-username">{userInfo?.username.toLocaleUpperCase()}</Text>
+                <Text className="user-header-username">
+                  {userInfo?.username.toLocaleUpperCase()}
+                </Text>
                 <span
-                  className={`user-status-dot ${isActive ? "active" : "inactive"}`}
+                  className={`user-status-dot ${
+                    isActive ? "active" : "inactive"
+                  }`}
                   aria-label={isActive ? "Active user" : "Inactive user"}
                   title={isActive ? "Active" : "Inactive"}
                 />
               </Flex>
-              <Text className="user-header-email" style={{ fontSize: 12, color: "#888" }}>
+              <Text
+                className="user-header-email"
+                style={{ fontSize: 12, color: "#888" }}
+              >
                 {userInfo?.email}
               </Text>
             </Flex>
@@ -232,7 +253,9 @@ function UserHeader() {
         wrapClassName="custom-login-modal"
       >
         {modalType === "login" && <LoginForm setModalType={setModalType} />}
-        {modalType === "register" && <RegisterForm setModalType={setModalType} />}
+        {modalType === "register" && (
+          <RegisterForm setModalType={setModalType} />
+        )}
         {modalType === "forgot-password" && <ForgotPasswordForm />}
       </Modal>
     </Flex>

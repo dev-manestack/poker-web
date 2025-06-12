@@ -10,10 +10,8 @@ export const containerStyles: CSSProperties = {
 export const tableStyles: React.CSSProperties = {
   width: "100%",
   height: "100%",
-  background: "#6B4F3E", // dark wood color
-  border: "30px solid #3E2F1C", // darker wood border
+  // background: "#6B4F3E", // dark wood color
   borderRadius: "50% / 100%", // oval with flat top/bottom
-  boxShadow: "inset 0 0 20px #2a1f0d, 0 0 15px rgba(0,0,0,0.7)",
   position: "relative",
   overflow: "visible",
 };

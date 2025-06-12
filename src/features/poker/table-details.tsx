@@ -2,8 +2,8 @@ import { Table, Typography, Grid } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import type { GameTable } from "../../api/admin";
 import { useState } from "react";
-import bannerGif from "../../assets/banner.gif";
 import { useTranslation } from "react-i18next";
+import { BannerGif } from "../../assets/image";
 
 const { Title } = Typography;
 const { useBreakpoint } = Grid;
@@ -16,7 +16,7 @@ interface Player {
 
 function TableDetails({ table }: { table: GameTable | null }) {
   const screens = useBreakpoint();
-  const [dataSource, setDataSource] = useState<Player[]>([]);
+  const [dataSource, _] = useState<Player[]>([]);
   const { t, i18n } = useTranslation();
 
   const lang = i18n.language === "mn" ? "mn" : "en";
@@ -61,7 +61,11 @@ function TableDetails({ table }: { table: GameTable | null }) {
   return (
     <div className="table-details-container">
       <div className="table-details-banner">
-        <img src={bannerGif} alt="banner" className="table-details-banner-img" />
+        <img
+          src={BannerGif}
+          alt="banner"
+          className="table-details-banner-img"
+        />
       </div>
 
       <Table

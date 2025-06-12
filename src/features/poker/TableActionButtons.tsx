@@ -8,7 +8,7 @@ import { IoInformationCircleOutline } from "react-icons/io5";
 import { MdOutlineReplay } from "react-icons/md";
 import { LuMenu } from "react-icons/lu";
 import { AiOutlinePlus } from "react-icons/ai";
-import pokerTableIcon from "../../assets/pokerTable.svg"; // imported as URL
+import { PokerTableIcon } from "../../assets/image";
 
 interface TableActionButtonsProps {
   isPreview: boolean;
@@ -161,7 +161,7 @@ export default function TableActionButtons({
           }}
         >
           <img
-            src={pokerTableIcon}
+            src={PokerTableIcon}
             alt="Table"
             style={{
               width: 50,
@@ -187,7 +187,10 @@ export default function TableActionButtons({
           }}
           onClick={() => navigate("/")}
         >
-          <AiOutlinePlus size={20} style={{ filter: "drop-shadow(0 0 0.5px currentColor)" }} />
+          <AiOutlinePlus
+            size={20}
+            style={{ filter: "drop-shadow(0 0 0.5px currentColor)" }}
+          />
         </Button>
       </Tooltip>
     </>

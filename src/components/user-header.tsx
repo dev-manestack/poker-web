@@ -15,9 +15,8 @@ import { useMeQuery } from "../api/user";
 import { logout, setAuthenticated, setUserInfo } from "../providers/auth-slice";
 import { useNavigate } from "react-router";
 import "../index.css";
-import Logo from "../assets/logo.webp";
 import { useTranslation } from "react-i18next";
-import balance from "../assets/balance-icon2.png";
+import { BalanceIcon2, Logo } from "../assets/image";
 
 const { Text } = Typography;
 
@@ -25,9 +24,8 @@ function UserHeader() {
   const navigate = useNavigate();
   const [modalType, setModalType] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [isActive, setIsActive] = useState(true); // Manually controlled active status
+  const [isActive, _] = useState(true); // Manually controlled active status
 
-  const themeMode = useSelector((state: any) => state.theme.mode);
   const dispatch = useDispatch();
   const isAuthenticated = useSelector(
     (state: any) => state.auth.isAuthenticated
@@ -140,7 +138,7 @@ function UserHeader() {
             gap={8}
           >
             <img
-              src={balance}
+              src={BalanceIcon2}
               alt="balance icon"
               className="user-header-balance-icon"
             />

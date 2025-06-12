@@ -309,6 +309,15 @@ function TexasTableGame({
               ...newState,
               winners: [],
             };
+          } else if (data?.state === "WAITING_FOR_PLAYERS") {
+            newState = {
+              ...newState,
+              seats: newState.seats.map((seat) => ({
+                ...seat,
+                holeCards: [],
+                hand: null,
+              })),
+            };
           }
           return newState;
         });
@@ -367,20 +376,24 @@ function TexasTableGame({
       }
       case "PLAYER_STACKS": {
         console.log("Received player stacks event:", data);
-        setGameState((prevState) => ({
-          ...prevState,
-          winners: data?.winners || [],
-          seats: prevState.seats.map((seat, idx) => {
-            return data?.stacks?.[idx]
-              ? {
-                  ...seat,
-                  stack: data.stacks[idx],
-                  hand: data.hands[idx],
-                  holeCards: data.revealedCards?.[idx],
-                }
-              : seat;
-          }),
-        }));
+
+        setGameState((prevState) => {
+          return {
+            ...prevState,
+            winners: data?.winners || [],
+            seats: prevState.seats.map((seat, idx) => {
+              return data?.stacks?.[idx]
+                ? {
+                    ...seat,
+                    stack: data.stacks[idx],
+                    hand: data.hands[idx],
+                    holeCards: data.revealedCards?.[idx],
+                  }
+                : seat;
+            }),
+          };
+        });
+
         break;
       }
     }
@@ -517,6 +530,19 @@ function TexasTableGame({
   useEffect(() => {
     if (setPreviewSeats) {
       setPreviewSeats(gameState.seats);
+    }
+    if (
+      gameState.state === "FINISHED" ||
+      gameState.state === "WAITING_FOR_PLAYERS"
+    ) {
+      gameState.seats.forEach((seat, index) => {
+        if (seat.user?.userId === userInfoRef.current?.userId) {
+          if (seat.stack <= gameState.bigBlind) {
+            setSelectedSeat(index);
+            setModalType("RECHARGE");
+          }
+        }
+      });
     }
   }, [gameState]);
 
@@ -746,7 +772,7 @@ function TexasTableGame({
             </Form.Item>
           </Form>
         </Modal>
-        <Modal
+        {/* <Modal
           open={gameState.winners?.length > 0}
           onCancel={() => {}}
           footer={null}
@@ -778,7 +804,7 @@ function TexasTableGame({
               );
             })}
           </Flex>
-        </Modal>
+        </Modal> */}
         <div
           style={{
             ...tableStyles,

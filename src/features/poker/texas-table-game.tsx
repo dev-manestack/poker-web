@@ -38,9 +38,11 @@ import {
   authLoadingStyles,
 } from "../../styles/PokerTableStyles.ts";
 import { FundOutlined, WalletOutlined } from "@ant-design/icons";
-import TableActionButtons from "./TableActionButtons.tsx"; // adjust path
+import TableActionButtons from "./table-action-buttons.tsx"; // adjust path
 import useResponsiveTableSize from "../../hooks/useResponsiveTableSize.tsx"; // adjust path as needed
 import { useTranslation } from "react-i18next";
+import { DesktopTable, MobileTable } from "../../assets/image/index.ts";
+import { useIsMobile } from "../../hooks/useIsMobile.tsx";
 
 interface GameState {
   minBuyIn: number;
@@ -113,14 +115,15 @@ function TexasTableGame({
   const [turnProgress, setTurnProgress] = useState(1); // 1 = 100%, 0 = 0%
   const timerRef = useRef<number | null>(null);
   const userInfoRef = useRef<User | null>(null);
+  const isMobile = useIsMobile();
   const [rechargeAmount, setRechargeAmount] = useState<number>(0);
 
   const ws = useRef<WebSocket | null>(null);
 
   const centerX = 50;
   const centerY = 50;
-  const radiusX = 50;
-  const radiusY = 50;
+  const radiusX = 45;
+  const radiusY = 55;
   const chipRadiusX = radiusX - 20;
   const chipRadiusY = radiusY - 20;
   const turnDuration = 10; // seconds
@@ -779,6 +782,10 @@ function TexasTableGame({
         <div
           style={{
             ...tableStyles,
+            backgroundImage: `url(${isMobile ? MobileTable : DesktopTable})`,
+            backgroundSize: "cover",
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: "center",
           }}
         >
           <Flex style={{ width: "100%" }} vertical gap={12}>

@@ -1,5 +1,5 @@
-import React from "react";
-import { Button, Tooltip } from "antd";
+import React, { useState } from "react";
+import { Button, Tooltip, Drawer } from "antd";
 import { MdFullscreen } from "react-icons/md";
 import { PiPokerChipLight } from "react-icons/pi";
 import { CiLogout, CiSaveUp1 } from "react-icons/ci";
@@ -7,8 +7,7 @@ import { SlSettings } from "react-icons/sl";
 import { IoInformationCircleOutline } from "react-icons/io5";
 import { MdOutlineReplay } from "react-icons/md";
 import { LuMenu } from "react-icons/lu";
-import { AiOutlinePlus } from "react-icons/ai";
-import { PokerTableIcon } from "../../assets/image";
+import type { ReactElement } from "react";
 
 interface TableActionButtonsProps {
   isPreview: boolean;
@@ -19,180 +18,200 @@ interface TableActionButtonsProps {
   leaveSeat: (seat: number) => void;
   selectedSeat?: number;
   navigate: (path: string) => void;
-  badBeatText?: string; // you can remove this prop if unused elsewhere
 }
 
 export default function TableActionButtons({
   isPreview,
-  iconBtnStyle,
   setModalType,
   userHasSeat,
   seatOut,
-  leaveSeat,
-  selectedSeat,
   navigate,
 }: TableActionButtonsProps) {
+  const [drawerVisible, setDrawerVisible] = useState(false);
+
+  // Device detection
+  const isMobile = typeof window !== "undefined" && window.innerWidth <= 480;
+  const isTabletOrMobile = typeof window !== "undefined" && window.innerWidth <= 1024;
+  const isTouchDevice = isTabletOrMobile; // touch devices: no tooltip on touch devices
+
   if (isPreview) return null;
+
+  const renderWithTooltip = (title: string, element: ReactElement) =>
+    !isTouchDevice ? <Tooltip title={title}>{element}</Tooltip> : element;
+
+  const renderLeftButtons = () => (
+    <>
+      {renderWithTooltip(
+        "Recharge",
+        <Button
+          type="text"
+          style={{ fontSize: 10 }}
+          onClick={() => {
+            setModalType("RECHARGE");
+            setDrawerVisible(false);
+          }}
+          icon={<PiPokerChipLight size={28} />}
+        >
+          Recharge
+        </Button>
+      )}
+      {renderWithTooltip(
+        "Replay",
+        <Button
+          type="text"
+          style={{ fontSize: 10 }}
+          icon={<MdOutlineReplay size={26} />}
+          onClick={() => setDrawerVisible(false)}
+        >
+          Replay
+        </Button>
+      )}
+      {renderWithTooltip(
+        "Information",
+        <Button
+          type="text"
+          style={{ fontSize: 10 }}
+          icon={<IoInformationCircleOutline size={28} />}
+          onClick={() => setDrawerVisible(false)}
+        >
+          Information
+        </Button>
+      )}
+    </>
+  );
+
+  const renderRightButtons = () => (
+    <>
+      {renderWithTooltip(
+        "Settings",
+        <Button
+          type="text"
+          style={{ fontSize: 10 }}
+          icon={<SlSettings size={24} />}
+          onClick={() => setDrawerVisible(false)}
+        >
+          Settings
+        </Button>
+      )}
+      {renderWithTooltip(
+        "Sit Out",
+        <Button
+          type="text"
+          style={{ fontSize: 10, color: userHasSeat ? "white" : "#888888" }}
+          icon={<CiSaveUp1 size={28} />}
+          disabled={!userHasSeat}
+          onClick={() => {
+            if (userHasSeat) seatOut();
+            setDrawerVisible(false);
+          }}
+        >
+          Sit Out
+        </Button>
+      )}
+      {renderWithTooltip(
+        "Full screen",
+        <Button
+          type="text"
+          style={{ fontSize: 10 }}
+          onClick={() => {
+            const elem = document.documentElement;
+            if (!document.fullscreenElement) elem.requestFullscreen();
+            else document.exitFullscreen();
+            setDrawerVisible(false);
+          }}
+          icon={<MdFullscreen size={30} />}
+        >
+          Full Screen
+        </Button>
+      )}
+      {renderWithTooltip(
+        "Leave Table",
+        <Button
+          type="text"
+          style={{ fontSize: 10, color: "white" }}
+          icon={<CiLogout size={28} />}
+          onClick={() => {
+            navigate("/");
+            setDrawerVisible(false);
+          }}
+        >
+          Leave Table
+        </Button>
+      )}
+    </>
+  );
 
   return (
     <>
-      {/* Top-right action buttons */}
-      <div
-        style={{
-          position: "absolute",
-          top: 15,
-          right: 20,
-          display: "flex",
-          gap: 7,
-          alignItems: "center",
-        }}
-      >
-        <Tooltip title="Recharge" mouseEnterDelay={0} mouseLeaveDelay={0}>
-          <Button
-            type="text"
-            style={iconBtnStyle()}
-            onClick={() => setModalType("RECHARGE")}
-            icon={<PiPokerChipLight size={28} />}
-          />
-        </Tooltip>
+      {/* Desktop View (width > 1024) */}
+      {!isTabletOrMobile && (
+        <>
+          <div
+            style={{
+              position: "absolute",
+              top: 15,
+              left: 20,
+              display: "flex",
+              gap: 7,
+              alignItems: "center",
+              zIndex: 10,
+            }}
+          >
+            {renderLeftButtons()}
+          </div>
+          <div
+            style={{
+              position: "absolute",
+              top: 15,
+              right: 20,
+              display: "flex",
+              gap: 7,
+              alignItems: "center",
+              zIndex: 10,
+            }}
+          >
+            {renderRightButtons()}
+          </div>
+        </>
+      )}
 
-        <Tooltip title="Replay" mouseEnterDelay={0} mouseLeaveDelay={0}>
-          <Button
-            type="text"
-            style={iconBtnStyle()}
-            icon={<MdOutlineReplay size={26} />}
-            onClick={() => console.log("replay clicked")}
-          />
-        </Tooltip>
-
-        <Tooltip title="Information" mouseEnterDelay={0} mouseLeaveDelay={0}>
-          <Button
-            type="text"
-            style={iconBtnStyle()}
-            icon={<IoInformationCircleOutline size={28} />}
-            onClick={() => console.log("info clicked")}
-          />
-        </Tooltip>
-
-        <Tooltip title="Settings" mouseEnterDelay={0} mouseLeaveDelay={0}>
-          <Button
-            type="text"
-            style={iconBtnStyle()}
-            icon={<SlSettings size={24} />}
-            onClick={() => console.log("settings clicked")}
-          />
-        </Tooltip>
-
-        <Tooltip title="Sit Out" mouseEnterDelay={0} mouseLeaveDelay={0}>
+      {/* Mobile & Tablet View (width <= 1024) */}
+      {isTabletOrMobile &&
+        renderWithTooltip(
+          "Menu",
           <Button
             type="text"
             style={{
-              ...iconBtnStyle(),
-              color: userHasSeat ? "white" : "#888888",
+              position: "absolute",
+              top: 10,
+              right: 10,
+              zIndex: 999,
             }}
-            icon={<CiSaveUp1 size={28} />}
-            disabled={!userHasSeat}
-            onClick={() => {
-              if (userHasSeat) seatOut();
-            }}
-          />
-        </Tooltip>
-
-        <Tooltip title="Menu" mouseEnterDelay={0} mouseLeaveDelay={0}>
-          <Button
-            type="text"
-            style={iconBtnStyle()}
             icon={<LuMenu size={26} />}
-            onClick={() => console.log("menu clicked")}
+            onClick={() => setDrawerVisible(true)}
           />
-        </Tooltip>
+        )}
 
-        <Tooltip title="Full screen" mouseEnterDelay={0} mouseLeaveDelay={0}>
-          <Button
-            type="text"
-            style={iconBtnStyle()}
-            onClick={() => {
-              const elem = document.documentElement;
-              if (!document.fullscreenElement) {
-                elem.requestFullscreen();
-              } else {
-                document.exitFullscreen();
-              }
-            }}
-            icon={<MdFullscreen size={30} style={{ color: "white" }} />}
-          />
-        </Tooltip>
-      </div>
-
-      {/* Logout Button (Top Left) */}
-      <Tooltip title="Leave Table" mouseEnterDelay={0} mouseLeaveDelay={0}>
-        <Button
-          type="primary"
-          style={{
-            position: "absolute",
-            top: 20,
-            left: 20,
-            width: 40,
-            height: 40,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: 0,
-          }}
-          icon={<CiLogout size={24} />}
-          onClick={() => {
-            leaveSeat(selectedSeat || 0);
-            navigate("/");
-          }}
-        />
-      </Tooltip>
-      <Tooltip title="Join New Table" mouseEnterDelay={0} mouseLeaveDelay={0}>
+      <Drawer
+        title="Table Options"
+        placement="right"
+        onClose={() => setDrawerVisible(false)}
+        open={drawerVisible}
+        width={250}
+        bodyStyle={{ padding: 10 }}
+      >
         <div
           style={{
-            position: "absolute",
-            top: 20,
-            left: 85,
-            width: 40,
-            height: 40,
             display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            cursor: "pointer",
+            flexDirection: "column",
+            gap: 10,
+            alignItems: "flex-start",
           }}
         >
-          <img
-            src={PokerTableIcon}
-            alt="Table"
-            style={{
-              width: 50,
-              height: 50,
-              filter: "invert(1)",
-            }}
-          />
+          {renderLeftButtons()}
+          {renderRightButtons()}
         </div>
-      </Tooltip>
-      <Tooltip title="Join New Table" mouseEnterDelay={0} mouseLeaveDelay={0}>
-        <Button
-          type="default"
-          shape="circle"
-          style={{
-            position: "absolute",
-            top: 25,
-            left: 145,
-            width: 25,
-            height: 30,
-            padding: 0,
-            boxShadow: "none",
-            background: "none",
-          }}
-          onClick={() => navigate("/")}
-        >
-          <AiOutlinePlus
-            size={20}
-            style={{ filter: "drop-shadow(0 0 0.5px currentColor)" }}
-          />
-        </Button>
-      </Tooltip>
+      </Drawer>
     </>
   );
 }

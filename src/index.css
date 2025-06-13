@@ -438,7 +438,7 @@
 
 @media (max-width: 415px) {
   .user-header-balance > .ant-typography {
-    font-size: 10px !important;
+    font-size: 8px !important;
   }
 
   .user-header-username {
@@ -463,7 +463,7 @@
   }
 
   .user-header-balance {
-    padding: 8px 10px !important;
+    padding: 6px 8px !important;
     min-width: 45px !important;
   }
 
@@ -476,7 +476,7 @@
   }
 
   .user-header-balance > .ant-typography {
-    font-size: 9px !important;
+    font-size: 8px !important;
   }
 
   .user-header-level {

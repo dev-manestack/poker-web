@@ -1,13 +1,4 @@
-import {
-  Button,
-  Flex,
-  Form,
-  message,
-  Modal,
-  Slider,
-  Spin,
-  Typography,
-} from "antd";
+import { Button, Flex, Form, message, Modal, Slider, Spin, Typography } from "antd";
 import { useEffect, useRef, useState } from "react";
 import PokerCard from "./poker-card";
 import "./texas-table-game.css";
@@ -16,13 +7,7 @@ import {
   DisconnectAudio,
   SuccessAudio,
 } from "../../assets/sounds";
-import {
-  websocketURL,
-  type GameCard,
-  type GamePlayer,
-  type TableState,
-  type WebsocketEvent,
-} from "../../api/game";
+import { websocketURL, type GameCard, type GamePlayer, type TableState, type WebsocketEvent } from "../../api/game";
 import { useNavigate, useParams } from "react-router";
 import TablePlayer from "./table-player";
 import PokerActions from "./poker-actions";
@@ -43,6 +28,7 @@ import useResponsiveTableSize from "../../hooks/useResponsiveTableSize.tsx"; // 
 import { useTranslation } from "react-i18next";
 import { DesktopTable, MobileTable } from "../../assets/image/index.ts";
 import { useIsMobile } from "../../hooks/useIsMobile.tsx";
+import { style } from "motion/react-client";
 
 interface GameState {
   minBuyIn: number;
@@ -64,14 +50,7 @@ interface GameState {
 
   currentPlayerSeat: number;
   communityCards?: GameCard[];
-  state:
-    | "WAITING_FOR_PLAYERS"
-    | "PRE_FLOP"
-    | "FLOP"
-    | "TURN"
-    | "RIVER"
-    | "SHOWDOWN"
-    | "FINISHED";
+  state: "WAITING_FOR_PLAYERS" | "PRE_FLOP" | "FLOP" | "TURN" | "RIVER" | "SHOWDOWN" | "FINISHED";
 }
 
 function TexasTableGame({
@@ -117,6 +96,25 @@ function TexasTableGame({
   const userInfoRef = useRef<User | null>(null);
   const isMobile = useIsMobile();
   const [rechargeAmount, setRechargeAmount] = useState<number>(0);
+  const isSmallPhone = typeof window !== "undefined" && window.innerWidth <= 389;
+
+  const tableHeight = isMobile ? (isSmallPhone ? 500 : 550) : "auto";
+
+  const tableWidth = isMobile ? "100%" : "100%";
+
+  const maxTableWidth = isMobile ? (isSmallPhone ? "100%" : "600px") : "100%";
+
+  const seatRadiusX = isMobile
+    ? isSmallPhone
+      ? 40 // tighter horizontally on small phone
+      : 40 // normal mobile
+    : 40;
+
+  const seatRadiusY = isMobile
+    ? isSmallPhone
+      ? 55 // closer vertically on small phone
+      : 45 // normal mobile
+    : 50;
 
   const ws = useRef<WebSocket | null>(null);
 
@@ -130,9 +128,7 @@ function TexasTableGame({
 
   const { width, height } = useResponsiveTableSize(isPreview);
 
-  const userHasSeat = gameState.seats.some(
-    (seat) => seat.user?.userId === userInfoRef.current?.userId
-  );
+  const userHasSeat = gameState.seats.some((seat) => seat.user?.userId === userInfoRef.current?.userId);
 
   const { t } = useTranslation();
 
@@ -248,10 +244,8 @@ function TexasTableGame({
       currentBets: currentSession?.currentBets || gameState.currentBets,
       currentPot: currentSession?.currentPot || gameState.currentPot,
       state: currentSession?.state || gameState.state,
-      currentPlayerSeat:
-        currentSession?.currentPlayerSeat || gameState.currentPlayerSeat,
-      communityCards:
-        currentSession?.communityCards || gameState.communityCards,
+      currentPlayerSeat: currentSession?.currentPlayerSeat || gameState.currentPlayerSeat,
+      communityCards: currentSession?.communityCards || gameState.communityCards,
       isSpectator: data?.isSpectator || false,
     }));
     switch (data.action) {
@@ -332,10 +326,7 @@ function TexasTableGame({
           };
           return newState;
         });
-        if (
-          gameState.state !== "FINISHED" &&
-          gameState.state !== "WAITING_FOR_PLAYERS"
-        ) {
+        if (gameState.state !== "FINISHED" && gameState.state !== "WAITING_FOR_PLAYERS") {
           startTurnTimer();
         }
         break;
@@ -345,9 +336,7 @@ function TexasTableGame({
         setGameState((prevState) => ({
           ...prevState,
           seats: prevState.seats.map((seat, idx) =>
-            data?.holeCards?.[idx]
-              ? { ...seat, holeCards: data.holeCards[idx], hand: null }
-              : seat
+            data?.holeCards?.[idx] ? { ...seat, holeCards: data.holeCards[idx], hand: null } : seat
           ),
         }));
         break;
@@ -444,11 +433,7 @@ function TexasTableGame({
   };
 
   const establishWebSocketConnection = (delay = 0) => {
-    if (
-      ws.current &&
-      (ws.current.readyState === WebSocket.OPEN ||
-        ws.current.readyState === WebSocket.CONNECTING)
-    ) {
+    if (ws.current && (ws.current.readyState === WebSocket.OPEN || ws.current.readyState === WebSocket.CONNECTING)) {
       return;
     }
 
@@ -476,9 +461,7 @@ function TexasTableGame({
             break;
           }
           case "ERROR": {
-            messageAPI.error(
-              message.data?.error ? message.data.error : "Алдаа гарлаа"
-            );
+            messageAPI.error(message.data?.error ? message.data.error : "Алдаа гарлаа");
             break;
           }
         }
@@ -531,10 +514,7 @@ function TexasTableGame({
     if (setPreviewSeats) {
       setPreviewSeats(gameState.seats);
     }
-    if (
-      gameState.state === "FINISHED" ||
-      gameState.state === "WAITING_FOR_PLAYERS"
-    ) {
+    if (gameState.state === "FINISHED" || gameState.state === "WAITING_FOR_PLAYERS") {
       gameState.seats.forEach((seat, index) => {
         if (seat.user?.userId === userInfoRef.current?.userId) {
           if (seat.stack <= gameState.bigBlind) {
@@ -546,13 +526,17 @@ function TexasTableGame({
     }
   }, [gameState]);
 
+  useEffect(() => {
+    if (gameState?.minBuyIn && rechargeAmount === 0) {
+      setRechargeAmount(gameState.minBuyIn);
+    }
+  }, [gameState.minBuyIn]);
+
   if (!gameState.isAuthenticated) {
     return (
       <Flex style={authLoadingStyles}>
         <Spin size="large" tip="Loading..." />
-        <Typography.Text style={{ marginTop: 16, fontSize: 14 }}>
-          Та түр хүлээнэ үү.
-        </Typography.Text>
+        <Typography.Text style={{ marginTop: 16, fontSize: 14, fontStyle: "italic" }}>LOADING...</Typography.Text>
       </Flex>
     );
   }
@@ -607,9 +591,10 @@ function TexasTableGame({
       >
         {contextHolder}
         <Modal
+          className="custom-login-modal"
           open={modalType?.length > 0}
           footer={null}
-          title={modalType === "RECHARGE" ? "Цэнэглэх" : "Суух"}
+          title={modalType === "RECHARGE" ? t("modal.recharge") : t("modal.sit")}
           onCancel={() => setModalType("")}
         >
           <Form
@@ -624,15 +609,14 @@ function TexasTableGame({
             <Form.Item>
               <>
                 {/* Game Info with icons */}
-                <div style={{ marginBottom: 16 }}>
+                <div style={{ marginBottom: 16, fontSize: "14px" }}>
                   <p>
                     <FundOutlined style={{ marginRight: 8 }} />
                     Game Type: Texas {gameState.smallBlind}/{gameState.bigBlind}
                   </p>
                   <p>
                     <WalletOutlined style={{ marginRight: 8 }} />
-                    Available balance:{" "}
-                    {gameState.usableBalance.toLocaleString("mn-MN")}₮
+                    Available balance: {gameState.usableBalance.toLocaleString("mn-MN")}₮
                   </p>
                 </div>
 
@@ -643,9 +627,10 @@ function TexasTableGame({
                     justifyContent: "space-between",
                     alignItems: "center",
                     marginBottom: 12,
+                    fontSize: "12px",
                   }}
                 >
-                  <span style={{ fontWeight: 500 }}>Хэмжээ</span>
+                  <span style={{ fontWeight: 500 }}>{t("modal.amount")}</span>
                   <span
                     style={{
                       padding: "6px 10px",
@@ -668,15 +653,13 @@ function TexasTableGame({
                   <Button
                     onClick={() => {
                       setRechargeAmount((prevValue) => {
-                        if (
-                          prevValue - gameState.bigBlind <
-                          gameState.minBuyIn
-                        ) {
+                        if (prevValue - gameState.bigBlind < gameState.minBuyIn) {
                           return gameState.minBuyIn;
                         }
                         return prevValue - gameState.bigBlind;
                       });
                     }}
+                    style={{ background: "#7e57c2", border: "none" }}
                   >
                     -
                   </Button>
@@ -684,6 +667,7 @@ function TexasTableGame({
                     <Slider
                       min={gameState.minBuyIn}
                       max={gameState.maxBuyIn}
+                      step={gameState.maxBuyIn * 0.01}
                       value={rechargeAmount}
                       onChange={(value) => setRechargeAmount(value)}
                       style={{ height: 8 }}
@@ -692,32 +676,28 @@ function TexasTableGame({
                   <Button
                     onClick={() =>
                       setRechargeAmount((prevValue) => {
-                        if (
-                          prevValue + gameState.bigBlind >
-                          gameState.maxBuyIn
-                        ) {
+                        if (prevValue + gameState.bigBlind > gameState.maxBuyIn) {
                           return gameState.maxBuyIn;
                         }
-                        if (
-                          prevValue + gameState.bigBlind >
-                          gameState.usableBalance
-                        ) {
+                        if (prevValue + gameState.bigBlind > gameState.usableBalance) {
                           return prevValue;
                         }
                         return prevValue + gameState.bigBlind;
                       })
                     }
+                    style={{ background: "#7e57c2", border: "none" }}
                   >
                     +
                   </Button>
                 </div>
 
                 {/* Preset Buttons */}
-                <div style={{ marginTop: 16, display: "flex", gap: 8 }}>
+                <div style={{ marginTop: 20, display: "flex", gap: 8 }}>
                   <Button
                     onClick={() => {
                       setRechargeAmount(gameState.minBuyIn);
                     }}
+                    style={{ fontSize: "12px" }}
                   >
                     Min
                   </Button>
@@ -731,17 +711,19 @@ function TexasTableGame({
                         setRechargeAmount(gameState.bigBlind * 40);
                       }
                     }}
+                    style={{ fontSize: "12px" }}
                   >
                     40BB
                   </Button>
                   <Button
                     onClick={() => {
-                      if (gameState.usableBalance < gameState.bigBlind * 20) {
+                      if (gameState.usableBalance < gameState.bigBlind * 70) {
                         setRechargeAmount(gameState.usableBalance);
                       } else {
-                        setRechargeAmount(gameState.bigBlind * 20);
+                        setRechargeAmount(gameState.bigBlind * 70);
                       }
                     }}
+                    style={{ fontSize: "12px" }}
                   >
                     70BB
                   </Button>
@@ -753,6 +735,7 @@ function TexasTableGame({
                         setRechargeAmount(gameState.maxBuyIn);
                       }
                     }}
+                    style={{ fontSize: "12px" }}
                   >
                     Max
                   </Button>
@@ -766,8 +749,8 @@ function TexasTableGame({
                 justifyContent: "end",
               }}
             >
-              <Button type="primary" htmlType="submit">
-                {modalType === "RECHARGE" ? "Цэнэглэх" : "Суух"}
+              <Button type="default" htmlType="submit" style={{ fontSize: "12px" }}>
+                {modalType === "RECHARGE" ? t("modal.recharge") : t("modal.sit")}
               </Button>
             </Form.Item>
           </Form>
@@ -812,15 +795,14 @@ function TexasTableGame({
             backgroundSize: "cover",
             backgroundRepeat: "no-repeat",
             backgroundPosition: "center",
+            height: tableHeight,
+            width: tableWidth,
+            maxWidth: maxTableWidth,
+            transform: isMobile ? "translateY(-130px)" : "none", // Move UP 50px on mobile
+            transition: "transform 0.3s ease", // optional smoothness
           }}
         >
-          <Flex
-            style={{ width: "100%", height: "100%" }}
-            vertical
-            justify="center"
-            align="center"
-            gap={12}
-          >
+          <Flex style={{ width: "100%", height: "100%" }} vertical justify="center" align="center" gap={12}>
             <Flex>
               <Typography.Text
                 style={{
@@ -848,10 +830,7 @@ function TexasTableGame({
                 gameState.seats.forEach((seat) => {
                   if (userInfoRef.current?.userId === seat.user?.userId) {
                     seat?.hand?.combinationCards?.forEach((card) => {
-                      if (
-                        card.suit === communityCard.suit &&
-                        card.rank === communityCard.rank
-                      ) {
+                      if (card.suit === communityCard.suit && card.rank === communityCard.rank) {
                         isMyCard = true;
                       }
                     });
@@ -874,6 +853,7 @@ function TexasTableGame({
         </div>
 
         {/* Player seats - absolutely positioned relative to outer table */}
+
         <div
           style={{
             position: "absolute",
@@ -883,25 +863,41 @@ function TexasTableGame({
             height: "100%",
             pointerEvents: "none",
             zIndex: 2,
+            transform: isMobile
+              ? isSmallPhone
+                ? "translateY(-70px)" // small phone
+                : "translateY(-100px)" // other mobiles
+              : "none",
+            transition: "transform 0.3s ease",
           }}
         >
           {gameState.seats.map((seat: GamePlayer, ind: number) => {
             const myUserId = userInfoRef.current?.userId;
-            const mySeatIndex = gameState.seats.findIndex(
-              (seat) => seat.user?.userId === myUserId
-            );
+            const mySeatIndex = gameState.seats.findIndex((seat) => seat.user?.userId === myUserId);
             const centerIndex = Math.floor(seatCount / 4);
             let rotatedIndex = ind;
 
             if (mySeatIndex !== -1) {
               const relativePosition = ind - mySeatIndex;
-              rotatedIndex =
-                (relativePosition + centerIndex + seatCount) % seatCount;
+              rotatedIndex = (relativePosition + centerIndex + seatCount) % seatCount;
             }
 
             const angle = (2 * Math.PI * rotatedIndex) / seatCount;
-            const x = centerX + radiusX * Math.cos(angle);
-            const y = centerY + radiusY * Math.sin(angle);
+
+            const sin = Math.sin(angle);
+
+            // Adjust Y radius for top/bottom seats
+            let adjustedRadiusY = seatRadiusY;
+            if (Math.abs(sin) > 0.9) {
+              adjustedRadiusY = isMobile
+                ? isSmallPhone
+                  ? 50 // top/bottom closer on small phone
+                  : 45 // normal mobile
+                : 40;
+            }
+
+            const x = centerX + seatRadiusX * Math.cos(angle);
+            const y = centerY + adjustedRadiusY * sin;
 
             return (
               <Button
@@ -918,6 +914,7 @@ function TexasTableGame({
                   left: `${x}%`,
                   top: `${y}%`,
                   pointerEvents: "auto",
+                  fontStyle: "italic",
                 }}
               >
                 {seat?.user?.userId ? (
@@ -926,13 +923,11 @@ function TexasTableGame({
                       player={seat}
                       isTurn={ind === gameState.currentPlayerSeat}
                       holeCards={seat?.holeCards || []}
-                      progress={
-                        ind === gameState.currentPlayerSeat ? turnProgress : 0
-                      }
+                      progress={ind === gameState.currentPlayerSeat ? turnProgress : 0}
                     />
                   </Flex>
                 ) : (
-                  `${t("seat")} ${ind + 1}`
+                  `${t("seat")}`
                 )}
               </Button>
             );
@@ -953,16 +948,13 @@ function TexasTableGame({
         >
           {gameState.seats.map((_: GamePlayer, i: number) => {
             const myUserId = userInfoRef.current?.userId;
-            const mySeatIndex = gameState.seats.findIndex(
-              (seat) => seat.user?.userId === myUserId
-            );
+            const mySeatIndex = gameState.seats.findIndex((seat) => seat.user?.userId === myUserId);
             const centerIndex = Math.floor(seatCount / 4);
             let rotatedIndex = i;
 
             if (mySeatIndex !== -1) {
               const relativePosition = i - mySeatIndex;
-              rotatedIndex =
-                (relativePosition + centerIndex + seatCount) % seatCount;
+              rotatedIndex = (relativePosition + centerIndex + seatCount) % seatCount;
             }
 
             const angle = (2 * Math.PI * rotatedIndex) / seatCount;
@@ -996,25 +988,14 @@ function TexasTableGame({
           {gameState.state !== "WAITING_FOR_PLAYERS" && (
             <PokerActions
               stack={
-                gameState.seats?.filter(
-                  (seat) => seat.user?.userId === userInfoRef.current?.userId
-                )[0]?.stack || 0
+                gameState.seats?.filter((seat) => seat.user?.userId === userInfoRef.current?.userId)[0]?.stack || 0
               }
               player={userInfoRef.current}
               turnPlayer={gameState.turnPlayer}
-              isFolded={
-                gameState.isFolded ||
-                gameState.state === "FINISHED" ||
-                gameState.state === "SHOWDOWN"
-              }
+              isFolded={gameState.isFolded || gameState.state === "FINISHED" || gameState.state === "SHOWDOWN"}
               isAllIn={gameState.isAllIn}
-              currentBet={
-                gameState.currentBets[gameState.currentPlayerSeat] || 0
-              }
-              currentRequiredBet={Math.max(
-                ...Object.values(gameState.currentBets),
-                0
-              )}
+              currentBet={gameState.currentBets[gameState.currentPlayerSeat] || 0}
+              currentRequiredBet={Math.max(...Object.values(gameState.currentBets), 0)}
               currentPot={gameState.currentPot}
               minRaise={gameState.bigBlind}
               sendAction={(action, amount) => sendGameAction(action, amount)}

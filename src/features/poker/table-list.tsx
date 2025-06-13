@@ -13,17 +13,19 @@ const { useBreakpoint } = Grid;
 interface TableListProps {
   setSelectedTable: (table: GameTable | null) => void;
   tableType?: string;
+  isAuthenticated: boolean;
+  onRequestLogin: () => void;
 }
 
-function TableList({ setSelectedTable, tableType }: TableListProps) {
+function TableList({ setSelectedTable, tableType, isAuthenticated, onRequestLogin }: TableListProps) {
   const [selectedRowKey, setSelectedRowKey] = useState<string | number | null>(null);
   const navigate = useNavigate();
   const { data: tableData } = useFetchTablesQuery();
   const screens = useBreakpoint();
   const isMobileOrTablet = !screens.lg;
   const { t, i18n } = useTranslation();
-
   const lang = i18n.language === "mn" ? "mn" : "en";
+  const [loadingTableId, setLoadingTableId] = useState<number | null>(null);
 
   const filteredTables = useMemo(() => {
     if (!tableData) return [];
@@ -31,11 +33,42 @@ function TableList({ setSelectedTable, tableType }: TableListProps) {
     return tableData.filter((table) => table.variant?.toLowerCase() === tableType.toLowerCase());
   }, [tableData, tableType]);
 
+  const handlePlayClick = useCallback(
+    (record: GameTable) => {
+      if (!isAuthenticated) {
+        onRequestLogin();
+      } else {
+        setLoadingTableId(record.tableId);
+        setTimeout(() => {
+          navigate("/table/" + record.tableId);
+        }, 300);
+      }
+    },
+    [isAuthenticated, navigate, onRequestLogin]
+  );
+
+  const renderActions = useCallback(
+    (_: any, record: GameTable) => (
+      <div className="actions-wrapper">
+        <Button
+          className="play-button"
+          type="default"
+          loading={loadingTableId === record.tableId}
+          onClick={() => handlePlayClick(record)}
+          size="middle"
+        >
+          {t("actions.play")}
+        </Button>
+      </div>
+    ),
+    [loadingTableId, t, handlePlayClick]
+  );
+
   const renderVariant = useCallback(
     (text: string) => {
       switch (text.toUpperCase()) {
         case "TEXAS":
-          return t("variant.texas"); // e.g. "Texas Hold'em"
+          return t("variant.texas");
         case "OMAHA":
           return t("variant.omaha");
         default:
@@ -61,24 +94,6 @@ function TableList({ setSelectedTable, tableType }: TableListProps) {
     []
   );
 
-  const renderActions = useCallback(
-    (_: any, record: GameTable) => (
-      <div className="actions-wrapper">
-        <Button
-          className="play-button"
-          type="default"
-          onClick={() => {
-            navigate("/table/" + record.tableId);
-          }}
-          size="middle"
-        >
-          {t("actions.play")}
-        </Button>
-      </div>
-    ),
-    [navigate, t]
-  );
-
   const desktopColumns = useMemo(
     () => [
       {
@@ -98,11 +113,6 @@ function TableList({ setSelectedTable, tableType }: TableListProps) {
         key: "variant",
         render: renderVariant,
       },
-      // {
-      //   title: <span lang={lang}>{t("tableList.buyIn")}</span>,
-      //   key: "buyInRange",
-      //   render: renderBuyInRange,
-      // },
       {
         title: <span lang={lang}>{t("tableList.players")}</span>,
         dataIndex: "maxPlayers",
@@ -119,7 +129,7 @@ function TableList({ setSelectedTable, tableType }: TableListProps) {
         render: renderActions,
       },
     ],
-    [renderVariant, renderBuyInRange, renderBlinds, renderActions, t, lang]
+    [renderVariant, renderBlinds, renderActions, t, lang]
   );
 
   const renderMobileVariant = useCallback(
@@ -165,7 +175,7 @@ function TableList({ setSelectedTable, tableType }: TableListProps) {
   const mobileColumns: ColumnsType<GameTable> = useMemo(
     () => [
       {
-        title: () => (
+        title: (
           <div className="mobile-column-header" lang={lang}>
             <span>{t("tableList.variant")}</span>
           </div>
@@ -175,7 +185,7 @@ function TableList({ setSelectedTable, tableType }: TableListProps) {
         render: renderMobileVariant,
       },
       {
-        title: () => (
+        title: (
           <div className="mobile-column-header" lang={lang}>
             <span>{t("tableList.table")}</span>
           </div>
@@ -186,7 +196,7 @@ function TableList({ setSelectedTable, tableType }: TableListProps) {
         render: renderMobileTableName,
       },
       {
-        title: () => (
+        title: (
           <div className="mobile-column-header" lang={lang}>
             <span>{t("tableList.blinds")}</span>
           </div>
@@ -196,7 +206,7 @@ function TableList({ setSelectedTable, tableType }: TableListProps) {
         render: renderMobileBlinds,
       },
       {
-        title: () => (
+        title: (
           <div className="mobile-column-header" lang={lang}>
             <span>{t("tableList.players")}</span>
           </div>
@@ -211,7 +221,7 @@ function TableList({ setSelectedTable, tableType }: TableListProps) {
         render: renderActions,
       },
     ],
-    [renderMobileVariant, renderMobileTableName, renderMobileBlinds, renderMobilePlayers, t, lang]
+    [renderMobileVariant, renderMobileTableName, renderMobileBlinds, renderMobilePlayers, renderActions, t, lang]
   );
 
   const handleRowClick = useCallback(
@@ -239,7 +249,6 @@ function TableList({ setSelectedTable, tableType }: TableListProps) {
           scroll={{ x: "max-content" }}
           onRow={(record) => ({
             onClick: () => handleRowClick(record),
-            lang: lang, // here lang="mn" or lang="en"
           })}
           rowClassName={(record) => {
             let className = "custom-table-row";

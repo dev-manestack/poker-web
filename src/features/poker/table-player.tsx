@@ -22,19 +22,14 @@ function TablePlayer({
 
   const isMyCard = (holeCard: GameCard): boolean => {
     return (
-      player?.hand?.combinationCards?.some(
-        (card) => card.suit === holeCard.suit && card.rank === holeCard.rank
-      ) ?? false
+      player?.hand?.combinationCards?.some((card) => card.suit === holeCard.suit && card.rank === holeCard.rank) ??
+      false
     );
   };
 
   return (
     <Flex style={{ flexDirection: "column" }} justify="center" align="center">
-      {player?.hand?.rank && (
-        <Typography.Text className="rank-text">
-          {player.hand.rank}
-        </Typography.Text>
-      )}
+      {player?.hand?.rank && <Typography.Text className="rank-text">{player.hand.rank}</Typography.Text>}
       <Flex className="hole-cards-container">
         {holeCards[0] && (
           <PokerCard
@@ -81,17 +76,13 @@ function TablePlayer({
             width: "100%",
             height: "100%",
           }}
-          className={`player-image${
-            isTurn && progress === 0 ? " turn-active" : ""
-          }`}
-          src="https://static.vecteezy.com/system/resources/thumbnails/048/216/761/small/modern-male-avatar-with-black-hair-and-hoodie-illustration-free-png.png"
+          className={`player-image${isTurn && progress === 0 ? " turn-active" : ""}`}
+          src="https://i.imgur.com/SyIZEu7.png"
         />
       </div>
 
       <Flex className="stack-box">
-        <Typography.Text className="username-text">
-          {player?.user?.username ?? "Waiting for player"}
-        </Typography.Text>
+        <Typography.Text className="username-text">{player?.user?.username ?? "Waiting for player"}</Typography.Text>
         <Typography.Text className="stack-text">
           {player?.stack ? player.stack.toLocaleString("mn-MN") : 0}₮
         </Typography.Text>

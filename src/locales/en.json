@@ -43,11 +43,13 @@
   "userHeader": {
     "menu": "Menu",
     "login": "Login",
+    "signup": "Sign Up",
     "register": "Register",
     "forgotPassword": "Forgot Password",
     "adminMenu": "Admin Menu",
     "userProfile": "User Profile",
     "logout": "Logout",
+    "info": "Info",
     "balanceLabel": "Balance:",
     "usernameLabel": "Username",
     "aria": {
@@ -134,5 +136,15 @@
     "errorMessage": "Registration error: ",
     "errorMessageGeneric": "An error occurred during registration"
   },
-  "seat": "Sit"
+  "seat": "Sit",
+  "modal": {
+    "recharge": "Recharge",
+    "sit": "Sit",
+    "amount": "Amount"
+  },
+  "forgotPasswordForm": {
+    "emailLabel": "Email",
+    "emailPlaceholder": "Please enter your email",
+    "sendButton": "Send Email"
+  }
 }

@@ -1,6 +1,6 @@
 import { Button, Flex, Form, Input, message, Typography } from "antd";
 import { useLoginMutation, type LoginCredentials } from "../../api/user";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
 import { setAuthenticated } from "../../providers/auth-slice";
@@ -15,6 +15,7 @@ function LoginForm({ setModalType }: { setModalType: (type: string) => void }) {
   const [messageAPI, contextHolder] = message.useMessage();
   const [login, { data, isLoading, isError, error }] = useLoginMutation();
   const { t, i18n } = useTranslation();
+  const [showPassword, setShowPassword] = useState(false);
 
   const onFinish = (values: LoginCredentials) => {
     login(values);
@@ -44,22 +45,28 @@ function LoginForm({ setModalType }: { setModalType: (type: string) => void }) {
   return (
     <Form layout="vertical" onFinish={onFinish}>
       {contextHolder}
-
       <Form.Item label={<span lang={i18n.language}>{t("loginForm.emailLabel")}</span>} name="email">
         <Input
           style={{ textTransform: "none" }} // Prevents forced uppercase
           placeholder={t("loginForm.emailPlaceholder")}
         />
       </Form.Item>
-
       <Form.Item label={<span lang={i18n.language}>{t("loginForm.passwordLabel")}</span>} name="password">
         <Input
-          type="password"
+          className="ant-input-password"
+          type={showPassword ? "text" : "password"} // Toggle between 'text' and 'password'
           style={{ textTransform: "none" }} // Prevents forced uppercase
           placeholder={t("loginForm.passwordPlaceholder")}
+          suffix={
+            <span
+              onClick={() => setShowPassword(!showPassword)}
+              style={{ cursor: "pointer", userSelect: "none", fontSize: "9px", marginRight: "5px" }}
+            >
+              {showPassword ? "Hide" : "Show"}
+            </span>
+          }
         />
       </Form.Item>
-
       <Form.Item>
         <Flex vertical gap={10}>
           <Button

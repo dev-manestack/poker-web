@@ -43,11 +43,13 @@
   "userHeader": {
     "menu": "Цэс",
     "login": "Нэвтрэх",
+    "signup": "Бүртгүүлэх",
     "register": "Бүртгүүлэх",
     "forgotPassword": "Нууц үг сэргээх",
     "adminMenu": "Админ цэс",
     "userProfile": "Хэрэглэгч",
     "logout": "Гарах",
+    "info": "Мэдээлэл",
     "balanceLabel": "Үлдэгдэл :",
     "usernameLabel": "Хэрэглэгчийн нэр",
     "aria": {
@@ -134,5 +136,15 @@
     "errorMessage": "Нэвтрэхэд алдаа гарлаа: ",
     "errorMessageGeneric": "Нэвтрэхэд алдаа гарлаа"
   },
-  "seat": "Суух"
+  "seat": "Суух",
+  "modal": {
+    "recharge": "Цэнэглэх",
+    "sit": "Суух",
+    "amount": "Хэмжээ"
+  },
+  "forgotPasswordForm": {
+    "emailLabel": "Цахим хаяг",
+    "emailPlaceholder": "Цахим хаягаа оруулна уу",
+    "sendButton": "Мэйл илгээх"
+  }
 }

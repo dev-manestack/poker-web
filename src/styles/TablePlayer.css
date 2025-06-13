@@ -1,5 +1,5 @@
 :root {
-  --size: 80px;
+  --size: 120px;
   --stroke: 3px;
   --radius: calc((var(--size) - var(--stroke)) / 2);
   --circumference: calc(2 * 3.1416 * var(--radius));
@@ -46,34 +46,40 @@
 }
 
 .stack-box {
-  border-radius: 16px;
-  background: linear-gradient(145deg, #1c1c1c, #111);
-  padding: 6px 30px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  margin-top: -16px;
+  border-radius: 50%/100%;
+  background: rgba(66, 64, 64, 0.5);
+  padding: 15px;
+  border: 1.2px solid rgba(170, 167, 167, 0.2);
+  margin-top: -20px;
   z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  box-shadow: inset 0 4px 5px rgba(255, 255, 255, 0.05), 0px 4px 2px rgba(5, 5, 5, 0.8), 0 4px 8px rgba(0, 0, 0, 0.4);
-  color: #eee;
+  color: #645d5d;
   text-shadow: 0 0 2px rgba(0, 0, 0, 0.6);
   transition: all 0.3s ease-in-out;
+  height: 55px;
+
+  /* inset shadow on top only (darker inside top edge) */
+  box-shadow: inset 0 19px 8px -6px rgba(17, 17, 17, 0.7);
+
+  /* or alternatively a top gradient overlay */
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(71, 71, 71, 0.5) 40%, rgba(71, 71, 71, 0.5) 100%);
 }
 
 .stack-text {
   margin-left: 8px;
-  color: #fff;
-  font-size: 12px;
+  color: #f8f669;
+  font-size: 14px;
 }
 
 .username-text {
   margin-left: 8px;
   color: #f0f0f0;
-  font-family: "Orbitron", sans-serif;
+  font-family: "Orbitron", sans-serif !important;
   font-weight: 700;
-  font-size: 12px;
+  font-size: 18px;
   letter-spacing: 0.5px;
   border-radius: 10px;
   text-align: center;

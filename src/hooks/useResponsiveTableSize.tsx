@@ -27,8 +27,8 @@ export default function useResponsiveTableSize(isPreview: boolean): { width: str
     height = isPreview ? "90%" : "50%";
   } else {
     // Desktop
-    width = isPreview ? "90%" : "60%";
-    height = isPreview ? "90%" : "50%";
+    width = isPreview ? "90%" : "70%";
+    height = isPreview ? "90%" : "60%";
   }
 
   return { width, height };

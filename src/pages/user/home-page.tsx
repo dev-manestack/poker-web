@@ -1,4 +1,4 @@
-import { Row, Col, Tabs } from "antd";
+import { Row, Col, Tabs, Modal } from "antd";
 import TableList from "../../features/poker/table-list";
 import { useState } from "react";
 import TableDetails from "../../features/poker/table-details";
@@ -6,12 +6,21 @@ import type { GameTable } from "../../api/admin";
 import "../../index.css";
 import Footer from "../../components/user-footer";
 import { useTranslation } from "react-i18next";
+import RegisterForm from "../../features/user/register-form";
+import ForgotPasswordForm from "../../features/user/forgot-password-form";
+import LoginForm from "../../features/user/login-form";
+import { CloseOutlined } from "@ant-design/icons";
+import { useSelector } from "react-redux";
 
 function HomePage() {
   const { t, i18n } = useTranslation();
   const [selectedTable, setSelectedTable] = useState<GameTable | null>(null);
   const [activeTableType, setActiveTableType] = useState<"texas" | "omaha">("texas");
   const [activeTab, setActiveTab] = useState("1");
+
+  const isAuthenticated = useSelector((state: any) => state.auth.isAuthenticated);
+
+  const [modalType, setModalType] = useState("");
 
   const onTableTypeChange = (key: string) => {
     setActiveTableType(key as "texas" | "omaha");
@@ -24,6 +33,10 @@ function HomePage() {
   };
 
   const lang = i18n.language === "mn" ? "mn" : "en";
+
+  const openLoginModal = () => {
+    setModalType("login");
+  };
 
   return (
     <>
@@ -45,42 +58,14 @@ function HomePage() {
                       </div>
                     ),
                     children: (
-                      <>
-                        {/* <Tabs
-                          type="line"
-                          activeKey={activeTableType}
-                          onChange={onTableTypeChange}
-                          className="table-type-tabs"
-                          items={[
-                            {
-                              key: "texas",
-                              label: (
-                                <div
-                                  className={`custom-tab-btn ${activeTableType === "texas" ? "active" : ""}`}
-                                  lang={lang}
-                                >
-                                  {t("homePage.tableTypes.texas")}
-                                </div>
-                              ),
-                            },
-                            {
-                              key: "omaha",
-                              disabled: true,
-                              label: (
-                                <div
-                                  className={`custom-tab-btn ${activeTableType === "omaha" ? "active" : ""}`}
-                                  lang={lang}
-                                >
-                                  {t("homePage.tableTypes.omaha")}
-                                </div>
-                              ),
-                            },
-                          ]}
-                        /> */}
-                        <div className={activeTableType === "texas" ? "table-list-texas" : "table-list-omaha"}>
-                          <TableList setSelectedTable={setSelectedTable} tableType={activeTableType} />
-                        </div>
-                      </>
+                      <div className={activeTableType === "texas" ? "table-list-texas" : "table-list-omaha"}>
+                        <TableList
+                          setSelectedTable={setSelectedTable}
+                          tableType={activeTableType}
+                          isAuthenticated={isAuthenticated}
+                          onRequestLogin={openLoginModal}
+                        />
+                      </div>
                     ),
                   },
                   {
@@ -102,7 +87,29 @@ function HomePage() {
             </Col>
           </Row>
         </div>
+
         <Footer />
+
+        {/* Modal for Login/Register/Forgot Password */}
+        <Modal
+          open={modalType.length > 0}
+          onOk={() => setModalType("")}
+          onCancel={() => setModalType("")}
+          title={
+            modalType === "login"
+              ? t("userHeader.login")
+              : modalType === "register"
+              ? t("userHeader.register")
+              : t("userHeader.forgotPassword")
+          }
+          closeIcon={<CloseOutlined style={{ color: "#EEFFFF" }} />}
+          footer={null}
+          wrapClassName="custom-login-modal"
+        >
+          {modalType === "login" && <LoginForm setModalType={setModalType} />}
+          {modalType === "register" && <RegisterForm setModalType={setModalType} />}
+          {modalType === "forgot-password" && <ForgotPasswordForm />}
+        </Modal>
       </div>
     </>
   );

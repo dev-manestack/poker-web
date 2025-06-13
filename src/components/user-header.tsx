@@ -4,6 +4,7 @@ import {
   LogoutOutlined,
   MenuOutlined,
   UserOutlined,
+  InfoCircleOutlined,
 } from "@ant-design/icons";
 import { Avatar, Button, Drawer, Flex, Modal, Typography } from "antd";
 import { useEffect, useState } from "react";
@@ -24,14 +25,11 @@ function UserHeader() {
   const navigate = useNavigate();
   const [modalType, setModalType] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [isActive, _] = useState(true); // Manually controlled active status
+  const [isActive] = useState(true);
 
   const dispatch = useDispatch();
-  const isAuthenticated = useSelector(
-    (state: any) => state.auth.isAuthenticated
-  );
+  const isAuthenticated = useSelector((state: any) => state.auth.isAuthenticated);
   const { t, i18n } = useTranslation();
-
   const { data: userInfo, refetch } = useMeQuery();
 
   useEffect(() => {
@@ -109,7 +107,6 @@ function UserHeader() {
           onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.1)")}
           onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
         />
-
         <span
           onClick={() => navigate("/")}
           className="user-header-logo-text"
@@ -137,61 +134,44 @@ function UserHeader() {
             aria-label="User balance"
             gap={8}
           >
-            <img
-              src={BalanceIcon2}
-              alt="balance icon"
-              className="user-header-balance-icon"
-            />
-
-            <Text className="user-header-balance-value">
-              {userInfo?.userBalance?.balance.toLocaleString()}₮
-            </Text>
+            <img src={BalanceIcon2} alt="balance icon" className="user-header-balance-icon" />
+            <Text className="user-header-balance-value">{userInfo?.userBalance?.balance.toLocaleString()}₮</Text>
           </Flex>
-
-          <Flex
-            className="user-header-profile"
-            onClick={() => navigate("/profile")}
-            align="center"
-            gap={12}
-          >
+          <Flex className="user-header-profile" onClick={() => navigate("/profile")} align="center" gap={12}>
             <Avatar
               className="user-header-avatar"
               src={"https://i.imgur.com/SyIZEu7.png"}
               alt={`${userInfo?.username}'s avatar`}
             />
-
             <Flex vertical style={{ flex: 1 }}>
               <Flex align="center" gap={6}>
-                <Text className="user-header-username">
-                  {userInfo?.username.toLocaleUpperCase()}
-                </Text>
+                <Text className="user-header-username">{userInfo?.username.toLocaleUpperCase()}</Text>
                 <span
-                  className={`user-status-dot ${
-                    isActive ? "active" : "inactive"
-                  }`}
+                  className={`user-status-dot ${isActive ? "active" : "inactive"}`}
                   aria-label={isActive ? "Active user" : "Inactive user"}
                   title={isActive ? "Active" : "Inactive"}
                 />
               </Flex>
-              <Text
-                className="user-header-email"
-                style={{ fontSize: 12, color: "#888" }}
-              >
+              <Text className="user-header-email" style={{ fontSize: 12, color: "#888" }}>
                 {userInfo?.email}
               </Text>
             </Flex>
           </Flex>
         </Flex>
       ) : (
-        <Button
-          type="default"
-          onClick={() => setModalType("login")}
-          lang="mn"
-          className="user-header-login-button"
-          style={{ fontSize: 16, padding: "8px 20px" }}
-        >
-          {t("userHeader.login")}
-        </Button>
+        <Flex align="center" gap={8}>
+          <Button type="default" onClick={() => setModalType("login")} lang="mn" className="user-header-login-button">
+            {t("userHeader.login")}
+          </Button>
+          <Button
+            type="default"
+            onClick={() => setModalType("register")}
+            lang="mn"
+            className="user-header-login-button"
+          >
+            {t("userHeader.signup")}
+          </Button>
+        </Flex>
       )}
 
       <Drawer
@@ -201,13 +181,23 @@ function UserHeader() {
         open={drawerOpen}
         width="auto"
       >
+        <Button
+          icon={<InfoCircleOutlined />}
+          type="text"
+          block
+          style={{ textAlign: "left", paddingLeft: 10, justifyContent: "flex-start", marginBottom: "10px" }}
+          onClick={() => handleMenuClick("info")}
+        >
+          <span lang={i18n.language}>{t("userHeader.info")}</span>
+        </Button>
+
         {isAuthenticated && (
-          <Flex vertical gap={10}>
+          <Flex vertical gap={10} style={{ alignItems: "flex-start" }}>
             <Button
               icon={<CrownOutlined />}
               type="text"
               block
-              style={{ textAlign: "left", paddingLeft: 10 }}
+              style={{ textAlign: "left", paddingLeft: 10, justifyContent: "flex-start" }}
               onClick={() => handleMenuClick("admin")}
             >
               <span lang={i18n.language}>{t("userHeader.adminMenu")}</span>
@@ -216,7 +206,7 @@ function UserHeader() {
               icon={<UserOutlined />}
               type="text"
               block
-              style={{ textAlign: "left", paddingLeft: 10 }}
+              style={{ textAlign: "left", paddingLeft: 10, justifyContent: "flex-start" }}
               onClick={() => handleMenuClick("profile")}
             >
               <span lang={i18n.language}>{t("userHeader.userProfile")}</span>
@@ -225,7 +215,7 @@ function UserHeader() {
               icon={<LogoutOutlined />}
               type="text"
               block
-              style={{ textAlign: "left", paddingLeft: 10, color: "#888" }}
+              style={{ textAlign: "left", paddingLeft: 10, color: "#888", justifyContent: "flex-start" }}
               onClick={() => handleMenuClick("logout")}
             >
               <span lang={i18n.language}>{t("userHeader.logout")}</span>
@@ -234,7 +224,6 @@ function UserHeader() {
         )}
       </Drawer>
 
-      {/* Modal for Login/Register/Forgot */}
       <Modal
         open={modalType?.length > 0}
         onOk={() => setModalType("")}
@@ -251,9 +240,7 @@ function UserHeader() {
         wrapClassName="custom-login-modal"
       >
         {modalType === "login" && <LoginForm setModalType={setModalType} />}
-        {modalType === "register" && (
-          <RegisterForm setModalType={setModalType} />
-        )}
+        {modalType === "register" && <RegisterForm setModalType={setModalType} />}
         {modalType === "forgot-password" && <ForgotPasswordForm />}
       </Modal>
     </Flex>

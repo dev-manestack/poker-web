@@ -1,5 +1,8 @@
+import { useState, useEffect } from "react";
 import { Layout } from "antd";
 import UserHeader from "../components/user-header";
+import LoadingPage from "../components/loadingPage";
+
 const { Header, Content } = Layout;
 
 const headerStyle: React.CSSProperties = {
@@ -10,7 +13,22 @@ const headerStyle: React.CSSProperties = {
   background: "none",
 };
 
-function UserLayout({ children }: { children: React.ReactNode }) {
+interface UserLayoutProps {
+  children: React.ReactNode;
+}
+
+function UserLayout({ children }: UserLayoutProps) {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return <LoadingPage />;
+  }
+
   return (
     <Layout
       style={{

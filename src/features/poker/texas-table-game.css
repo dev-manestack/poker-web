@@ -2,7 +2,7 @@
   position: absolute;
   width: 80px;
   height: 80px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.6);
   color: white;
   border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 50%;
@@ -25,8 +25,8 @@
 /* 📱 iPhone SE / Small Phones */
 @media (max-width: 375px) {
   .seat {
-    width: 50px;
-    height: 50px;
+    width: 40px !important;
+    height: 40px !important;
     line-height: 50px;
     font-size: 10px;
     padding: 15px;
@@ -36,10 +36,10 @@
 /* 📱 Regular Phones (iPhone 14, Samsung Galaxy, etc.) */
 @media (min-width: 376px) and (max-width: 768px) {
   .seat {
-    width: 60px;
-    height: 60px;
-    line-height: 60px;
-    font-size: 12px;
+    width: 50px !important;
+    height: 50px !important;
+    line-height: 50px;
+    font-size: 10px;
     padding: 20px;
   }
 }

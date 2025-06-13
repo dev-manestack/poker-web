@@ -52,9 +52,12 @@ function PokerActions({
   return (
     <Flex
       style={{
+        position: "fixed",
+        bottom: "20px",
+        right: "50px",
         width: "auto",
-        height: "100px",
-        marginBottom: "16px",
+        height: "auto",
+        zIndex: 9999,
       }}
       justify="space-between"
       align="center"
@@ -96,8 +99,7 @@ function PokerActions({
           </Button>
           <Button
             onClick={() => {
-              const amount =
-                currentRequiredBet + Math.min(stack, currentPot, minRaise);
+              const amount = currentRequiredBet + Math.min(stack, currentPot, minRaise);
               if (amount < minRaise) {
                 messageAPI.error("You must raise at least the minimum raise.");
                 return;
@@ -135,7 +137,7 @@ function PokerActions({
               borderRadius: "10px",
               height: "60px",
               width: "120px",
-              background: "#04BA78",
+              background: "linear-gradient(135deg,rgb(25, 168, 224), #2a5298)",
               border: "none",
               fontWeight: "bold",
             }}
@@ -149,7 +151,7 @@ function PokerActions({
               borderRadius: "10px",
               height: "60px",
               width: "120px",
-              background: "#04BA78",
+              background: "linear-gradient(135deg,rgb(25, 168, 224), #2a5298)",
               border: "none",
               fontWeight: "bold",
             }}
@@ -178,16 +180,13 @@ function PokerActions({
               borderRadius: "10px",
               height: "60px",
               width: "120px",
-              background: "#04BA78",
+              background: "linear-gradient(135deg,rgb(25, 168, 224), #2a5298)",
               border: "none",
               fontWeight: "bold",
             }}
             disabled={isDisabled}
             onClick={() => {
-              if (
-                selectedAmount < currentRequiredBet &&
-                selectedAmount !== stack
-              ) {
+              if (selectedAmount < currentRequiredBet && selectedAmount !== stack) {
                 messageAPI.error("You must raise at least the required bet.");
                 return;
               }
@@ -208,12 +207,8 @@ function PokerActions({
           </Button>
         </Flex>
         <Flex gap={8} justify="space-between" align="center">
-          <Checkbox onChange={(e) => setFoldAnyBet(e.target.value)}>
-            Fold to any bet
-          </Checkbox>
-          <Checkbox onChange={(e) => setCheckFold(e.target.value)}>
-            Check/Fold
-          </Checkbox>
+          <Checkbox onChange={(e) => setFoldAnyBet(e.target.value)}>Fold to any bet</Checkbox>
+          <Checkbox onChange={(e) => setCheckFold(e.target.value)}>Check/Fold</Checkbox>
         </Flex>
       </Flex>
     </Flex>

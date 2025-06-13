@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import loadingLogo from "../assets/image/logo.png";
 
 export default function LoadingPage() {
   const [progress, setProgress] = useState(0);
@@ -24,7 +25,20 @@ export default function LoadingPage() {
         background: "#001529",
       }}
     >
+      <img
+        src={loadingLogo}
+        alt="Loading"
+        style={{
+          width: 200,
+          height: "auto",
+          marginBottom: 30,
+          objectFit: "contain",
+          userSelect: "none",
+        }}
+      />
+
       <AnimatedLoadingText />
+
       <div
         style={{
           marginTop: 20,
@@ -43,7 +57,7 @@ export default function LoadingPage() {
             background: "linear-gradient(90deg, #00cfff, #0077ff)",
             borderRadius: 5,
             boxShadow: "0 0 10px #00cfff",
-            transition: "width 1s ease-out", // smooth 1 second transition here
+            transition: "width 1s ease-out",
           }}
         />
       </div>

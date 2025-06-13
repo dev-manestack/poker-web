@@ -15,17 +15,19 @@ import { useSelector } from "react-redux";
 function HomePage() {
   const { t, i18n } = useTranslation();
   const [selectedTable, setSelectedTable] = useState<GameTable | null>(null);
-  const [activeTableType, setActiveTableType] = useState<"texas" | "omaha">("texas");
+  const [activeTableType, _] = useState<"texas" | "omaha">("texas");
   const [activeTab, setActiveTab] = useState("1");
 
-  const isAuthenticated = useSelector((state: any) => state.auth.isAuthenticated);
+  const isAuthenticated = useSelector(
+    (state: any) => state.auth.isAuthenticated
+  );
 
   const [modalType, setModalType] = useState("");
 
-  const onTableTypeChange = (key: string) => {
-    setActiveTableType(key as "texas" | "omaha");
-    setSelectedTable(null);
-  };
+  // const onTableTypeChange = (key: string) => {
+  //   setActiveTableType(key as "texas" | "omaha");
+  //   setSelectedTable(null);
+  // };
 
   const onMainTabChange = (key: string) => {
     setActiveTab(key);
@@ -40,7 +42,9 @@ function HomePage() {
 
   return (
     <>
-      <div style={{ display: "flex", flexDirection: "column", minHeight: "100%" }}>
+      <div
+        style={{ display: "flex", flexDirection: "column", minHeight: "100%" }}
+      >
         <div style={{ flex: 1, padding: 20 }}>
           <Row gutter={[16, 16]} className="full-height">
             <Col xs={24} md={16} className="full-height">
@@ -58,7 +62,13 @@ function HomePage() {
                       </div>
                     ),
                     children: (
-                      <div className={activeTableType === "texas" ? "table-list-texas" : "table-list-omaha"}>
+                      <div
+                        className={
+                          activeTableType === "texas"
+                            ? "table-list-texas"
+                            : "table-list-omaha"
+                        }
+                      >
                         <TableList
                           setSelectedTable={setSelectedTable}
                           tableType={activeTableType}
@@ -75,7 +85,11 @@ function HomePage() {
                         {t("homePage.tabs.tournament")}
                       </div>
                     ),
-                    children: <div lang={lang}>{t("homePage.tournament.comingSoon")}</div>,
+                    children: (
+                      <div lang={lang}>
+                        {t("homePage.tournament.comingSoon")}
+                      </div>
+                    ),
                     disabled: true,
                   },
                 ]}
@@ -107,7 +121,9 @@ function HomePage() {
           wrapClassName="custom-login-modal"
         >
           {modalType === "login" && <LoginForm setModalType={setModalType} />}
-          {modalType === "register" && <RegisterForm setModalType={setModalType} />}
+          {modalType === "register" && (
+            <RegisterForm setModalType={setModalType} />
+          )}
           {modalType === "forgot-password" && <ForgotPasswordForm />}
         </Modal>
       </div>

@@ -29,9 +29,8 @@ export default function TableActionButtons({
 }: TableActionButtonsProps) {
   const [drawerVisible, setDrawerVisible] = useState(false);
 
-  // Device detection
-  const isMobile = typeof window !== "undefined" && window.innerWidth <= 480;
-  const isTabletOrMobile = typeof window !== "undefined" && window.innerWidth <= 1024;
+  const isTabletOrMobile =
+    typeof window !== "undefined" && window.innerWidth <= 1024;
   const isTouchDevice = isTabletOrMobile; // touch devices: no tooltip on touch devices
 
   if (isPreview) return null;

@@ -17,8 +17,15 @@ interface TableListProps {
   onRequestLogin: () => void;
 }
 
-function TableList({ setSelectedTable, tableType, isAuthenticated, onRequestLogin }: TableListProps) {
-  const [selectedRowKey, setSelectedRowKey] = useState<string | number | null>(null);
+function TableList({
+  setSelectedTable,
+  tableType,
+  isAuthenticated,
+  onRequestLogin,
+}: TableListProps) {
+  const [selectedRowKey, setSelectedRowKey] = useState<string | number | null>(
+    null
+  );
   const navigate = useNavigate();
   const { data: tableData } = useFetchTablesQuery();
   const screens = useBreakpoint();
@@ -30,7 +37,9 @@ function TableList({ setSelectedTable, tableType, isAuthenticated, onRequestLogi
   const filteredTables = useMemo(() => {
     if (!tableData) return [];
     if (!tableType) return tableData;
-    return tableData.filter((table) => table.variant?.toLowerCase() === tableType.toLowerCase());
+    return tableData.filter(
+      (table) => table.variant?.toLowerCase() === tableType.toLowerCase()
+    );
   }, [tableData, tableType]);
 
   const handlePlayClick = useCallback(
@@ -78,13 +87,13 @@ function TableList({ setSelectedTable, tableType, isAuthenticated, onRequestLogi
     [t]
   );
 
-  const renderBuyInRange = useCallback(
-    (_: any, record: GameTable) =>
-      `${currencySymbol}${record.minBuyIn.toLocaleString("mn-MN")} / ${currencySymbol}${record.maxBuyIn.toLocaleString(
-        "mn-MN"
-      )}`,
-    []
-  );
+  // const renderBuyInRange = useCallback(
+  //   (_: any, record: GameTable) =>
+  //     `${currencySymbol}${record.minBuyIn.toLocaleString("mn-MN")} / ${currencySymbol}${record.maxBuyIn.toLocaleString(
+  //       "mn-MN"
+  //     )}`,
+  //   []
+  // );
 
   const renderBlinds = useCallback(
     (_: any, record: GameTable) =>
@@ -100,7 +109,9 @@ function TableList({ setSelectedTable, tableType, isAuthenticated, onRequestLogi
         title: <span lang={lang}>{t("tableList.index")}</span>,
         dataIndex: "index",
         key: "index",
-        render: (_: any, __: any, index: number) => <Typography.Text>{index + 1}</Typography.Text>,
+        render: (_: any, __: any, index: number) => (
+          <Typography.Text>{index + 1}</Typography.Text>
+        ),
       },
       {
         title: <span lang={lang}>{t("tableList.name")}</span>,
@@ -157,7 +168,9 @@ function TableList({ setSelectedTable, tableType, isAuthenticated, onRequestLogi
   const renderMobileBlinds = useCallback(
     (_: any, record: GameTable) => (
       <div className="mobile-blinds" lang={lang}>
-        {`${record.smallBlind.toLocaleString("mn-MN")} / ${record.bigBlind.toLocaleString("mn-MN")}`}
+        {`${record.smallBlind.toLocaleString(
+          "mn-MN"
+        )} / ${record.bigBlind.toLocaleString("mn-MN")}`}
       </div>
     ),
     [lang]
@@ -221,7 +234,15 @@ function TableList({ setSelectedTable, tableType, isAuthenticated, onRequestLogi
         render: renderActions,
       },
     ],
-    [renderMobileVariant, renderMobileTableName, renderMobileBlinds, renderMobilePlayers, renderActions, t, lang]
+    [
+      renderMobileVariant,
+      renderMobileTableName,
+      renderMobileBlinds,
+      renderMobilePlayers,
+      renderActions,
+      t,
+      lang,
+    ]
   );
 
   const handleRowClick = useCallback(
@@ -241,7 +262,9 @@ function TableList({ setSelectedTable, tableType, isAuthenticated, onRequestLogi
     <Row gutter={[16, 16]}>
       <Col xs={24} sm={24} md={24} lg={24} xl={24}>
         <Table
-          className={`${isMobileOrTablet ? "table-mobile" : "table-desktop"} ${lang === "mn" ? "lang-mn" : "lang-en"}`}
+          className={`${isMobileOrTablet ? "table-mobile" : "table-desktop"} ${
+            lang === "mn" ? "lang-mn" : "lang-en"
+          }`}
           columns={isMobileOrTablet ? mobileColumns : desktopColumns}
           dataSource={filteredTables}
           rowKey="tableId"

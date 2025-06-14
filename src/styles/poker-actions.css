@@ -1,0 +1,136 @@
+.poker-actions-container {
+  position: fixed;
+  bottom: 20px;
+  right: 50px;
+  width: auto;
+  height: auto;
+  z-index: 9999;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.poker-actions-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.poker-actions-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.poker-action-button {
+  border-radius: 10px;
+  height: 60px;
+  width: 120px;
+  background: linear-gradient(135deg, rgb(25, 168, 224), #2a5298);
+  border: none;
+  font-weight: bold;
+}
+
+.poker-actions-bottom {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Responsive for tablets */
+@media (max-width: 768px) {
+  .poker-actions-container {
+    bottom: 10px;
+    right: 10px;
+  }
+
+  .poker-actions-buttons {
+    margin-top: 0;
+    flex-wrap: wrap;
+    justify-content: center;
+    font-size: 8px;
+  }
+
+  .poker-action-button {
+    height: 50px;
+    width: 100px;
+    font-size: 12px;
+  }
+}
+
+/* Responsive for mobile phones */
+@media (max-width: 480px) {
+  .poker-actions-container {
+    bottom: 15px;
+    right: 0;
+    left: 0;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .poker-actions-buttons {
+    flex-direction: row;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .poker-action-button {
+    height: 45px;
+    width: 90px;
+    font-size: 10px;
+  }
+
+  .poker-actions-bottom {
+    flex-direction: row;
+    gap: 4px;
+    justify-content: center;
+  }
+
+  .poker-actions-bottom label {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 375px) {
+  .poker-actions-container {
+    bottom: 15px;
+    right: 0;
+    left: 0;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .poker-actions-buttons button {
+    flex-direction: row;
+    justify-content: center;
+    gap: 6px;
+    font-size: 8px;
+  }
+
+  .arc-slider-wrapper {
+    width: 100%; /* Or whatever width you want */
+    max-width: 100%; /* optional, makes it responsive */
+  }
+
+  .arc-slider-wrapper input {
+    height: 4px;
+  }
+
+  .arc-slider-wrapper span {
+    font-size: 12px;
+  }
+
+  .poker-action-button {
+    height: 30px;
+    width: 70px;
+    font-size: 8px;
+  }
+
+  .poker-actions-bottom {
+    flex-direction: row;
+    gap: 4px;
+    justify-content: center;
+  }
+}

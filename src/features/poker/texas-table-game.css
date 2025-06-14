@@ -22,6 +22,15 @@
   background-color: rgba(255, 255, 255, 0.05);
 }
 
+.total-pot {
+  font-size: 12px;
+  position: absolute;
+  transform: translateX(-50%);
+  top: 35%; /* distance from top edge */
+  font-weight: "bold";
+  color: "#fff";
+}
+
 /* 📱 iPhone SE / Small Phones */
 @media (max-width: 375px) {
   .seat {
@@ -30,6 +39,15 @@
     line-height: 50px;
     font-size: 10px;
     padding: 15px;
+  }
+
+  .total-pot {
+    font-size: 12px;
+    position: absolute;
+    transform: translateX(-50%);
+    top: 35%; /* distance from top edge */
+    font-weight: "bold";
+    color: "#fff";
   }
 }
 
@@ -41,6 +59,15 @@
     line-height: 50px;
     font-size: 10px;
     padding: 20px;
+  }
+
+  .total-pot {
+    font-size: 12px;
+    position: absolute;
+    transform: translateX(-50%);
+    top: 35%; /* distance from top edge */
+    font-weight: "bold";
+    color: "#fff";
   }
 }
 

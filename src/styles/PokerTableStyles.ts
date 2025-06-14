@@ -1,5 +1,7 @@
 import type { CSSProperties } from "react";
 
+const isMobile = window.innerWidth <= 768;
+
 export const containerStyles: CSSProperties = {
   width: "100vw",
   height: "100%",
@@ -24,16 +26,14 @@ export const contentStyles: CSSProperties = {
 };
 
 export const playerCardStyle: CSSProperties = {
-  height: "100px",
+  height: isMobile ? "50px" : "100px",
+  width: isMobile ? "40px" : "90px", // add width for consistency
+  transition: "all 0.3s ease-in-out",
 };
-
-export const seatChipStyle: CSSProperties = {
+export const seatChipStyle: React.CSSProperties = {
   position: "absolute",
-  transform: "translate(-50%, -50%)",
-  width: "28px",
-  height: "28px",
-  zIndex: 2,
-  pointerEvents: "none",
+  transform: "translate(-50%, -50%)", // to center the chip exactly
+  zIndex: 1000, // show on top
 };
 
 export const playerSeatStyle: CSSProperties = {

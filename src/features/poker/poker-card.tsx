@@ -5,13 +5,7 @@ import { Howl } from "howler";
 import { FlipCardAudio } from "../../assets/sounds";
 import type { GameCard } from "../../api/game";
 
-function PokerCard({
-  style,
-  info,
-}: {
-  style?: React.CSSProperties;
-  info: GameCard;
-}) {
+function PokerCard({ style, info }: { style?: React.CSSProperties; info: GameCard }) {
   const [cardImage, setCardImage] = useState<null | string>(null);
 
   useEffect(() => {

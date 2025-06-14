@@ -2,6 +2,7 @@ import { Button, Checkbox, Flex, message } from "antd";
 import { useEffect, useState } from "react";
 import type { User } from "../../api/user";
 import ArcSlider from "./arc-slider";
+import "../../styles/poker-actions.css";
 
 function PokerActions({
   player,
@@ -50,29 +51,10 @@ function PokerActions({
   }, [turnPlayer, turnPlayer, isFolded, isAllIn]);
 
   return (
-    <Flex
-      style={{
-        position: "fixed",
-        bottom: "20px",
-        right: "50px",
-        width: "auto",
-        height: "auto",
-        zIndex: 9999,
-      }}
-      justify="space-between"
-      align="center"
-    >
+    <Flex className="poker-actions-container" justify="space-between" align="center">
       {contextHolder}
-      <Flex gap={12} vertical>
-        <Flex
-          style={{
-            marginTop: "-150px",
-            flexDirection: "row",
-            justifyContent: "end",
-          }}
-          vertical
-          gap={8}
-        >
+      <Flex className="poker-actions-inner">
+        <Flex className="poker-actions-buttons">
           <Button
             onClick={() => {
               const amount = currentRequiredBet + Math.min(stack, minRaise);
@@ -121,43 +103,36 @@ function PokerActions({
             Max
           </Button>
         </Flex>
-        <ArcSlider
-          value={selectedAmount}
-          onChange={(value) => {
-            setSelectedAmount(Number(value.toFixed(0)));
-          }}
-          onClick={() => {}}
-          minValue={minRaise}
-          maxValue={stack}
-          label="Bet"
-        />
-        <Flex gap={12}>
-          <Button
-            style={{
-              borderRadius: "10px",
-              height: "60px",
-              width: "120px",
-              background: "linear-gradient(135deg,rgb(25, 168, 224), #2a5298)",
-              border: "none",
-              fontWeight: "bold",
+
+        <div className="arc-slider-wrapper">
+          <ArcSlider
+            value={selectedAmount}
+            onChange={(value) => {
+              setSelectedAmount(Number(value.toFixed(0)));
             }}
-            disabled={isDisabled}
-            onClick={() => sendAction("FOLD", 0)}
-          >
+            onClick={() => {}}
+            minValue={minRaise}
+            maxValue={stack}
+            label=""
+          />
+        </div>
+
+        <Flex className="poker-actions-buttons">
+          <Button className="poker-action-button" disabled={isDisabled} onClick={() => sendAction("FOLD", 0)}>
             FOLD
           </Button>
+
           <Button
-            style={{
-              borderRadius: "10px",
-              height: "60px",
-              width: "120px",
-              background: "linear-gradient(135deg,rgb(25, 168, 224), #2a5298)",
-              border: "none",
-              fontWeight: "bold",
-            }}
+            className="poker-action-button"
             disabled={isDisabled}
             onClick={() => {
               if (currentBet === currentRequiredBet) {
+                // Dispatch chipFly event on CHECK (usually no chips move, but you can skip or keep)
+                window.dispatchEvent(
+                  new CustomEvent("chipFly", {
+                    detail: { fromPlayerId: player?.userId, amount: 0 }, // amount 0 since check no chips
+                  })
+                );
                 sendAction("CHECK", 0);
               } else {
                 let missingBet = currentRequiredBet - currentBet;
@@ -165,6 +140,12 @@ function PokerActions({
                 if (missingBet > stack) {
                   amount = stack;
                 }
+                // Dispatch chipFly event on CALL with amount
+                window.dispatchEvent(
+                  new CustomEvent("chipFly", {
+                    detail: { fromPlayerId: player?.userId, amount },
+                  })
+                );
                 sendAction("CALL", amount);
               }
             }}
@@ -175,15 +156,9 @@ function PokerActions({
               ? `All-In ${stack}`
               : `CALL ${currentRequiredBet - currentBet}₮`}
           </Button>
+
           <Button
-            style={{
-              borderRadius: "10px",
-              height: "60px",
-              width: "120px",
-              background: "linear-gradient(135deg,rgb(25, 168, 224), #2a5298)",
-              border: "none",
-              fontWeight: "bold",
-            }}
+            className="poker-action-button"
             disabled={isDisabled}
             onClick={() => {
               if (selectedAmount < currentRequiredBet && selectedAmount !== stack) {
@@ -198,17 +173,16 @@ function PokerActions({
                 messageAPI.error("You must raise at least the minimum raise.");
                 return;
               }
-              if (typeof sendAction === "function") {
-                sendAction("RAISE", Number(selectedAmount));
-              }
+              sendAction("RAISE", Number(selectedAmount));
             }}
           >
             {selectedAmount === stack ? "ALL IN" : `RAISE ${selectedAmount}₮`}
           </Button>
         </Flex>
-        <Flex gap={8} justify="space-between" align="center">
-          <Checkbox onChange={(e) => setFoldAnyBet(e.target.value)}>Fold to any bet</Checkbox>
-          <Checkbox onChange={(e) => setCheckFold(e.target.value)}>Check/Fold</Checkbox>
+
+        <Flex className="poker-actions-bottom" gap={8} justify="space-between" align="center">
+          <Checkbox onChange={(e) => setFoldAnyBet(e.target.checked)}>Fold to any bet</Checkbox>
+          <Checkbox onChange={(e) => setCheckFold(e.target.checked)}>Check/Fold</Checkbox>
         </Flex>
       </Flex>
     </Flex>

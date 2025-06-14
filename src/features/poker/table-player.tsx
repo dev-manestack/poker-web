@@ -28,14 +28,20 @@ function TablePlayer({
   };
 
   return (
-    <Flex style={{ flexDirection: "column" }} justify="center" align="center">
+    <Flex style={{ flexDirection: "column", position: "relative" }} justify="center" align="center">
       {player?.hand?.rank && <Typography.Text className="rank-text">{player.hand.rank}</Typography.Text>}
-      <Flex className="hole-cards-container">
+
+      {/* Cards over the avatar */}
+      <div className="hole-cards-overlay">
         {holeCards[0] && (
           <PokerCard
             info={holeCards[0]}
             style={{
-              outline: isMyCard(holeCards[0]) ? "5px solid red" : "none",
+              transform: "rotate(-10deg)",
+              position: "absolute",
+              left: "-15",
+              top: "0",
+              outline: isMyCard(holeCards[0]) ? "3px solid red" : "none",
             }}
           />
         )}
@@ -43,20 +49,19 @@ function TablePlayer({
           <PokerCard
             info={holeCards[1]}
             style={{
-              outline: isMyCard(holeCards[1]) ? "5px solid red" : "none",
+              transform: "rotate(10deg)",
+              position: "absolute",
+              right: "-15px",
+              top: "0",
+              outline: isMyCard(holeCards[1]) ? "3px solid red" : "none",
             }}
           />
         )}
-      </Flex>
+      </div>
 
       <div className="player-image-wrapper">
         {progress > 0 && (
-          <svg
-            width="100%"
-            height="100%"
-            className="svg-circle"
-            viewBox={`0 0 ${size} ${size}`} // pass fixed size for circle math, optional
-          >
+          <svg width="100%" height="100%" className="svg-circle" viewBox={`0 0 ${size} ${size}`}>
             <circle
               cx={size / 2}
               cy={size / 2}

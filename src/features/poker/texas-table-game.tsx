@@ -1,13 +1,4 @@
-import {
-  Button,
-  Flex,
-  Form,
-  message,
-  Modal,
-  Slider,
-  Spin,
-  Typography,
-} from "antd";
+import { Button, Flex, Form, message, Modal, Slider, Spin, Typography } from "antd";
 import { useEffect, useRef, useState } from "react";
 import PokerCard from "./poker-card";
 import "./texas-table-game.css";
@@ -16,13 +7,7 @@ import {
   DisconnectAudio,
   SuccessAudio,
 } from "../../assets/sounds";
-import {
-  websocketURL,
-  type GameCard,
-  type GamePlayer,
-  type TableState,
-  type WebsocketEvent,
-} from "../../api/game";
+import { websocketURL, type GameCard, type GamePlayer, type TableState, type WebsocketEvent } from "../../api/game";
 import { useNavigate, useParams } from "react-router";
 import TablePlayer from "./table-player";
 import PokerActions from "./poker-actions";
@@ -43,6 +28,7 @@ import useResponsiveTableSize from "../../hooks/useResponsiveTableSize.tsx"; // 
 import { useTranslation } from "react-i18next";
 import { DesktopTable, MobileTable } from "../../assets/image/index.ts";
 import { useIsMobile } from "../../hooks/useIsMobile.tsx";
+import { motion } from "framer-motion";
 
 interface GameState {
   minBuyIn: number;
@@ -64,14 +50,7 @@ interface GameState {
 
   currentPlayerSeat: number;
   communityCards?: GameCard[];
-  state:
-    | "WAITING_FOR_PLAYERS"
-    | "PRE_FLOP"
-    | "FLOP"
-    | "TURN"
-    | "RIVER"
-    | "SHOWDOWN"
-    | "FINISHED";
+  state: "WAITING_FOR_PLAYERS" | "PRE_FLOP" | "FLOP" | "TURN" | "RIVER" | "SHOWDOWN" | "FINISHED";
 }
 
 function TexasTableGame({
@@ -117,8 +96,7 @@ function TexasTableGame({
   const userInfoRef = useRef<User | null>(null);
   const isMobile = useIsMobile();
   const [rechargeAmount, setRechargeAmount] = useState<number>(0);
-  const isSmallPhone =
-    typeof window !== "undefined" && window.innerWidth <= 389;
+  const isSmallPhone = typeof window !== "undefined" && window.innerWidth <= 389;
 
   const tableHeight = isMobile ? (isSmallPhone ? 500 : 550) : "auto";
 
@@ -150,9 +128,7 @@ function TexasTableGame({
 
   const { width, height } = useResponsiveTableSize(isPreview);
 
-  const userHasSeat = gameState.seats.some(
-    (seat) => seat.user?.userId === userInfoRef.current?.userId
-  );
+  const userHasSeat = gameState.seats.some((seat) => seat.user?.userId === userInfoRef.current?.userId);
 
   const { t } = useTranslation();
 
@@ -268,10 +244,8 @@ function TexasTableGame({
       currentBets: currentSession?.currentBets || gameState.currentBets,
       currentPot: currentSession?.currentPot || gameState.currentPot,
       state: currentSession?.state || gameState.state,
-      currentPlayerSeat:
-        currentSession?.currentPlayerSeat || gameState.currentPlayerSeat,
-      communityCards:
-        currentSession?.communityCards || gameState.communityCards,
+      currentPlayerSeat: currentSession?.currentPlayerSeat || gameState.currentPlayerSeat,
+      communityCards: currentSession?.communityCards || gameState.communityCards,
       isSpectator: data?.isSpectator || false,
     }));
     switch (data.action) {
@@ -352,10 +326,7 @@ function TexasTableGame({
           };
           return newState;
         });
-        if (
-          gameState.state !== "FINISHED" &&
-          gameState.state !== "WAITING_FOR_PLAYERS"
-        ) {
+        if (gameState.state !== "FINISHED" && gameState.state !== "WAITING_FOR_PLAYERS") {
           startTurnTimer();
         }
         break;
@@ -365,9 +336,7 @@ function TexasTableGame({
         setGameState((prevState) => ({
           ...prevState,
           seats: prevState.seats.map((seat, idx) =>
-            data?.holeCards?.[idx]
-              ? { ...seat, holeCards: data.holeCards[idx], hand: null }
-              : seat
+            data?.holeCards?.[idx] ? { ...seat, holeCards: data.holeCards[idx], hand: null } : seat
           ),
         }));
         break;
@@ -464,11 +433,7 @@ function TexasTableGame({
   };
 
   const establishWebSocketConnection = (delay = 0) => {
-    if (
-      ws.current &&
-      (ws.current.readyState === WebSocket.OPEN ||
-        ws.current.readyState === WebSocket.CONNECTING)
-    ) {
+    if (ws.current && (ws.current.readyState === WebSocket.OPEN || ws.current.readyState === WebSocket.CONNECTING)) {
       return;
     }
 
@@ -496,9 +461,7 @@ function TexasTableGame({
             break;
           }
           case "ERROR": {
-            messageAPI.error(
-              message.data?.error ? message.data.error : "Алдаа гарлаа"
-            );
+            messageAPI.error(message.data?.error ? message.data.error : "Алдаа гарлаа");
             break;
           }
         }
@@ -551,10 +514,7 @@ function TexasTableGame({
     if (setPreviewSeats) {
       setPreviewSeats(gameState.seats);
     }
-    if (
-      gameState.state === "FINISHED" ||
-      gameState.state === "WAITING_FOR_PLAYERS"
-    ) {
+    if (gameState.state === "FINISHED" || gameState.state === "WAITING_FOR_PLAYERS") {
       gameState.seats.forEach((seat, index) => {
         if (seat.user?.userId === userInfoRef.current?.userId) {
           if (seat.stack <= gameState.bigBlind) {
@@ -576,11 +536,7 @@ function TexasTableGame({
     return (
       <Flex style={authLoadingStyles}>
         <Spin size="large" tip="Loading..." />
-        <Typography.Text
-          style={{ marginTop: 16, fontSize: 14, fontStyle: "italic" }}
-        >
-          LOADING...
-        </Typography.Text>
+        <Typography.Text style={{ marginTop: 16, fontSize: 14, fontStyle: "italic" }}>LOADING...</Typography.Text>
       </Flex>
     );
   }
@@ -638,9 +594,7 @@ function TexasTableGame({
           className="custom-login-modal"
           open={modalType?.length > 0}
           footer={null}
-          title={
-            modalType === "RECHARGE" ? t("modal.recharge") : t("modal.sit")
-          }
+          title={modalType === "RECHARGE" ? t("modal.recharge") : t("modal.sit")}
           onCancel={() => setModalType("")}
         >
           <Form
@@ -662,8 +616,7 @@ function TexasTableGame({
                   </p>
                   <p>
                     <WalletOutlined style={{ marginRight: 8 }} />
-                    Available balance:{" "}
-                    {gameState.usableBalance.toLocaleString("mn-MN")}₮
+                    Available balance: {gameState.usableBalance.toLocaleString("mn-MN")}₮
                   </p>
                 </div>
 
@@ -700,10 +653,7 @@ function TexasTableGame({
                   <Button
                     onClick={() => {
                       setRechargeAmount((prevValue) => {
-                        if (
-                          prevValue - gameState.bigBlind <
-                          gameState.minBuyIn
-                        ) {
+                        if (prevValue - gameState.bigBlind < gameState.minBuyIn) {
                           return gameState.minBuyIn;
                         }
                         return prevValue - gameState.bigBlind;
@@ -726,16 +676,10 @@ function TexasTableGame({
                   <Button
                     onClick={() =>
                       setRechargeAmount((prevValue) => {
-                        if (
-                          prevValue + gameState.bigBlind >
-                          gameState.maxBuyIn
-                        ) {
+                        if (prevValue + gameState.bigBlind > gameState.maxBuyIn) {
                           return gameState.maxBuyIn;
                         }
-                        if (
-                          prevValue + gameState.bigBlind >
-                          gameState.usableBalance
-                        ) {
+                        if (prevValue + gameState.bigBlind > gameState.usableBalance) {
                           return prevValue;
                         }
                         return prevValue + gameState.bigBlind;
@@ -805,14 +749,8 @@ function TexasTableGame({
                 justifyContent: "end",
               }}
             >
-              <Button
-                type="default"
-                htmlType="submit"
-                style={{ fontSize: "12px" }}
-              >
-                {modalType === "RECHARGE"
-                  ? t("modal.recharge")
-                  : t("modal.sit")}
+              <Button type="default" htmlType="submit" style={{ fontSize: "12px" }}>
+                {modalType === "RECHARGE" ? t("modal.recharge") : t("modal.sit")}
               </Button>
             </Form.Item>
           </Form>
@@ -853,6 +791,7 @@ function TexasTableGame({
         <div
           style={{
             ...tableStyles,
+            position: "relative",
             backgroundImage: `url(${isMobile ? MobileTable : DesktopTable})`,
             backgroundSize: "cover",
             backgroundRepeat: "no-repeat",
@@ -864,50 +803,23 @@ function TexasTableGame({
             transition: "transform 0.3s ease", // optional smoothness
           }}
         >
-          <Flex
-            style={{ width: "100%", height: "100%" }}
-            vertical
-            justify="center"
-            align="center"
-            gap={12}
-          >
+          <Flex style={{ width: "100%", height: "100%" }} vertical justify="center" align="center" gap={12}>
             <Flex>
-              <Typography.Text
-                style={{
-                  fontSize: "16px",
-                  fontWeight: "bold",
-                  color: "#fff",
-                }}
-              >
-                Total Pot: {gameState.currentPot}
-              </Typography.Text>
+              <Typography.Text className="total-pot">Total Pot: {gameState.currentPot}</Typography.Text>
             </Flex>
-            <Flex
-              gap={12}
-              style={{
-                width: "100%",
-                height: "120px",
-                background: "transparent",
-                borderRadius: "12px",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
+            <Flex>
               {gameState.communityCards?.map((communityCard, index) => {
                 let isMyCard = false;
                 gameState.seats.forEach((seat) => {
                   if (userInfoRef.current?.userId === seat.user?.userId) {
                     seat?.hand?.combinationCards?.forEach((card) => {
-                      if (
-                        card.suit === communityCard.suit &&
-                        card.rank === communityCard.rank
-                      ) {
+                      if (card.suit === communityCard.suit && card.rank === communityCard.rank) {
                         isMyCard = true;
                       }
                     });
                   }
                 });
-                console.log(gameState.seats);
+                // console.log(gameState.seats);
                 return (
                   <div key={index} style={playerCardStyle}>
                     <PokerCard
@@ -944,16 +856,13 @@ function TexasTableGame({
         >
           {gameState.seats.map((seat: GamePlayer, ind: number) => {
             const myUserId = userInfoRef.current?.userId;
-            const mySeatIndex = gameState.seats.findIndex(
-              (seat) => seat.user?.userId === myUserId
-            );
+            const mySeatIndex = gameState.seats.findIndex((seat) => seat.user?.userId === myUserId);
             const centerIndex = Math.floor(seatCount / 4);
             let rotatedIndex = ind;
 
             if (mySeatIndex !== -1) {
               const relativePosition = ind - mySeatIndex;
-              rotatedIndex =
-                (relativePosition + centerIndex + seatCount) % seatCount;
+              rotatedIndex = (relativePosition + centerIndex + seatCount) % seatCount;
             }
 
             const angle = (2 * Math.PI * rotatedIndex) / seatCount;
@@ -997,9 +906,7 @@ function TexasTableGame({
                       player={seat}
                       isTurn={ind === gameState.currentPlayerSeat}
                       holeCards={seat?.holeCards || []}
-                      progress={
-                        ind === gameState.currentPlayerSeat ? turnProgress : 0
-                      }
+                      progress={ind === gameState.currentPlayerSeat ? turnProgress : 0}
                     />
                   </Flex>
                 ) : (
@@ -1011,53 +918,73 @@ function TexasTableGame({
         </div>
 
         {/* Player chips - absolutely positioned relative to outer table */}
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            pointerEvents: "none",
-            zIndex: 3,
-          }}
-        >
+        <div>
           {gameState.seats.map((_: GamePlayer, i: number) => {
+            const isMobile = window.innerWidth < 768;
+
             const myUserId = userInfoRef.current?.userId;
-            const mySeatIndex = gameState.seats.findIndex(
-              (seat) => seat.user?.userId === myUserId
-            );
+            const mySeatIndex = gameState.seats.findIndex((seat) => seat.user?.userId === myUserId);
             const centerIndex = Math.floor(seatCount / 4);
             let rotatedIndex = i;
 
             if (mySeatIndex !== -1) {
               const relativePosition = i - mySeatIndex;
-              rotatedIndex =
-                (relativePosition + centerIndex + seatCount) % seatCount;
+              rotatedIndex = (relativePosition + centerIndex + seatCount) % seatCount;
             }
 
             const angle = (2 * Math.PI * rotatedIndex) / seatCount;
-            const x = centerX + chipRadiusX * Math.cos(angle);
-            const y = centerY + chipRadiusY * Math.sin(angle);
+
+            const extraYOffset = isMobile ? -22 : 0;
+            const chipOffsetX = isMobile ? 7 : -7;
+            const chipOffsetY = isMobile ? 5 : 15;
+
+            const chipRadiusXAdjusted = chipRadiusX - chipOffsetX;
+            const chipRadiusYAdjusted = chipRadiusY - chipOffsetY;
+
+            // Both avatar and chip use the same mobile adjustment
+            const avatarRadiusX = isMobile ? chipRadiusX * 0.8 : chipRadiusXAdjusted;
+            const avatarRadiusY = isMobile ? chipRadiusY * 0.9 : chipRadiusYAdjusted;
+
+            const distanceFactorAvatar = 1.2; // seat (avatar) position
+            const distanceFactorChip = 1; // chip comes closer to center
+
+            // Starting point (from avatar/seat)
+            const avatarX = centerX + avatarRadiusX * distanceFactorAvatar * Math.cos(angle);
+            const avatarY = centerY + avatarRadiusY * distanceFactorAvatar * Math.sin(angle) + extraYOffset;
+
+            // Ending point (where chip stops)
+            const chipX = centerX + avatarRadiusX * distanceFactorChip * Math.cos(angle);
+            const chipY = centerY + avatarRadiusY * distanceFactorChip * Math.sin(angle) + extraYOffset;
+
             const playerBet = gameState.currentBets[i] || 0;
 
             if (playerBet > 0) {
               return (
-                <div
+                <motion.div
                   key={i}
-                  className="seat-chip"
+                  initial={{
+                    left: `${avatarX}%`,
+                    top: `${avatarY}%`,
+                  }}
+                  animate={{
+                    left: `${chipX}%`,
+                    top: `${chipY}%`,
+                  }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 150,
+                    damping: 20,
+                  }}
                   style={{
                     ...seatChipStyle,
-                    left: `${x}%`,
-                    top: `${y}%`,
+                    position: "absolute",
                   }}
                 >
                   <PokerChip amount={playerBet} />
-                </div>
+                </motion.div>
               );
-            } else {
-              return null;
             }
+            return null;
           })}
         </div>
       </Flex>
@@ -1067,25 +994,14 @@ function TexasTableGame({
           {gameState.state !== "WAITING_FOR_PLAYERS" && (
             <PokerActions
               stack={
-                gameState.seats?.filter(
-                  (seat) => seat.user?.userId === userInfoRef.current?.userId
-                )[0]?.stack || 0
+                gameState.seats?.filter((seat) => seat.user?.userId === userInfoRef.current?.userId)[0]?.stack || 0
               }
               player={userInfoRef.current}
               turnPlayer={gameState.turnPlayer}
-              isFolded={
-                gameState.isFolded ||
-                gameState.state === "FINISHED" ||
-                gameState.state === "SHOWDOWN"
-              }
+              isFolded={gameState.isFolded || gameState.state === "FINISHED" || gameState.state === "SHOWDOWN"}
               isAllIn={gameState.isAllIn}
-              currentBet={
-                gameState.currentBets[gameState.currentPlayerSeat] || 0
-              }
-              currentRequiredBet={Math.max(
-                ...Object.values(gameState.currentBets),
-                0
-              )}
+              currentBet={gameState.currentBets[gameState.currentPlayerSeat] || 0}
+              currentRequiredBet={Math.max(...Object.values(gameState.currentBets), 0)}
               currentPot={gameState.currentPot}
               minRaise={gameState.bigBlind}
               sendAction={(action, amount) => sendGameAction(action, amount)}

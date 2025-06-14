@@ -14,22 +14,30 @@ function TablePlayer({
   holeCards: GameCard[];
   progress: number;
 }) {
-  const size = 80; // default size, adjust if needed or make dynamic if you want
+  const size = 80;
   const stroke = 3;
   const radius = (size - stroke) / 2;
   const circumference = 2 * Math.PI * radius;
-  const offset = circumference * (1 - progress);
 
   const isMyCard = (holeCard: GameCard): boolean => {
     return (
-      player?.hand?.combinationCards?.some((card) => card.suit === holeCard.suit && card.rank === holeCard.rank) ??
-      false
+      player?.hand?.combinationCards?.some(
+        (card) => card.suit === holeCard.suit && card.rank === holeCard.rank
+      ) ?? false
     );
   };
 
   return (
-    <Flex style={{ flexDirection: "column", position: "relative" }} justify="center" align="center">
-      {player?.hand?.rank && <Typography.Text className="rank-text">{player.hand.rank}</Typography.Text>}
+    <Flex
+      style={{ flexDirection: "column", position: "relative" }}
+      justify="center"
+      align="center"
+    >
+      {player?.hand?.rank && (
+        <Typography.Text className="rank-text">
+          {player.hand.rank}
+        </Typography.Text>
+      )}
 
       {/* Cards over the avatar */}
       <div className="hole-cards-overlay">
@@ -61,7 +69,12 @@ function TablePlayer({
 
       <div className="player-image-wrapper">
         {progress > 0 && (
-          <svg width="100%" height="100%" className="svg-circle" viewBox={`0 0 ${size} ${size}`}>
+          <svg
+            width="100%"
+            height="100%"
+            className="svg-circle"
+            viewBox={`0 0 ${size} ${size}`}
+          >
             <circle
               cx={size / 2}
               cy={size / 2}
@@ -70,7 +83,7 @@ function TablePlayer({
               stroke="#fff"
               strokeWidth={stroke}
               strokeDasharray={circumference}
-              strokeDashoffset={offset}
+              strokeDashoffset={isTurn ? circumference * (1 - progress) : 0}
               style={{ transition: "stroke-dashoffset 0.2s linear" }}
             />
           </svg>
@@ -81,13 +94,17 @@ function TablePlayer({
             width: "100%",
             height: "100%",
           }}
-          className={`player-image${isTurn && progress === 0 ? " turn-active" : ""}`}
+          className={`player-image${
+            isTurn && progress === 0 ? " turn-active" : ""
+          }`}
           src="https://i.imgur.com/SyIZEu7.png"
         />
       </div>
 
       <Flex className="stack-box">
-        <Typography.Text className="username-text">{player?.user?.username ?? "Waiting for player"}</Typography.Text>
+        <Typography.Text className="username-text">
+          {player?.user?.username ?? "Waiting for player"}
+        </Typography.Text>
         <Typography.Text className="stack-text">
           {player?.stack ? player.stack.toLocaleString("mn-MN") : 0}₮
         </Typography.Text>

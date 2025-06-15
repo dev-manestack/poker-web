@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { BackCard, PokerCardImage } from "../../assets/card";
+import { BackCard, PokerCardImage } from "../../assets/card2";
 import { motion } from "motion/react";
 import { Howl } from "howler";
 import { FlipCardAudio } from "../../assets/sounds";

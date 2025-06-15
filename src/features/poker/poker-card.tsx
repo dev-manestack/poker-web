@@ -13,6 +13,7 @@ function PokerCard({
   info: GameCard;
 }) {
   const [cardImage, setCardImage] = useState<null | string>(null);
+  const [animationKey, setAnimationKey] = useState<number>(0);
 
   useEffect(() => {
     if (info.secret) {
@@ -37,6 +38,7 @@ function PokerCard({
         volume: 0.5,
       });
       sound.play();
+      setAnimationKey((prevKey) => prevKey + 1);
     }
   }, [info.secret]);
 
@@ -46,7 +48,16 @@ function PokerCard({
 
   return (
     <motion.img
+      key={animationKey}
       src={cardImage}
+      initial={{
+        transform: "rotateY(180deg)",
+        opacity: 0,
+      }}
+      animate={{
+        transform: "rotateY(0deg)",
+        opacity: 1,
+      }}
       style={{
         ...style,
         width: "100%",

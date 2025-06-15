@@ -9,7 +9,6 @@ import {
   Typography,
 } from "antd";
 import { useEffect, useRef, useState } from "react";
-import PokerCard from "../poker-card.tsx";
 import "./texas-table-game.css";
 import {
   DealCardAudio,
@@ -31,7 +30,6 @@ import PokerChip from "../poker-chip.tsx";
 import {
   containerStyles,
   tableStyles,
-  playerCardStyle,
   seatChipStyle,
   playerSeatStyle,
   actionBarStyles,
@@ -46,6 +44,7 @@ import { useIsMobile } from "../../../hooks/useIsMobile.tsx";
 import { motion } from "framer-motion";
 import PokerChat from "../poker-chat.tsx";
 import TexasTableDealAnimation from "./texas-table-deal-animation.tsx";
+import TexasTableCommunityCards from "./texas-table-community-cards.tsx";
 
 interface GameState {
   minBuyIn: number;
@@ -912,33 +911,10 @@ function TexasTableGame({
               seatCount={seatCount}
               dealCardAnimationKey={dealCardAnimationKey}
             />
-            <Flex>
-              {gameState.communityCards?.map((communityCard, index) => {
-                let isMyCard = false;
-                gameState.seats.forEach((seat) => {
-                  if (userInfoRef.current?.userId === seat.user?.userId) {
-                    seat?.hand?.combinationCards?.forEach((card) => {
-                      if (
-                        card.suit === communityCard.suit &&
-                        card.rank === communityCard.rank
-                      ) {
-                        isMyCard = true;
-                      }
-                    });
-                  }
-                });
-                return (
-                  <div key={index} style={playerCardStyle}>
-                    <PokerCard
-                      info={communityCard}
-                      style={{
-                        outline: isMyCard ? `5px solid red` : "none",
-                      }}
-                    />
-                  </div>
-                );
-              })}
-            </Flex>
+            <TexasTableCommunityCards
+              gameState={gameState}
+              userInfo={userInfoRef.current || undefined}
+            />
           </Flex>
         </div>
 

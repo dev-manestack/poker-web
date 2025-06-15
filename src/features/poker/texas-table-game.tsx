@@ -184,7 +184,10 @@ function TexasTableGame({
     );
   };
 
-  const takeSeat = (seatIndex: number, amount: number) => {
+  const takeSeat = (seatIndex: number | null | undefined, amount: number) => {
+    if (seatIndex === null || seatIndex === undefined) {
+      messageAPI.error("Та суудал сонгоно уу");
+    }
     if (gameState.isAuthenticated) {
       ws.current?.send(
         JSON.stringify({
@@ -242,10 +245,17 @@ function TexasTableGame({
     const currentSession = data?.session;
     const tempArray = new Array(seatCount).fill(null);
     Object.entries(tableState.seats).forEach(([index, seat]) => {
-      tempArray[parseInt(index)] = {
-        user: seat.user,
-        stack: seat.stack,
-      };
+      if (seat) {
+        tempArray[parseInt(index)] = {
+          user: seat.user,
+          stack: seat.stack,
+        };
+      } else {
+        tempArray[parseInt(index)] = {
+          user: null,
+          stack: 0,
+        };
+      }
     });
     setGameState((prevState) => ({
       ...prevState,
@@ -643,7 +653,12 @@ function TexasTableGame({
               if (modalType === "RECHARGE") {
                 recharge(rechargeAmount);
               } else {
-                takeSeat(selectedSeat ? selectedSeat : -1, rechargeAmount);
+                console.log(
+                  "Calling takeSeat with:",
+                  selectedSeat,
+                  rechargeAmount
+                );
+                takeSeat(selectedSeat, rechargeAmount);
               }
             }}
           >

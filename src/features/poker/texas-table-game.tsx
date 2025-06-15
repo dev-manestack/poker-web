@@ -44,6 +44,7 @@ import { useTranslation } from "react-i18next";
 import { DesktopTable, MobileTable } from "../../assets/image/index.ts";
 import { useIsMobile } from "../../hooks/useIsMobile.tsx";
 import { motion } from "framer-motion";
+import PokerChat from "./poker-chat.tsx";
 
 interface GameState {
   minBuyIn: number;
@@ -1083,8 +1084,14 @@ function TexasTableGame({
       </Flex>
 
       {!isPreview && (
-        <Flex style={actionBarStyles} align="center" justify="center" gap={16}>
-          {gameState.state !== "WAITING_FOR_PLAYERS" && (
+        <Flex
+          style={actionBarStyles}
+          align="center"
+          justify="space-between"
+          gap={16}
+        >
+          <PokerChat isAdmin={true} />
+          {gameState.state !== "WAITING_FOR_PLAYERS" ? (
             <PokerActions
               stack={
                 gameState.seats?.filter(
@@ -1110,6 +1117,8 @@ function TexasTableGame({
               minRaise={gameState.bigBlind}
               sendAction={(action, amount) => sendGameAction(action, amount)}
             />
+          ) : (
+            <p></p>
           )}
         </Flex>
       )}

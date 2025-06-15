@@ -43,11 +43,11 @@ export const playerSeatStyle: CSSProperties = {
 };
 
 export const actionBarStyles: CSSProperties = {
-  width: "100%",
+  width: "90%",
+  left: "5%",
   position: "absolute",
   bottom: 0,
-  right: 10,
-  paddingTop: "16px",
+  padding: "10px",
 };
 
 export const authLoadingStyles: React.CSSProperties = {

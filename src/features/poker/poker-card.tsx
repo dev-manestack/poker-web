@@ -1,11 +1,17 @@
 import { useEffect, useState } from "react";
-import { BackCard, PokerCardImage } from "../../assets/card2";
+import { BackCard, PokerCardImage } from "../../assets/card";
 import { motion } from "motion/react";
 import { Howl } from "howler";
 import { FlipCardAudio } from "../../assets/sounds";
 import type { GameCard } from "../../api/game";
 
-function PokerCard({ style, info }: { style?: React.CSSProperties; info: GameCard }) {
+function PokerCard({
+  style,
+  info,
+}: {
+  style?: React.CSSProperties;
+  info: GameCard;
+}) {
   const [cardImage, setCardImage] = useState<null | string>(null);
 
   useEffect(() => {

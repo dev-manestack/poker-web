@@ -12,7 +12,7 @@ import { useEffect, useRef, useState } from "react";
 import PokerCard from "./poker-card";
 import "./texas-table-game.css";
 import {
-  // DealCardAudio,
+  DealCardAudio,
   DisconnectAudio,
   SuccessAudio,
 } from "../../assets/sounds";
@@ -115,6 +115,7 @@ function TexasTableGame({
     communityCards: [],
     state: "WAITING_FOR_PLAYERS",
   });
+  const [dealCardAnimationKey, setDealCardAnimationKey] = useState(0);
   const [turnProgress, setTurnProgress] = useState(1); // 1 = 100%, 0 = 0%
   const userInfoRef = useRef<User | null>(null);
   const isMobile = useIsMobile();
@@ -158,6 +159,21 @@ function TexasTableGame({
   const userSeatIndex = gameState.seats.findIndex(
     (seat) => seat.user?.userId === userInfoRef.current?.userId
   );
+
+  const calculateRotatedIndex = (
+    mySeatIndex: number,
+    centerIndex: number,
+    index: number
+  ) => {
+    if (mySeatIndex !== -1) {
+      const relativePosition = index - mySeatIndex;
+      const rotatedIndex =
+        (relativePosition + centerIndex + seatCount) % seatCount;
+      return rotatedIndex;
+    } else {
+      return index;
+    }
+  };
 
   const isSeatTaken = (seatIndex: number) => {
     return (
@@ -401,6 +417,12 @@ function TexasTableGame({
               : seat
           ),
         }));
+        const sound = new Howl({
+          src: [DealCardAudio],
+          volume: 0.5,
+        });
+        setDealCardAnimationKey((prev) => prev + 1);
+        sound.play();
         break;
       }
       case "PLAYER_ACTION": {
@@ -881,6 +903,70 @@ function TexasTableGame({
                 Total Pot: {gameState.currentPot}
               </Typography.Text>
             </Flex>
+            {gameState.seats.map((seat, index) => {
+              if (seat?.user?.userId && dealCardAnimationKey > 0) {
+                return (
+                  <motion.div
+                    key={dealCardAnimationKey + "." + index}
+                    style={{
+                      width: "50px",
+                      height: "70px",
+                      position: "absolute",
+                      zIndex: 0,
+                    }}
+                    initial={{
+                      top: "48%",
+                      left: "50%",
+                    }}
+                    animate={{
+                      top: `${
+                        centerY +
+                        seatRadiusY *
+                          Math.sin(
+                            (2 *
+                              Math.PI *
+                              calculateRotatedIndex(
+                                gameState.currentPlayerSeat,
+                                Math.floor(seatCount / 4),
+                                index
+                              )) /
+                              seatCount
+                          )
+                      }%`,
+                      left: `${
+                        centerX +
+                        seatRadiusX *
+                          Math.cos(
+                            (2 *
+                              Math.PI *
+                              calculateRotatedIndex(
+                                gameState.currentPlayerSeat,
+                                Math.floor(seatCount / 4),
+                                index
+                              )) /
+                              seatCount
+                          )
+                      }%`,
+                      opacity: 0,
+                    }}
+                    transition={{
+                      duration: 0.3,
+                    }}
+                  >
+                    <PokerCard
+                      style={{}}
+                      info={{
+                        suit: null,
+                        rank: null,
+                        secret: true,
+                      }}
+                    />
+                  </motion.div>
+                );
+              } else {
+                return <></>;
+              }
+            })}
             <Flex>
               {gameState.communityCards?.map((communityCard, index) => {
                 let isMyCard = false;
@@ -896,7 +982,6 @@ function TexasTableGame({
                     });
                   }
                 });
-                // console.log(gameState.seats);
                 return (
                   <div key={index} style={playerCardStyle}>
                     <PokerCard
@@ -937,13 +1022,11 @@ function TexasTableGame({
               (seat) => seat.user?.userId === myUserId
             );
             const centerIndex = Math.floor(seatCount / 4);
-            let rotatedIndex = ind;
-
-            if (mySeatIndex !== -1) {
-              const relativePosition = ind - mySeatIndex;
-              rotatedIndex =
-                (relativePosition + centerIndex + seatCount) % seatCount;
-            }
+            let rotatedIndex = calculateRotatedIndex(
+              mySeatIndex,
+              centerIndex,
+              ind
+            );
 
             const angle = (2 * Math.PI * rotatedIndex) / seatCount;
 

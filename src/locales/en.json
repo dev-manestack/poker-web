@@ -107,8 +107,8 @@
   "loginForm": {
     "success": "Successfully logged in",
     "error": "Login failed",
-    "emailLabel": "Email",
-    "emailPlaceholder": "Enter your email",
+    "usernameLabel": "Username",
+    "usernamePlaceholder": "Enter your username",
     "passwordLabel": "Password",
     "passwordPlaceholder": "Enter your password",
     "loginButton": "Login",

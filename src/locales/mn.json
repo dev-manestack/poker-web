@@ -107,8 +107,8 @@
   "loginForm": {
     "success": "Амжилттай нэвтэрлээ",
     "error": "Нэвтрэхэд алдаа гарлаа",
-    "emailLabel": "Цахим хаяг",
-    "emailPlaceholder": "Цахим хаягаа оруулна уу",
+    "usernameLabel": "Тоглогчийн нэр",
+    "usernamePlaceholder": "Тоглогчийн нэрээ оруулна уу",
     "passwordLabel": "Нууц үг",
     "passwordPlaceholder": "Нууц үгээ оруулна уу",
     "loginButton": "Нэвтрэх",

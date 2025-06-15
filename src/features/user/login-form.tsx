@@ -35,7 +35,9 @@ function LoginForm({ setModalType }: { setModalType: (type: string) => void }) {
     if (error) {
       console.error(error);
       if ("data" in error && (error as any).data?.errorMessage) {
-        messageAPI.error(t("loginForm.error") + ": " + (error as any).data.errorMessage);
+        messageAPI.error(
+          t("loginForm.error") + ": " + (error as any).data.errorMessage
+        );
       } else {
         messageAPI.error(t("loginForm.error"));
       }
@@ -45,13 +47,19 @@ function LoginForm({ setModalType }: { setModalType: (type: string) => void }) {
   return (
     <Form layout="vertical" onFinish={onFinish}>
       {contextHolder}
-      <Form.Item label={<span lang={i18n.language}>{t("loginForm.emailLabel")}</span>} name="email">
+      <Form.Item
+        label={<span lang={i18n.language}>{t("loginForm.usernameLabel")}</span>}
+        name="username"
+      >
         <Input
           style={{ textTransform: "none" }} // Prevents forced uppercase
-          placeholder={t("loginForm.emailPlaceholder")}
+          placeholder={t("loginForm.usernamePlaceholder")}
         />
       </Form.Item>
-      <Form.Item label={<span lang={i18n.language}>{t("loginForm.passwordLabel")}</span>} name="password">
+      <Form.Item
+        label={<span lang={i18n.language}>{t("loginForm.passwordLabel")}</span>}
+        name="password"
+      >
         <Input
           className="ant-input-password"
           type={showPassword ? "text" : "password"} // Toggle between 'text' and 'password'
@@ -60,7 +68,12 @@ function LoginForm({ setModalType }: { setModalType: (type: string) => void }) {
           suffix={
             <span
               onClick={() => setShowPassword(!showPassword)}
-              style={{ cursor: "pointer", userSelect: "none", fontSize: "9px", marginRight: "5px" }}
+              style={{
+                cursor: "pointer",
+                userSelect: "none",
+                fontSize: "9px",
+                marginRight: "5px",
+              }}
             >
               {showPassword ? "Hide" : "Show"}
             </span>

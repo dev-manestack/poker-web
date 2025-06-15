@@ -4,7 +4,7 @@ import type { SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 import type { GameState } from "./texas-table-game";
 
-function TexasRechargeForm({
+function TexasTableRechargeForm({
   recharge,
   takeSeat,
   gameState,
@@ -29,8 +29,12 @@ function TexasRechargeForm({
         if (modalType === "RECHARGE") {
           recharge(rechargeAmount);
         } else {
-          console.log("Calling takeSeat with:", selectedSeat, rechargeAmount);
-          takeSeat(selectedSeat, rechargeAmount);
+          let chosenSeat = 0;
+          if (selectedSeat > 0) {
+            chosenSeat = selectedSeat;
+          }
+          console.log("Calling takeSeat with:", chosenSeat, rechargeAmount);
+          takeSeat(chosenSeat, rechargeAmount);
         }
       }}
     >
@@ -189,4 +193,4 @@ function TexasRechargeForm({
   );
 }
 
-export default TexasRechargeForm;
+export default TexasTableRechargeForm;

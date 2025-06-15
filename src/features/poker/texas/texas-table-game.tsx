@@ -32,7 +32,8 @@ import TexasTableDealAnimation from "./texas-table-deal-animation.tsx";
 import TexasTableCommunityCards from "./texas-table-community-cards.tsx";
 import TexasTablePlayerChips from "./texas-table-player-chips.tsx";
 import TexasTablePlayerSeats from "./texas-table-player-seats.tsx";
-import TexasRechargeForm from "./texas-recharge-form.tsx";
+import TexasTableRechargeForm from "./texas-table-recharge-form.tsx";
+import TexasTableSplitChipAnimation from "./texas-table-split-chip-animation.tsx";
 
 interface GameState {
   minBuyIn: number;
@@ -82,7 +83,7 @@ function TexasTableGame({
   const [isDisconnected, setIsDisconnected] = useState(false);
   const [messageAPI, contextHolder] = message.useMessage();
   const [modalType, setModalType] = useState("");
-  const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
+  const [selectedSeat, setSelectedSeat] = useState<number>(-1);
   const [gameState, setGameState] = useState<GameState>({
     minBuyIn: 0,
     maxBuyIn: 0,
@@ -104,6 +105,7 @@ function TexasTableGame({
     state: "WAITING_FOR_PLAYERS",
   });
   const [dealCardAnimationKey, setDealCardAnimationKey] = useState(0);
+  const [splitChipAnimationKey, setSplitChipAnimationKey] = useState(0);
   const [turnProgress, setTurnProgress] = useState(1); // 1 = 100%, 0 = 0%
   const userInfoRef = useRef<User | null>(null);
   const isMobile = useIsMobile();
@@ -188,10 +190,7 @@ function TexasTableGame({
     );
   };
 
-  const takeSeat = (seatIndex: number | null | undefined, amount: number) => {
-    if (seatIndex === null || seatIndex === undefined) {
-      messageAPI.error("Та суудал сонгоно уу");
-    }
+  const takeSeat = (seatIndex: number, amount: number) => {
     if (gameState.isAuthenticated) {
       ws.current?.send(
         JSON.stringify({
@@ -431,7 +430,7 @@ function TexasTableGame({
             }),
           };
         });
-
+        setSplitChipAnimationKey((prev) => prev + 1);
         break;
       }
     }
@@ -475,9 +474,8 @@ function TexasTableGame({
   };
 
   const seatOut = () => {
-    // Remove player from their seat
-    leaveSeat(selectedSeat || 0); // your existing seat leave logic
-    setSelectedSeat(null); // or however you're clearing the seat
+    leaveSeat(selectedSeat || 0);
+    setSelectedSeat(-1);
     console.log("Player has left the seat");
   };
 
@@ -585,6 +583,13 @@ function TexasTableGame({
   }, [gameState]);
 
   useEffect(() => {
+    console.log("Selected seat changed:", selectedSeat);
+    if (selectedSeat >= 0) {
+      setModalType("TAKE_SEAT");
+    }
+  }, [selectedSeat]);
+
+  useEffect(() => {
     if (gameState?.minBuyIn && rechargeAmount === 0) {
       setRechargeAmount(gameState.minBuyIn);
     }
@@ -662,7 +667,7 @@ function TexasTableGame({
           }
           onCancel={() => setModalType("")}
         >
-          <TexasRechargeForm
+          <TexasTableRechargeForm
             modalType={modalType}
             gameState={gameState}
             selectedSeat={selectedSeat || -1}
@@ -708,6 +713,15 @@ function TexasTableGame({
               seatCount={seatCount}
               dealCardAnimationKey={dealCardAnimationKey}
             />
+            <TexasTableSplitChipAnimation
+              centerX={centerX}
+              centerY={centerY}
+              seatRadiusX={seatRadiusX}
+              seatRadiusY={seatRadiusY}
+              gameState={gameState}
+              seatCount={seatCount}
+              animationKey={splitChipAnimationKey}
+            />
             <TexasTableCommunityCards
               gameState={gameState}
               userInfo={userInfoRef.current || undefined}
@@ -720,7 +734,6 @@ function TexasTableGame({
           gameState={gameState}
           userInfo={userInfoRef.current || undefined}
           setSelectedSeat={setSelectedSeat}
-          setModalType={setModalType}
           isPreview={isPreview}
           seatCount={seatCount}
           centerX={centerX}

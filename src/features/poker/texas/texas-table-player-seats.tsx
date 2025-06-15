@@ -18,7 +18,6 @@ function TexasTablePlayerSeats({
   seatRadiusY = 30,
   turnProgress,
   setSelectedSeat,
-  setModalType,
   isPreview,
 }: {
   isMobile: boolean;
@@ -26,7 +25,6 @@ function TexasTablePlayerSeats({
   gameState: GameState;
   userInfo: User | undefined;
   setSelectedSeat: (seatIndex: number) => void;
-  setModalType: (type: string) => void;
   isPreview: boolean;
   seatCount: number;
   centerX: number;
@@ -104,7 +102,6 @@ function TexasTablePlayerSeats({
             key={ind}
             onClick={() => {
               setSelectedSeat(ind);
-              setModalType("TAKE_SEAT");
             }}
             disabled={isPreview || isSeatTaken(ind)}
             style={{

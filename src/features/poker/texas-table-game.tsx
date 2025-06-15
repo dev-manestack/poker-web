@@ -87,6 +87,7 @@ function TexasTableGame({
   setPreviewSeats?: (seats: GamePlayer[]) => void;
 }) {
   const navigate = useNavigate();
+  const intervalRef = useRef<number | null>(null);
   const { id: pathTableId } = useParams();
   const [tableId, setTableId] = useState<string>("");
   const [isDisconnected, setIsDisconnected] = useState(false);
@@ -146,7 +147,7 @@ function TexasTableGame({
   const radiusY = 55;
   const chipRadiusX = radiusX - 20;
   const chipRadiusY = radiusY - 20;
-  const turnDuration = 15; // seconds
+  const turnDuration = 20; // seconds
 
   const { width, height } = useResponsiveTableSize(isPreview);
 
@@ -157,18 +158,36 @@ function TexasTableGame({
     (seat) => seat.user?.userId === userInfoRef.current?.userId
   );
 
+  const isSeatTaken = (seatIndex: number) => {
+    return (
+      gameState.seats[seatIndex]?.user !== null &&
+      gameState.seats[seatIndex]?.user !== undefined
+    );
+  };
+
   const { t } = useTranslation();
 
   const startTurnTimer = () => {
     setTurnProgress(1);
     console.log("Starting turn timer with duration:", turnDuration);
-    const interval = setInterval(() => {
+
+    // Clear any existing interval
+    if (intervalRef.current !== null) {
+      clearInterval(intervalRef.current);
+    }
+
+    intervalRef.current = setInterval(() => {
       setTurnProgress((prev) => {
         const newProgress = prev - 1 / (turnDuration * 10);
+
         if (newProgress <= 0) {
-          clearInterval(interval);
+          if (intervalRef.current !== null) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+          }
           return 0;
         }
+
         console.log("Updating turn progress:", newProgress);
         return newProgress;
       });
@@ -247,16 +266,19 @@ function TexasTableGame({
     const tableState: TableState = data?.table;
     const currentSession = data?.session;
     const tempArray = new Array(seatCount).fill(null);
+    const holeCards = currentSession?.holeCards || [];
     Object.entries(tableState.seats).forEach(([index, seat]) => {
       if (seat) {
         tempArray[parseInt(index)] = {
           user: seat.user,
           stack: seat.stack,
+          holeCards: holeCards[parseInt(index)] || [],
         };
       } else {
         tempArray[parseInt(index)] = {
           user: null,
           stack: 0,
+          holeCards: gameState.seats[parseInt(index)]?.holeCards || [],
         };
       }
     });
@@ -929,11 +951,7 @@ function TexasTableGame({
             // Adjust Y radius for top/bottom seats
             let adjustedRadiusY = seatRadiusY;
             if (Math.abs(sin) > 0.9) {
-              adjustedRadiusY = isMobile
-                ? isSmallPhone
-                  ? 50 // top/bottom closer on small phone
-                  : 45 // normal mobile
-                : 40;
+              adjustedRadiusY = isMobile ? (isSmallPhone ? 50 : 45) : 40;
             }
 
             const x = centerX + seatRadiusX * Math.cos(angle);
@@ -947,7 +965,7 @@ function TexasTableGame({
                   setSelectedSeat(ind);
                   setModalType("TAKE_SEAT");
                 }}
-                disabled={isPreview}
+                disabled={isPreview || isSeatTaken(ind)}
                 style={{
                   ...playerSeatStyle,
                   position: "absolute",
@@ -961,9 +979,12 @@ function TexasTableGame({
                   <Flex>
                     <TablePlayer
                       player={seat}
+                      isMe={ind === mySeatIndex}
                       isTurn={ind === gameState.currentPlayerSeat}
                       holeCards={seat?.holeCards || []}
-                      progress={turnProgress}
+                      progress={
+                        ind === gameState.currentPlayerSeat ? turnProgress : 0
+                      }
                     />
                   </Flex>
                 ) : (

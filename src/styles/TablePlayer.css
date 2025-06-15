@@ -13,16 +13,6 @@
   font-size: 14px;
 }
 
-.hole-cards-overlay {
-  position: absolute;
-  top: 20px;
-  right: -50px;
-  width: 80px; /* or adjust as needed */
-  height: 80px;
-  display: flex;
-  pointer-events: none; /* so clicks go to avatar if needed */
-  z-index: 3;
-}
 
 .hole-cards-overlay > *:first-child {
   transform: rotate(-10deg) translateX(-10px);

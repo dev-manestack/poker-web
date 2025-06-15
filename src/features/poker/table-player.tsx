@@ -8,11 +8,13 @@ function TablePlayer({
   isTurn,
   holeCards,
   progress,
+  isMe,
 }: {
   player: GamePlayer | undefined;
   isTurn: boolean;
   holeCards: GameCard[];
   progress: number;
+  isMe?: boolean;
 }) {
   const size = 80;
   const stroke = 3;
@@ -40,14 +42,26 @@ function TablePlayer({
       )}
 
       {/* Cards over the avatar */}
-      <div className="hole-cards-overlay">
+      <div
+        className="hole-cards-overlay"
+        style={{
+          position: "absolute",
+          top: isMe ? "20px" : "0px",
+          right: isMe ? "-50px" : "0px",
+          width: isMe ? "80px" : "40px",
+          height: isMe ? "80px" : "40px",
+          display: "flex",
+          pointerEvents: "none",
+          zIndex: 3,
+        }}
+      >
         {holeCards[0] && (
           <PokerCard
             info={holeCards[0]}
             style={{
-              transform: "rotate(-10deg)",
+              transform: isMe ? "rotate(-10deg)" : "",
               position: "absolute",
-              left: "-15",
+              left: isMe ? "-15px" : "",
               top: "0",
               outline: isMyCard(holeCards[0]) ? "3px solid red" : "none",
             }}
@@ -57,9 +71,9 @@ function TablePlayer({
           <PokerCard
             info={holeCards[1]}
             style={{
-              transform: "rotate(10deg)",
+              transform: isMe ? "rotate(10deg)" : "",
               position: "absolute",
-              right: "-15px",
+              right: isMe ? "-15px" : "",
               top: "0",
               outline: isMyCard(holeCards[1]) ? "3px solid red" : "none",
             }}

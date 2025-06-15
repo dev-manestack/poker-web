@@ -9,25 +9,25 @@ import {
   Typography,
 } from "antd";
 import { useEffect, useRef, useState } from "react";
-import PokerCard from "./poker-card";
+import PokerCard from "../poker-card.tsx";
 import "./texas-table-game.css";
 import {
   DealCardAudio,
   DisconnectAudio,
   SuccessAudio,
-} from "../../assets/sounds";
+} from "../../../assets/sounds/index.ts";
 import {
   websocketURL,
   type GameCard,
   type GamePlayer,
   type TableState,
   type WebsocketEvent,
-} from "../../api/game";
+} from "../../../api/game.ts";
 import { useNavigate, useParams } from "react-router";
-import TablePlayer from "./table-player";
-import PokerActions from "./poker-actions";
-import type { User } from "../../api/user";
-import PokerChip from "./poker-chip";
+import TablePlayer from "../table-player.tsx";
+import PokerActions from "../poker-actions.tsx";
+import type { User } from "../../../api/user.ts";
+import PokerChip from "../poker-chip.tsx";
 import {
   containerStyles,
   tableStyles,
@@ -36,15 +36,16 @@ import {
   playerSeatStyle,
   actionBarStyles,
   authLoadingStyles,
-} from "../../styles/PokerTableStyles.ts";
+} from "../../../styles/PokerTableStyles.ts";
 import { FundOutlined, WalletOutlined } from "@ant-design/icons";
-import TableActionButtons from "./table-action-buttons.tsx"; // adjust path
-import useResponsiveTableSize from "../../hooks/useResponsiveTableSize.tsx"; // adjust path as needed
+import TableActionButtons from "../table-action-buttons.tsx"; // adjust path
+import useResponsiveTableSize from "../../../hooks/useResponsiveTableSize.tsx"; // adjust path as needed
 import { useTranslation } from "react-i18next";
-import { DesktopTable, MobileTable } from "../../assets/image/index.ts";
-import { useIsMobile } from "../../hooks/useIsMobile.tsx";
+import { DesktopTable, MobileTable } from "../../../assets/image/index.ts";
+import { useIsMobile } from "../../../hooks/useIsMobile.tsx";
 import { motion } from "framer-motion";
-import PokerChat from "./poker-chat.tsx";
+import PokerChat from "../poker-chat.tsx";
+import TexasTableDealAnimation from "./texas-table-deal-animation.tsx";
 
 interface GameState {
   minBuyIn: number;
@@ -188,7 +189,6 @@ function TexasTableGame({
     setTurnProgress(1);
     console.log("Starting turn timer with duration:", turnDuration);
 
-    // Clear any existing interval
     if (intervalRef.current !== null) {
       clearInterval(intervalRef.current);
     }
@@ -903,70 +903,15 @@ function TexasTableGame({
                 Total Pot: {gameState.currentPot}
               </Typography.Text>
             </Flex>
-            {gameState.seats.map((seat, index) => {
-              if (seat?.user?.userId && dealCardAnimationKey > 0) {
-                return (
-                  <motion.div
-                    key={dealCardAnimationKey + "." + index}
-                    style={{
-                      width: "50px",
-                      height: "70px",
-                      position: "absolute",
-                      zIndex: 0,
-                    }}
-                    initial={{
-                      top: "48%",
-                      left: "50%",
-                    }}
-                    animate={{
-                      top: `${
-                        centerY +
-                        seatRadiusY *
-                          Math.sin(
-                            (2 *
-                              Math.PI *
-                              calculateRotatedIndex(
-                                gameState.currentPlayerSeat,
-                                Math.floor(seatCount / 4),
-                                index
-                              )) /
-                              seatCount
-                          )
-                      }%`,
-                      left: `${
-                        centerX +
-                        seatRadiusX *
-                          Math.cos(
-                            (2 *
-                              Math.PI *
-                              calculateRotatedIndex(
-                                gameState.currentPlayerSeat,
-                                Math.floor(seatCount / 4),
-                                index
-                              )) /
-                              seatCount
-                          )
-                      }%`,
-                      opacity: 0,
-                    }}
-                    transition={{
-                      duration: 0.3,
-                    }}
-                  >
-                    <PokerCard
-                      style={{}}
-                      info={{
-                        suit: null,
-                        rank: null,
-                        secret: true,
-                      }}
-                    />
-                  </motion.div>
-                );
-              } else {
-                return <></>;
-              }
-            })}
+            <TexasTableDealAnimation
+              centerX={centerX}
+              centerY={centerY}
+              seatRadiusX={seatRadiusX}
+              seatRadiusY={seatRadiusY}
+              gameState={gameState}
+              seatCount={seatCount}
+              dealCardAnimationKey={dealCardAnimationKey}
+            />
             <Flex>
               {gameState.communityCards?.map((communityCard, index) => {
                 let isMyCard = false;
@@ -1210,3 +1155,4 @@ function TexasTableGame({
 }
 
 export default TexasTableGame;
+export type { GameState };

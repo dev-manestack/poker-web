@@ -1,5 +1,5 @@
 import { Flex } from "antd";
-import TexasTableGame from "../../features/poker/texas-table-game";
+import TexasTableGame from "../../features/poker/texas/texas-table-game";
 
 function TablePage() {
   return (

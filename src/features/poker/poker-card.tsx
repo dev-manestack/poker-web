@@ -5,7 +5,7 @@ import { Howl } from "howler";
 import { FlipCardAudio } from "../../assets/sounds";
 import type { GameCard } from "../../api/game";
 
-function PokerCard({ style, info, className }: { style?: React.CSSProperties; info: GameCard; className?: string }) {
+function PokerCard({ style, info }: { style?: React.CSSProperties; info: GameCard }) {
   const [cardImage, setCardImage] = useState<null | string>(null);
 
   useEffect(() => {
@@ -41,7 +41,6 @@ function PokerCard({ style, info, className }: { style?: React.CSSProperties; in
   return (
     <motion.img
       src={cardImage}
-      className={className}
       style={{
         ...style,
         width: "100%",

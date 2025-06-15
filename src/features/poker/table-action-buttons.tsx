@@ -29,7 +29,8 @@ export default function TableActionButtons({
 }: TableActionButtonsProps) {
   const [drawerVisible, setDrawerVisible] = useState(false);
 
-  const isTabletOrMobile = typeof window !== "undefined" && window.innerWidth <= 1024;
+  const isTabletOrMobile =
+    typeof window !== "undefined" && window.innerWidth <= 1024;
   const isTouchDevice = isTabletOrMobile; // touch devices: no tooltip on touch devices
 
   if (isPreview) return null;
@@ -196,9 +197,7 @@ export default function TableActionButtons({
         onClose={() => setDrawerVisible(false)}
         open={drawerVisible}
         width={250}
-        styles={{
-          body: { padding: 10 }, // ✅ new way
-        }}
+        bodyStyle={{ padding: 10 }}
       >
         <div
           style={{

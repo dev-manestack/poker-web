@@ -104,6 +104,13 @@
     "amount": "Amount",
     "date": "Date"
   },
+  "profileForm": {
+    "usernameLabel": "Username",
+    "usernamePlaceholder": "Enter your username",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Enter your email",
+    "title": "Profile"
+  },
   "loginForm": {
     "success": "Successfully logged in",
     "error": "Login failed",

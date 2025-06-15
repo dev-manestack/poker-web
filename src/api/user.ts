@@ -8,7 +8,7 @@ interface User {
   email: string;
   isVerified: boolean;
   username: string;
-  profileURL: string;
+  profileUrl: string;
   role: string;
   bankName: string;
   accountNumber: string;
@@ -65,6 +65,7 @@ export const userApi = createApi({
     "DepositList",
     "WithdrawList",
     "OutcomeList",
+    "Me",
   ],
   endpoints: (builder) => ({
     login: builder.mutation({
@@ -86,6 +87,15 @@ export const userApi = createApi({
         url: "/me",
         method: "GET",
       }),
+      providesTags: ["Me"],
+    }),
+    updateMe: builder.mutation({
+      query: (userData: User) => ({
+        url: "/me",
+        method: "PATCH",
+        body: userData,
+      }),
+      invalidatesTags: ["UserList", "Me"],
     }),
     searchUsers: builder.query<User[], void>({
       query: () => ({
@@ -137,6 +147,7 @@ export const {
   useLoginMutation,
   useRegisterMutation,
   useMeQuery,
+  useUpdateMeMutation,
   useFetchTablesQuery,
   useSearchUsersQuery,
   useFetchDepositsQuery,

@@ -30,6 +30,9 @@ const pokerDarkTheme = {
       // colorBorder: "#6a1b9a",
       // colorPrimaryHover: "#ff1744",
     },
+    Badge: {
+      dotSize: 16,
+    },
   },
   algorithm: theme.darkAlgorithm,
 };

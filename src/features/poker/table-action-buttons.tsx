@@ -14,6 +14,7 @@ interface TableActionButtonsProps {
   iconBtnStyle: () => React.CSSProperties;
   setModalType: (type: string) => void;
   userHasSeat: boolean;
+  userSeatIndex: number;
   seatOut: () => void;
   leaveSeat: (seat: number) => void;
   selectedSeat?: number;
@@ -24,8 +25,11 @@ export default function TableActionButtons({
   isPreview,
   setModalType,
   userHasSeat,
+  userSeatIndex,
   seatOut,
   navigate,
+
+  leaveSeat,
 }: TableActionButtonsProps) {
   const [drawerVisible, setDrawerVisible] = useState(false);
 
@@ -130,6 +134,9 @@ export default function TableActionButtons({
           style={{ fontSize: 10, color: "white" }}
           icon={<CiLogout size={28} />}
           onClick={() => {
+            if (userHasSeat) {
+              leaveSeat(userSeatIndex);
+            }
             navigate("/");
             setDrawerVisible(false);
           }}

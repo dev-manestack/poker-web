@@ -104,6 +104,13 @@
     "amount": "Дүн",
     "date": "Огноо"
   },
+  "profileForm": {
+    "usernameLabel": "Тоглогчийн нэр",
+    "usernamePlaceholder": "Тоглогчийн нэрээ оруулна уу",
+    "emailLabel": "Цахим хаяг",
+    "emailPlaceholder": "Цахим хаягаа оруулна уу",
+    "title": "Хэрэглэгчийн мэдээлэл"
+  },
   "loginForm": {
     "success": "Амжилттай нэвтэрлээ",
     "error": "Нэвтрэхэд алдаа гарлаа",

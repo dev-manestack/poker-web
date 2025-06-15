@@ -83,7 +83,7 @@ function AdminHeader({ style }: { style?: React.CSSProperties }) {
         <Button icon={<MessageOutlined />} />
         <Dropdown menu={{ items }}>
           <Flex align="center" gap={5} style={{ flex: 1 }}>
-            <Avatar src={userInfo?.profileURL} />
+            <Avatar src={userInfo?.profileUrl} />
             <Text>{userInfo?.username}</Text>
           </Flex>
         </Dropdown>

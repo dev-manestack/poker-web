@@ -153,6 +153,9 @@ function TexasTableGame({
   const userHasSeat = gameState.seats.some(
     (seat) => seat.user?.userId === userInfoRef.current?.userId
   );
+  const userSeatIndex = gameState.seats.findIndex(
+    (seat) => seat.user?.userId === userInfoRef.current?.userId
+  );
 
   const { t } = useTranslation();
 
@@ -608,6 +611,7 @@ function TexasTableGame({
         iconBtnStyle={iconBtnStyle}
         setModalType={setModalType}
         userHasSeat={userHasSeat}
+        userSeatIndex={userSeatIndex}
         seatOut={seatOut}
         leaveSeat={leaveSeat}
         selectedSeat={selectedSeat ?? undefined}

@@ -1,13 +1,4 @@
-import {
-  Button,
-  Flex,
-  Form,
-  message,
-  Modal,
-  Slider,
-  Spin,
-  Typography,
-} from "antd";
+import { Flex, message, Modal, Spin, Typography } from "antd";
 import { useEffect, useRef, useState } from "react";
 import "./texas-table-game.css";
 import {
@@ -23,28 +14,25 @@ import {
   type WebsocketEvent,
 } from "../../../api/game.ts";
 import { useNavigate, useParams } from "react-router";
-import TablePlayer from "../table-player.tsx";
 import PokerActions from "../poker-actions.tsx";
 import type { User } from "../../../api/user.ts";
-import PokerChip from "../poker-chip.tsx";
 import {
   containerStyles,
   tableStyles,
-  seatChipStyle,
-  playerSeatStyle,
   actionBarStyles,
   authLoadingStyles,
 } from "../../../styles/PokerTableStyles.ts";
-import { FundOutlined, WalletOutlined } from "@ant-design/icons";
 import TableActionButtons from "../table-action-buttons.tsx"; // adjust path
 import useResponsiveTableSize from "../../../hooks/useResponsiveTableSize.tsx"; // adjust path as needed
 import { useTranslation } from "react-i18next";
 import { DesktopTable, MobileTable } from "../../../assets/image/index.ts";
 import { useIsMobile } from "../../../hooks/useIsMobile.tsx";
-import { motion } from "framer-motion";
 import PokerChat from "../poker-chat.tsx";
 import TexasTableDealAnimation from "./texas-table-deal-animation.tsx";
 import TexasTableCommunityCards from "./texas-table-community-cards.tsx";
+import TexasTablePlayerChips from "./texas-table-player-chips.tsx";
+import TexasTablePlayerSeats from "./texas-table-player-seats.tsx";
+import TexasRechargeForm from "./texas-recharge-form.tsx";
 
 interface GameState {
   minBuyIn: number;
@@ -159,28 +147,6 @@ function TexasTableGame({
   const userSeatIndex = gameState.seats.findIndex(
     (seat) => seat.user?.userId === userInfoRef.current?.userId
   );
-
-  const calculateRotatedIndex = (
-    mySeatIndex: number,
-    centerIndex: number,
-    index: number
-  ) => {
-    if (mySeatIndex !== -1) {
-      const relativePosition = index - mySeatIndex;
-      const rotatedIndex =
-        (relativePosition + centerIndex + seatCount) % seatCount;
-      return rotatedIndex;
-    } else {
-      return index;
-    }
-  };
-
-  const isSeatTaken = (seatIndex: number) => {
-    return (
-      gameState.seats[seatIndex]?.user !== null &&
-      gameState.seats[seatIndex]?.user !== undefined
-    );
-  };
 
   const { t } = useTranslation();
 
@@ -696,184 +662,15 @@ function TexasTableGame({
           }
           onCancel={() => setModalType("")}
         >
-          <Form
-            onFinish={() => {
-              if (modalType === "RECHARGE") {
-                recharge(rechargeAmount);
-              } else {
-                console.log(
-                  "Calling takeSeat with:",
-                  selectedSeat,
-                  rechargeAmount
-                );
-                takeSeat(selectedSeat, rechargeAmount);
-              }
-            }}
-          >
-            <Form.Item>
-              <>
-                {/* Game Info with icons */}
-                <div style={{ marginBottom: 16, fontSize: "14px" }}>
-                  <p>
-                    <FundOutlined style={{ marginRight: 8 }} />
-                    Game Type: Texas {gameState.smallBlind}/{gameState.bigBlind}
-                  </p>
-                  <p>
-                    <WalletOutlined style={{ marginRight: 8 }} />
-                    Available balance:{" "}
-                    {gameState.usableBalance.toLocaleString("mn-MN")}₮
-                  </p>
-                </div>
-
-                {/* Хэмжээ and Selected Amount */}
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    marginBottom: 12,
-                    fontSize: "12px",
-                  }}
-                >
-                  <span style={{ fontWeight: 500 }}>{t("modal.amount")}</span>
-                  <span
-                    style={{
-                      padding: "6px 10px",
-                      background: "#f5f5f5 !important",
-                      borderRadius: 8,
-                      fontWeight: 600,
-                    }}
-                  >
-                    {rechargeAmount.toLocaleString("mn-MN")}₮
-                  </span>
-                </div>
-
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 8,
-                  }}
-                >
-                  <Button
-                    onClick={() => {
-                      setRechargeAmount((prevValue) => {
-                        if (
-                          prevValue - gameState.bigBlind <
-                          gameState.minBuyIn
-                        ) {
-                          return gameState.minBuyIn;
-                        }
-                        return prevValue - gameState.bigBlind;
-                      });
-                    }}
-                    style={{ background: "#7e57c2", border: "none" }}
-                  >
-                    -
-                  </Button>
-                  <div style={{ flexGrow: 1 }}>
-                    <Slider
-                      min={gameState.minBuyIn}
-                      max={gameState.maxBuyIn}
-                      step={gameState.maxBuyIn * 0.01}
-                      value={rechargeAmount}
-                      onChange={(value) => setRechargeAmount(value)}
-                      style={{ height: 8 }}
-                    />
-                  </div>
-                  <Button
-                    onClick={() =>
-                      setRechargeAmount((prevValue) => {
-                        if (
-                          prevValue + gameState.bigBlind >
-                          gameState.maxBuyIn
-                        ) {
-                          return gameState.maxBuyIn;
-                        }
-                        if (
-                          prevValue + gameState.bigBlind >
-                          gameState.usableBalance
-                        ) {
-                          return prevValue;
-                        }
-                        return prevValue + gameState.bigBlind;
-                      })
-                    }
-                    style={{ background: "#7e57c2", border: "none" }}
-                  >
-                    +
-                  </Button>
-                </div>
-
-                {/* Preset Buttons */}
-                <div style={{ marginTop: 20, display: "flex", gap: 8 }}>
-                  <Button
-                    onClick={() => {
-                      setRechargeAmount(gameState.minBuyIn);
-                    }}
-                    style={{ fontSize: "12px" }}
-                  >
-                    Min
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      if (gameState.usableBalance < gameState.bigBlind * 40) {
-                        setRechargeAmount(gameState.usableBalance);
-                      } else if (gameState.maxBuyIn < gameState.bigBlind * 40) {
-                        setRechargeAmount(gameState.maxBuyIn);
-                      } else {
-                        setRechargeAmount(gameState.bigBlind * 40);
-                      }
-                    }}
-                    style={{ fontSize: "12px" }}
-                  >
-                    40BB
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      if (gameState.usableBalance < gameState.bigBlind * 70) {
-                        setRechargeAmount(gameState.usableBalance);
-                      } else {
-                        setRechargeAmount(gameState.bigBlind * 70);
-                      }
-                    }}
-                    style={{ fontSize: "12px" }}
-                  >
-                    70BB
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      if (gameState.usableBalance < gameState.maxBuyIn) {
-                        setRechargeAmount(gameState.usableBalance);
-                      } else {
-                        setRechargeAmount(gameState.maxBuyIn);
-                      }
-                    }}
-                    style={{ fontSize: "12px" }}
-                  >
-                    Max
-                  </Button>
-                </div>
-              </>
-            </Form.Item>
-
-            <Form.Item
-              style={{
-                display: "flex",
-                justifyContent: "end",
-              }}
-            >
-              <Button
-                type="default"
-                htmlType="submit"
-                style={{ fontSize: "12px" }}
-              >
-                {modalType === "RECHARGE"
-                  ? t("modal.recharge")
-                  : t("modal.sit")}
-              </Button>
-            </Form.Item>
-          </Form>
+          <TexasRechargeForm
+            modalType={modalType}
+            gameState={gameState}
+            selectedSeat={selectedSeat || -1}
+            takeSeat={takeSeat}
+            recharge={recharge}
+            setRechargeAmount={setRechargeAmount}
+            rechargeAmount={rechargeAmount}
+          />
         </Modal>
         <div
           style={{
@@ -917,174 +714,31 @@ function TexasTableGame({
             />
           </Flex>
         </div>
+        <TexasTablePlayerSeats
+          isMobile={isMobile}
+          isSmallPhone={isSmallPhone}
+          gameState={gameState}
+          userInfo={userInfoRef.current || undefined}
+          setSelectedSeat={setSelectedSeat}
+          setModalType={setModalType}
+          isPreview={isPreview}
+          seatCount={seatCount}
+          centerX={centerX}
+          centerY={centerY}
+          seatRadiusX={seatRadiusX}
+          seatRadiusY={seatRadiusY}
+          turnProgress={turnProgress}
+        />
 
-        {/* Player seats - absolutely positioned relative to outer table */}
-
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            pointerEvents: "none",
-            zIndex: 2,
-            transform: isMobile
-              ? isSmallPhone
-                ? "translateY(-70px)" // small phone
-                : "translateY(-100px)" // other mobiles
-              : "none",
-            transition: "transform 0.3s ease",
-          }}
-        >
-          {gameState.seats.map((seat: GamePlayer, ind: number) => {
-            const myUserId = userInfoRef.current?.userId;
-            const mySeatIndex = gameState.seats.findIndex(
-              (seat) => seat.user?.userId === myUserId
-            );
-            const centerIndex = Math.floor(seatCount / 4);
-            let rotatedIndex = calculateRotatedIndex(
-              mySeatIndex,
-              centerIndex,
-              ind
-            );
-
-            const angle = (2 * Math.PI * rotatedIndex) / seatCount;
-
-            const sin = Math.sin(angle);
-
-            // Adjust Y radius for top/bottom seats
-            let adjustedRadiusY = seatRadiusY;
-            if (Math.abs(sin) > 0.9) {
-              adjustedRadiusY = isMobile ? (isSmallPhone ? 50 : 45) : 40;
-            }
-
-            const x = centerX + seatRadiusX * Math.cos(angle);
-            const y = centerY + adjustedRadiusY * sin;
-
-            return (
-              <Button
-                className={`seat${isPreview ? " preview" : ""}`}
-                key={ind}
-                onClick={() => {
-                  setSelectedSeat(ind);
-                  setModalType("TAKE_SEAT");
-                }}
-                disabled={isPreview || isSeatTaken(ind)}
-                style={{
-                  ...playerSeatStyle,
-                  position: "absolute",
-                  left: `${x}%`,
-                  top: `${y}%`,
-                  pointerEvents: "auto",
-                  fontStyle: "italic",
-                }}
-              >
-                {seat?.user?.userId ? (
-                  <Flex>
-                    <TablePlayer
-                      player={seat}
-                      isMe={ind === mySeatIndex}
-                      isTurn={ind === gameState.currentPlayerSeat}
-                      holeCards={seat?.holeCards || []}
-                      progress={
-                        ind === gameState.currentPlayerSeat ? turnProgress : 0
-                      }
-                    />
-                  </Flex>
-                ) : (
-                  `${t("seat")}`
-                )}
-              </Button>
-            );
-          })}
-        </div>
-
-        {/* Player chips - absolutely positioned relative to outer table */}
-        <div>
-          {gameState.seats.map((_: GamePlayer, i: number) => {
-            const isMobile = window.innerWidth < 768;
-
-            const myUserId = userInfoRef.current?.userId;
-            const mySeatIndex = gameState.seats.findIndex(
-              (seat) => seat.user?.userId === myUserId
-            );
-            const centerIndex = Math.floor(seatCount / 4);
-            let rotatedIndex = i;
-
-            if (mySeatIndex !== -1) {
-              const relativePosition = i - mySeatIndex;
-              rotatedIndex =
-                (relativePosition + centerIndex + seatCount) % seatCount;
-            }
-
-            const angle = (2 * Math.PI * rotatedIndex) / seatCount;
-
-            const extraYOffset = isMobile ? -22 : 0;
-            const chipOffsetX = isMobile ? 7 : -7;
-            const chipOffsetY = isMobile ? 5 : 15;
-
-            const chipRadiusXAdjusted = chipRadiusX - chipOffsetX;
-            const chipRadiusYAdjusted = chipRadiusY - chipOffsetY;
-
-            // Both avatar and chip use the same mobile adjustment
-            const avatarRadiusX = isMobile
-              ? chipRadiusX * 0.8
-              : chipRadiusXAdjusted;
-            const avatarRadiusY = isMobile
-              ? chipRadiusY * 0.9
-              : chipRadiusYAdjusted;
-
-            const distanceFactorAvatar = 1.2; // seat (avatar) position
-            const distanceFactorChip = 1; // chip comes closer to center
-
-            // Starting point (from avatar/seat)
-            const avatarX =
-              centerX + avatarRadiusX * distanceFactorAvatar * Math.cos(angle);
-            const avatarY =
-              centerY +
-              avatarRadiusY * distanceFactorAvatar * Math.sin(angle) +
-              extraYOffset;
-
-            // Ending point (where chip stops)
-            const chipX =
-              centerX + avatarRadiusX * distanceFactorChip * Math.cos(angle);
-            const chipY =
-              centerY +
-              avatarRadiusY * distanceFactorChip * Math.sin(angle) +
-              extraYOffset;
-
-            const playerBet = gameState.currentBets[i] || 0;
-
-            if (playerBet > 0) {
-              return (
-                <motion.div
-                  key={i}
-                  initial={{
-                    left: `${avatarX}%`,
-                    top: `${avatarY}%`,
-                  }}
-                  animate={{
-                    left: `${chipX}%`,
-                    top: `${chipY}%`,
-                  }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 150,
-                    damping: 20,
-                  }}
-                  style={{
-                    ...seatChipStyle,
-                    position: "absolute",
-                  }}
-                >
-                  <PokerChip amount={playerBet} />
-                </motion.div>
-              );
-            }
-            return null;
-          })}
-        </div>
+        <TexasTablePlayerChips
+          gameState={gameState}
+          userInfo={userInfoRef.current || undefined}
+          centerX={centerX}
+          centerY={centerY}
+          seatCount={seatCount}
+          chipRadiusX={chipRadiusX}
+          chipRadiusY={chipRadiusY}
+        />
       </Flex>
 
       {!isPreview && (
